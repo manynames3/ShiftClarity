@@ -11,7 +11,7 @@ ShiftClarity helps healthcare staffing teams review potential billing discrepanc
 
 *Every shift. Clearly aligned.* A Supreme AI Ventures product.
 
-[Live demo](https://4p30g92j37.execute-api.us-east-1.amazonaws.com/demo/) · [Try it locally](#try-it-locally) · [Persistent pilot](https://4p30g92j37.execute-api.us-east-1.amazonaws.com/pilot/) · [C4 architecture](docs/architecture/README.md) · [Architecture decisions](docs/adr/README.md)
+[Live demo](https://shiftclarity.pages.dev/demo/) · [Try it locally](#try-it-locally) · [Persistent pilot](https://shiftclarity.pages.dev/pilot/) · [C4 architecture](docs/architecture/README.md) · [Architecture decisions](docs/adr/README.md)
 
 **Current release:** a working synthetic pilot with a React interface, FastAPI backend, Cognito sign-in, private S3 imports, Neon persistence, and Lambda/SQS processing. The hosted standalone demo is open to explore; the persistent cloud workspace requires an assigned account and authenticator. All examples below use fictional records.
 
@@ -92,11 +92,14 @@ Pilot imports accept the downloadable normalized **synthetic JSON** template, up
 | Neon PostgreSQL + Psycopg | Persistent reviews, immutable revisions/runs, source lineage, jobs, and audit history |
 | Private S3 | Quarantined and accepted source objects with gated downloads |
 | Lambda + SQS FIFO | On-demand web requests and durable processing without an always-on app server |
+| Cloudflare Pages | Simple HTTPS address for the full pilot through a fixed-origin proxy |
 | Terraform | Reproducible AWS infrastructure |
 
 The browser and backend use the same calculation engine. PostgreSQL transactions govern job claims and completed-run publication. Cognito establishes identity; server-side memberships govern workspace permissions. A container packages the UI, Python service, and Node engine into one versioned image for both Lambda functions.
 
 Read the [C4 context and container diagrams](docs/architecture/README.md), [import/publication sequence](docs/architecture/import-publication.md), and [ADRs](docs/adr/README.md) for the decisions and their tradeoffs. [AWS and database operations](docs/AWS_AND_DATABASE.md) covers deployment and costs. Small storage, secret, log, and usage charges can remain while idle.
+
+The full pilot opens at [shiftclarity.pages.dev](https://shiftclarity.pages.dev/). [Cloudflare operations](docs/CLOUDFLARE.md) explains the proxy, sign-in boundary and roughly $0.60–$1/month idle estimate before credits and shared free allowances.
 
 ## Verification
 

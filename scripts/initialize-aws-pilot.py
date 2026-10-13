@@ -67,6 +67,9 @@ configuration={"database_url":runtime,"issuer":issuer,"client_id":values["cognit
                "origin":values["app_origin"],"org_id":"synthetic-pilot","storage_dir":"/tmp/unused","cloud":True,
                "bucket":values["private_bucket"],"region":"us-east-1","cognito_pool":pool,"worker_enabled":False,
                "job_queue_url":values["job_queue"],"job_queue_arn":values["job_queue_arn"]}
+variables=json.loads((ROOT/".local/aws.tfvars.json").read_text())
+if variables.get("public_origin"):
+    configuration.update(gateway_host=values["gateway_origin"].split("://",1)[1],edge_proxy_secret=variables["edge_proxy_secret"])
 config_file=ROOT/".local/aws-cloud-config.json"
 config_file.write_text(json.dumps(configuration,indent=2))
 config_file.chmod(0o600)

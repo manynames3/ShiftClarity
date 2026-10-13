@@ -25,3 +25,6 @@ artifacts/
 *.pgpass
 *.pg_service.conf
 *.dump
+.wrangler/
+.dev.vars
+.dev.vars.*

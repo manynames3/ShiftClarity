@@ -1,5 +1,8 @@
 # ShiftClarity workspace instructions
 
+## Cloudflare full-pilot authorization · October 13, 2026
+The user requested a simpler Cloudflare Pages address and explicitly selected the full signed-in pilot under that URL. Configure the dedicated Pages proxy and necessary AWS/Cognito origin changes while retaining S3, Neon and the synthetic data boundary. No paid Cloudflare or Neon upgrade. Keep edge credentials private; retain exact host, CSRF, MFA and server authorization checks. The user additionally approved resuming browser verification for this new address. GitHub documentation/About updates remain authorized.
+
 ## GitHub publication authorization · October 13, 2026
 The user explicitly approved creating public `manynames3/ShiftClarity` and publishing a product-led README, GitHub About fields, actual synthetic product screenshots, ADRs and C4 documentation. Publish the reviewed application source and reproducible build/test inputs with that documentation. This supersedes earlier no-commit/no-push restrictions for this repository publication. Keep credentials, authenticator setup keys, private configurations, Terraform state, backups, raw runtime artifacts and customer data out of Git. Preserve the original handoff unchanged. Existing synthetic/real-data operating gates continue to apply.
 

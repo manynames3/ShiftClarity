@@ -9,6 +9,7 @@ These records explain the accepted architecture of the synthetic ShiftClarity pi
 | [0003](0003-cognito-and-server-authorization.md) | Cognito identity with server sessions and independent approval | Accepted |
 | [0004](0004-neon-postgres-and-rls.md) | Neon PostgreSQL with restricted runtime access and forced RLS | Accepted for synthetic use |
 | [0005](0005-private-versioned-evidence.md) | Private bounded imports and immutable evidence history | Accepted |
+| [0006](0006-cloudflare-pages-origin.md) | Cloudflare Pages as the full signed-in pilot origin | Accepted |
 
 Start with the [C4 architecture views](../architecture/README.md) to see how these decisions fit together. The [import publication sequence](../architecture/import-publication.md) explains transaction and retry behavior. The earlier [decision log](../../DECISIONS.md) remains available for chronology; these ADRs describe the current decisions after the authorized AWS scope change.
 

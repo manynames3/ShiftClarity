@@ -1,8 +1,10 @@
 # AWS synthetic pilot and database
 
-Updated October 13, 2026. The synthetic pilot is deployed at https://4p30g92j37.execute-api.us-east-1.amazonaws.com/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
+Updated October 13, 2026. The synthetic pilot is deployed at https://shiftclarity.pages.dev/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
 
 ## Deployed arrangement
+
+Cloudflare Pages now provides the full public origin at https://shiftclarity.pages.dev/. A fixed-origin Worker preserves same-origin API calls and secure cookies; the backend separately requires the exact AWS gateway host and private edge credential. Cognito callbacks/logout use the Pages origin. The original API Gateway hostname is an internal transport endpoint. See [Cloudflare operations](CLOUDFLARE.md) and [ADR 0006](adr/0006-cloudflare-pages-origin.md).
 
 The user approved Lambda/SQS and Mangum to minimize idle cost. One immutable, verified x86 image contains FastAPI, the shared Node calculator and the original branded React interface. HTTP API provides the AWS-generated HTTPS origin. The web and FIFO worker functions use 1024 MiB, with no provisioned concurrency or polling application server. A single FIFO group serializes worker notifications; PostgreSQL transactions, leases and fingerprints remain the publication authority. An early message retries until its job is committed. A failed SQS send rolls back job creation. Completed or terminal jobs acknowledge replay without duplicate publication.
 

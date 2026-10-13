@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
@@ -22,8 +23,14 @@ class Settings:
     worker_enabled: bool = True
     job_queue_url: str = ""
     job_queue_arn: str = ""
+    gateway_host: str = ""
+    edge_proxy_secret: str = field(default="", repr=False)
 
     def validate(self):
+        if bool(self.gateway_host) != bool(self.edge_proxy_secret):
+            raise ValueError("Gateway host and edge credential must be configured together")
+        if self.gateway_host and (not re.fullmatch(r"[a-z0-9]+\.execute-api\.[a-z0-9-]+\.amazonaws\.com",self.gateway_host) or len(self.edge_proxy_secret)<43):
+            raise ValueError("Invalid edge gateway configuration")
         for value in (self.issuer, self.origin):
             parsed = urlparse(value)
             if parsed.scheme != "https" and (self.cloud or parsed.hostname not in ("127.0.0.1", "localhost")):
@@ -52,6 +59,7 @@ def load_settings():
             origin=os.environ["APP_ORIGIN"], org_id=os.environ["ORG_ID"], storage_dir="/tmp/unused",
             cloud=True, bucket=os.environ["PRIVATE_BUCKET"], region=os.environ.get("AWS_REGION","us-east-1"),
             cognito_pool=os.environ["COGNITO_POOL_ID"],worker_enabled=not bool(os.environ.get("JOB_QUEUE_URL")),
-            job_queue_url=os.environ.get("JOB_QUEUE_URL",""),job_queue_arn=os.environ.get("JOB_QUEUE_ARN","")
+            job_queue_url=os.environ.get("JOB_QUEUE_URL",""),job_queue_arn=os.environ.get("JOB_QUEUE_ARN",""),
+            gateway_host=os.environ.get("GATEWAY_HOST",""),edge_proxy_secret=os.environ.get("EDGE_PROXY_SECRET","")
         ).validate()
     return Settings(**json.loads(Path(path).read_text())).validate()

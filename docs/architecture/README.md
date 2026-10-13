@@ -45,6 +45,8 @@ flowchart TB
     subgraph sc["ShiftClarity — software system"]
         ui["Browser application<br/>Container: React and TypeScript<br/>Workspace, evidence, inputs, rules and coverage"]
 
+        edge["Cloudflare Pages proxy<br/>Container: JavaScript Worker<br/>Fixed AWS origin, secure cookies and no private caching"]
+
         subgraph aws["AWS hosting boundary — us-east-1"]
             gateway["API Gateway HTTP API<br/>Infrastructure: HTTPS entry point"]
             web["Web function<br/>Container: FastAPI, Mangum and Node<br/>Sessions, authorization, imports and review API"]
@@ -61,10 +63,11 @@ flowchart TB
 
     user -->|"Uses HTTPS interface"| ui
     ui -->|"Sign-in redirect"| cognito
-    ui -->|"Same-origin API; session and CSRF on writes"| gateway
+    ui -->|"Same-origin requests; session and CSRF on writes"| edge
+    edge -->|"HTTPS; private edge credential; manual redirects"| gateway
     gateway -->|"Invokes"| web
     web -->|"Code exchange, token and MFA checks"| cognito
-    web -->|"Serves application and public build assets"| ui
+    web -->|"Serves application and assets through proxy"| edge
     web -->|"Transactions; verified TLS"| db
     web -->|"Private write, read and expiry-gated download"| objects
     web -->|"Sends job ID before database commit"| queue
@@ -76,7 +79,7 @@ flowchart TB
     classDef app fill:#e6f3f4,stroke:#006C78,color:#142333;
     classDef store fill:#f2f4f6,stroke:#667788,color:#142333;
     classDef infra fill:#ffffff,stroke:#667788,color:#142333;
-    class ui,web,worker app;
+    class ui,edge,web,worker app;
     class db,objects store;
     class gateway,queue,secrets,cognito infra;
 ```
@@ -107,7 +110,7 @@ flowchart LR
         jobs["Job notification<br/>Component: backend/jobs.py<br/>Durable job and FIFO wake-up"]
     end
 
-    browser -->|"Calls same-origin API"| routes
+    browser -->|"Calls API through Pages"| routes
     routes -->|"Verifies actor and request"| auth
     auth -->|"Validates identity and MFA"| provider
     auth -->|"Reads sessions and memberships"| persistence
@@ -130,6 +133,7 @@ flowchart LR
 | --- | --- | --- |
 | Identity to workspace | Cognito identity verification plus active server-side membership and role checks | Sign-in does not establish permission to use a workspace. |
 | Browser to API | Short server sessions; exact Origin and session-bound CSRF checks on writes | The local provider is loopback-only development infrastructure. |
+| Pages to AWS | Fixed upstream, exact gateway host and private edge credential; redirects are not followed by the proxy | Edge identity grants no user permission. Preview hosts are denied; the record-free health endpoint remains public. |
 | API to data | Restricted nonowner PostgreSQL role; forced RLS on organization-scoped evidence/workflow tables | Identity/session tables use server checks. This synthetic single-workspace build is not evidence of a multi-customer operating model. |
 | Upload to trusted evidence | Bounded exact-schema JSON, registered rule/source matching, revision conflicts and private quarantine | A synthetic declaration cannot classify or authorize real personal information. |
 | Calculation to publication | Shared exact-decimal engine; immutable completed run, head update and audit event committed together | Missing or unsupported evidence can require abstention rather than a financial finding. |

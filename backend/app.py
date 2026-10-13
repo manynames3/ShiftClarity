@@ -115,8 +115,11 @@ def create_app(settings=None):
 
     @app.middleware("http")
     async def security_headers(request,call_next):
-        if request.headers.get("host")!=settings.origin.split("://",1)[1] and request.url.path!="/health":
-            return JSONResponse({"detail":"Invalid host"},400)
+        if request.url.path!="/health":
+            if request.headers.get("host")!=(settings.gateway_host or settings.origin.split("://",1)[1]):
+                return JSONResponse({"detail":"Invalid host"},400)
+            if settings.gateway_host and not secrets.compare_digest(request.headers.get("x-shiftclarity-edge","").encode(),settings.edge_proxy_secret.encode()):
+                return JSONResponse({"detail":"Invalid gateway"},403)
         length=request.headers.get("content-length","0")
         if not length.isdigit() or int(length)>1024*1024:
             return JSONResponse({"detail":"Request exceeds 1 MiB limit."},413)

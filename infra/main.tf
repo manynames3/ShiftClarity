@@ -13,7 +13,24 @@ variable "region" { default = "us-east-1" }
 variable "name" { default = "shiftclarity-synthetic" }
 variable "org_id" { default = "synthetic-pilot" }
 locals {
-  app_origin = aws_apigatewayv2_api.pilot.api_endpoint
+  app_origin = var.public_origin != "" ? var.public_origin : aws_apigatewayv2_api.pilot.api_endpoint
+}
+variable "public_origin" {
+  type = string
+  default = ""
+  validation {
+    condition = var.public_origin == "" || can(regex("^https://[a-z0-9.-]+$", var.public_origin))
+    error_message = "Public origin must be an HTTPS origin without a path."
+  }
+}
+variable "edge_proxy_secret" {
+  type = string
+  sensitive = true
+  default = ""
+  validation {
+    condition = var.public_origin == "" ? var.edge_proxy_secret == "" : length(var.edge_proxy_secret) >= 43
+    error_message = "A public edge origin requires a private edge credential."
+  }
 }
 variable "image_identifier" {
   type        = string
@@ -185,6 +202,8 @@ resource "aws_cloudwatch_log_group" "worker" {
 locals {
   runtime_environment = {
     APP_ORIGIN              = local.app_origin
+    GATEWAY_HOST            = var.public_origin != "" ? trimprefix(aws_apigatewayv2_api.pilot.api_endpoint, "https://") : ""
+    EDGE_PROXY_SECRET       = var.edge_proxy_secret
     ORG_ID                  = var.org_id
     PRIVATE_BUCKET          = aws_s3_bucket.private.id
     COGNITO_POOL_ID         = aws_cognito_user_pool.pilot.id
@@ -280,6 +299,7 @@ resource "aws_cloudwatch_metric_alarm" "queue_dead_letters" {
 output "cognito_pool" { value = aws_cognito_user_pool.pilot.id }
 output "cognito_client" { value = aws_cognito_user_pool_client.web.id }
 output "app_origin" { value = local.app_origin }
+output "gateway_origin" { value = aws_apigatewayv2_api.pilot.api_endpoint }
 output "private_bucket" { value = aws_s3_bucket.private.id }
 output "job_queue" { value = aws_sqs_queue.jobs.url }
 output "job_queue_arn" { value = aws_sqs_queue.jobs.arn }

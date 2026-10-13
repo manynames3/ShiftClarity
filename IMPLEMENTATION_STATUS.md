@@ -1,5 +1,13 @@
 # ShiftClarity implementation status
 
+## October 13 Cloudflare full-pilot checkpoint
+
+The user selected the full signed-in pilot at https://shiftclarity.pages.dev/. A fixed-origin Pages Worker forwards to the existing AWS gateway, preserves secure cookies/Origin, avoids private caching and redirect following, and supplies a private edge credential. Backend exact gateway-host/credential checks precede the existing user permissions. Cognito callback/logout URLs use Pages. Terraform changed only its client and the two function images/environments in place; no data resource was replaced. No paid plan or additional Secrets Manager secret was added.
+
+Actual verification: two proxy tests, two gateway tests, frontend build, final Lambda runtime emulator, matching deployed digests, callback settings, anonymous/direct-origin/preview denial, zero drift, and real-browser authenticator sign-in/import/private download/SQS publication/persisted reload all passed. The sample again computed 12 checked records and $1,760.00 potential underbilling. The rendered signed-in product was inspected. Full original backend tests were blocked by local peer authentication, so their earlier results are not presented as rerun. See docs/CLOUDFLARE.md, ADR 0006 and ignored artifacts/cloudflare-browser-verification.json.
+
+Resource-based idle estimate: approximately $0.79/month baseline before credits/free allowances, with small variable requests/storage; budget about $0.60–$1/month at low use. Cloudflare adds no separate subscription within the shared Free allowance. This is not a measured monthly bill or a hard cap. Private sign-in instructions now use the Pages URL.
+
 ## October 13 public documentation checkpoint
 
 Public `manynames3/ShiftClarity` was explicitly approved by the user. Publication content includes the application source, unchanged handoff, an outcome-led README, four actual synthetic product screenshots, five ADRs, C4 context/container/component diagrams, and an import/publication sequence. Documentation validation checks 19 Markdown files, 114 local links/images and four Mermaid diagrams. All original 84 handoff hashes still match; the 20 fixture tests were rerun and passed. A public-source audit and Gitleaks scan found no real credentials in the selected files; private configuration/state/backups and raw artifacts are excluded.

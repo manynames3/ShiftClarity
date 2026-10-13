@@ -32,5 +32,5 @@ export async function cognitoLogin(page:Page,username:string){
   await page.locator('input[name=authentication_code]').fill(await code());
  }
  await page.getByRole('button',{name:'Sign in',exact:true}).click();
- await page.waitForURL(username==='outsider'?/execute-api.*\/auth\/callback/:/execute-api.*\/pilot\//);
+ await page.waitForURL(url=>username==='outsider'?url.pathname==='/auth/callback':url.pathname==='/pilot/');
 }

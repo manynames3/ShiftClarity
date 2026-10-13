@@ -69,7 +69,7 @@ if outputs_file.exists():
             statement["Action"].remove("cognito-idp:CreateUserPool")
             statement["Resource"]=[f"arn:aws:cognito-idp:us-east-1:{account}:userpool/"+values["cognito_pool"]["value"]]
         if "apigateway:POST" in statement["Action"]:
-            api_id=values["app_origin"]["value"].split("://",1)[1].split(".",1)[0]
+            api_id=values.get("gateway_origin",values["app_origin"])["value"].split("://",1)[1].split(".",1)[0]
             statement["Resource"]=[f"arn:aws:apigateway:us-east-1::/apis/{api_id}",f"arn:aws:apigateway:us-east-1::/apis/{api_id}/*",f"arn:aws:apigateway:us-east-1::/tags/arn:aws:apigateway:us-east-1::/apis/{api_id}*"]
 try:
     role=iam.get_role(RoleName=name)["Role"]

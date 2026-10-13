@@ -12,6 +12,8 @@ sequenceDiagram
     participant Queue as SQS FIFO
     participant Worker as Worker function
 
+    Note over User,API: Same-origin browser requests pass through the authenticated Pages proxy.
+
     User->>API: Upload attested synthetic JSON with request key
     API->>API: Verify session, role, Origin, CSRF and size
     API->>S3: Store opaque quarantine object

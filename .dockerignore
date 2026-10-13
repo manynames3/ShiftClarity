@@ -10,3 +10,6 @@ infra/.terraform
 **/*.tfvars
 **/*.tfstate*
 .git
+.wrangler
+.dev.vars
+.dev.vars.*
