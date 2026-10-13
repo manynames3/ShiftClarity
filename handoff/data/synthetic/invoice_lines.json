@@ -1,0 +1,164 @@
+[
+  {
+    "id": "LINE-001",
+    "invoice_id": "INV-001",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "600.00",
+    "currency": "USD",
+    "minutes": 600,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S001"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-002",
+    "invoice_id": "INV-001",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "600.00",
+    "currency": "USD",
+    "minutes": 600,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S002"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-003",
+    "invoice_id": "INV-001",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "600.00",
+    "currency": "USD",
+    "minutes": 600,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S003"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-004",
+    "invoice_id": "INV-001",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "600.00",
+    "currency": "USD",
+    "minutes": 600,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S004"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-005",
+    "invoice_id": "INV-002",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "1560.00",
+    "currency": "USD",
+    "minutes": 1440,
+    "unit_rate": "65.0000",
+    "shift_ids": [
+      "S007",
+      "S008",
+      "S009"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-006",
+    "invoice_id": "INV-003",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "720.00",
+    "currency": "USD",
+    "minutes": 720,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S010"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-007",
+    "invoice_id": "INV-004",
+    "facility_id": "FAC-001",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "780.00",
+    "currency": "USD",
+    "minutes": 720,
+    "unit_rate": "65.0000",
+    "shift_ids": [
+      "S011"
+    ],
+    "chain_id": null,
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-008",
+    "invoice_id": "INV-005",
+    "facility_id": "FAC-002",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "720.00",
+    "currency": "USD",
+    "minutes": 720,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S014"
+    ],
+    "chain_id": "CHAIN-001",
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-009",
+    "invoice_id": "CR-005",
+    "facility_id": "FAC-002",
+    "state": "posted",
+    "document_kind": "credit",
+    "amount": "-720.00",
+    "currency": "USD",
+    "minutes": 720,
+    "unit_rate": "60.0000",
+    "shift_ids": [
+      "S014"
+    ],
+    "chain_id": "CHAIN-001",
+    "batch_id": "BATCH-INV-001"
+  },
+  {
+    "id": "LINE-010",
+    "invoice_id": "INV-006",
+    "facility_id": "FAC-002",
+    "state": "posted",
+    "document_kind": "invoice",
+    "amount": "780.00",
+    "currency": "USD",
+    "minutes": 720,
+    "unit_rate": "65.0000",
+    "shift_ids": [
+      "S014"
+    ],
+    "chain_id": "CHAIN-001",
+    "batch_id": "BATCH-INV-001"
+  }
+]

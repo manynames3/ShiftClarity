@@ -1,0 +1,25 @@
+{
+  "parent": "Supreme AI Ventures",
+  "requested_url": "https://supremeaiventures.dev/",
+  "live_url_retrieved": false,
+  "source_repository": "manynames3/supremeai",
+  "source_file": "styles.css",
+  "source_blob_sha": "f30f5490cf5c319409df6dc391fbdcc1215b7f81",
+  "source_section": "Enterprise presentation overrides near line 313",
+  "observed": {
+    "ink": "#142333",
+    "teal": "#006C78",
+    "tealStrong": "#004E5A",
+    "muted": "#526171",
+    "line": "#D9DFE5",
+    "font": "Inter",
+    "enterprise_button_radius": "0"
+  },
+  "adapted_for_product": {
+    "control_radius": "4px",
+    "sidebar": "deep navy",
+    "information_hierarchy": "coverage, evidence, review"
+  },
+  "retrieved_date": "2026-10-12",
+  "note": "Original ShiftClarity assets are new design proposals. Parent source was inspected read-only; not modified."
+}

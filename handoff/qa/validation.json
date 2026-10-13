@@ -1,0 +1,152 @@
+{
+  "scope": "Build-handoff and HTML design-reference validation ONLY. Not future application or security certification.",
+  "chromium_version": "144.0.7559.96",
+  "checks": [
+    {
+      "check": "Domain JSON Schema parses and passes Draft 2020-12 schema validation",
+      "passed": true
+    },
+    {
+      "check": "Both canonical findings validate against the domain schema",
+      "passed": true
+    },
+    {
+      "check": "OpenAPI YAML parses and all local references resolve",
+      "passed": true
+    },
+    {
+      "check": "Draft rule source is present",
+      "passed": true
+    },
+    {
+      "check": "Ink on white contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Muted on white contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Teal on white contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Attention text contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Success text contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Error text contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Sidebar secondary contrast >= 4.5",
+      "passed": true
+    },
+    {
+      "check": "Workspace HTML reference renders",
+      "passed": true
+    },
+    {
+      "check": "Two initial finding records visible",
+      "passed": true
+    },
+    {
+      "check": "Facility filter narrows to one finding",
+      "passed": true
+    },
+    {
+      "check": "No-match state visible without changing coverage",
+      "passed": true
+    },
+    {
+      "check": "Clear filter restores both records",
+      "passed": true
+    },
+    {
+      "check": "Finding navigation points at expected evidence route",
+      "passed": true
+    },
+    {
+      "check": "Evidence route renders expected heading",
+      "passed": true
+    },
+    {
+      "check": "Evidence work tab switches document content",
+      "passed": true
+    },
+    {
+      "check": "Evidence invoice tab switches content",
+      "passed": true
+    },
+    {
+      "check": "Reference action clearly explains no persistence",
+      "passed": true
+    },
+    {
+      "check": "Escape closes reference dialog",
+      "passed": true
+    },
+    {
+      "check": "Second evidence case contains canonical 1560 amount",
+      "passed": true
+    },
+    {
+      "check": "Mobile menu reveals working navigation",
+      "passed": true
+    },
+    {
+      "check": "Mobile selector includes coverage target",
+      "passed": true
+    },
+    {
+      "check": "20 handoff fixture integrity tests pass",
+      "passed": true
+    },
+    {
+      "check": "35 reference viewport states have no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "check": "35 reference states have no JavaScript page errors",
+      "passed": true
+    }
+  ],
+  "contrast_pairs": [
+    {
+      "pair": "Ink on white",
+      "ratio": 15.93
+    },
+    {
+      "pair": "Muted on white",
+      "ratio": 6.35
+    },
+    {
+      "pair": "Teal on white",
+      "ratio": 6.15
+    },
+    {
+      "pair": "Attention text",
+      "ratio": 5.36
+    },
+    {
+      "pair": "Success text",
+      "ratio": 5.93
+    },
+    {
+      "pair": "Error text",
+      "ratio": 5.57
+    },
+    {
+      "pair": "Sidebar secondary",
+      "ratio": 9.4
+    }
+  ],
+  "reference_states_checked": 35,
+  "reference_screenshots": 29,
+  "future_application_tests_run": false,
+  "navigation_limitation": "Browser policy blocks file and URL navigation in this execution environment. HTML views were rendered using set_content, internal href/option targets were checked, and in-page interactions were exercised. Full browser route transitions were not exercised."
+}

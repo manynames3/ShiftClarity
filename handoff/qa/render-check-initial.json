@@ -1,0 +1,93 @@
+[
+  {
+    "view": "workspace",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1216
+    },
+    "errors": []
+  },
+  {
+    "view": "evidence",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1361
+    },
+    "errors": []
+  },
+  {
+    "view": "inputs",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1410
+    },
+    "errors": []
+  },
+  {
+    "view": "rules",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1224
+    },
+    "errors": []
+  },
+  {
+    "view": "coverage",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1301
+    },
+    "errors": []
+  },
+  {
+    "view": "brand",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1000
+    },
+    "errors": []
+  },
+  {
+    "view": "intro",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "metrics": {
+      "width": 1440,
+      "scroll": 1440,
+      "height": 1045
+    },
+    "errors": []
+  }
+]

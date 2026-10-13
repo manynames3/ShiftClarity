@@ -1,0 +1,25 @@
+test_acceptance_matrix_complete (test_fixture_integrity.FixtureIntegrity.test_acceptance_matrix_complete) ... ok
+test_aggregate_control (test_fixture_integrity.FixtureIntegrity.test_aggregate_control) ... ok
+test_brand_consistency (test_fixture_integrity.FixtureIntegrity.test_brand_consistency) ... ok
+test_coverage_is_exact_partition (test_fixture_integrity.FixtureIntegrity.test_coverage_is_exact_partition) ... ok
+test_credit_rebill_control (test_fixture_integrity.FixtureIntegrity.test_credit_rebill_control) ... ok
+test_csv_roundtrip_counts (test_fixture_integrity.FixtureIntegrity.test_csv_roundtrip_counts) ... ok
+test_draft_outside_canonical_run (test_fixture_integrity.FixtureIntegrity.test_draft_outside_canonical_run) ... ok
+test_evaluated_denominators (test_fixture_integrity.FixtureIntegrity.test_evaluated_denominators) ... ok
+test_financial_oracle_math (test_fixture_integrity.FixtureIntegrity.test_financial_oracle_math) ... ok
+test_golden_cases_numbered_and_money (test_fixture_integrity.FixtureIntegrity.test_golden_cases_numbered_and_money) ... ok
+test_input_counts_and_minutes (test_fixture_integrity.FixtureIntegrity.test_input_counts_and_minutes) ... ok
+test_late_entry_is_deliberate (test_fixture_integrity.FixtureIntegrity.test_late_entry_is_deliberate) ... ok
+test_no_font_files_or_secrets (test_fixture_integrity.FixtureIntegrity.test_no_font_files_or_secrets) ... ok
+test_no_self_approved_rules (test_fixture_integrity.FixtureIntegrity.test_no_self_approved_rules) ... ok
+test_posted_control_total (test_fixture_integrity.FixtureIntegrity.test_posted_control_total) ... ok
+test_reference_exists (test_fixture_integrity.FixtureIntegrity.test_reference_exists) ... ok
+test_scope_lock (test_fixture_integrity.FixtureIntegrity.test_scope_lock) ... ok
+test_source_references_exist (test_fixture_integrity.FixtureIntegrity.test_source_references_exist) ... ok
+test_unique_ids (test_fixture_integrity.FixtureIntegrity.test_unique_ids) ... ok
+test_unknown_values_not_zero (test_fixture_integrity.FixtureIntegrity.test_unknown_values_not_zero) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.005s
+
+OK

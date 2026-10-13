@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "product": "ShiftClarity",
+  "tagline": "Every shift. Clearly aligned.",
+  "descriptor": "Contract-to-invoice verification for healthcare staffing",
+  "parent": "Supreme AI Ventures",
+  "authorized_stage": "LOCAL_SYNTHETIC_DEMO",
+  "authorized_build_stages": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "production_ready": false,
+  "currency": "USD",
+  "demo_dataset_id": "sc-demo-v1",
+  "demo_as_of": "2026-10-12T17:00:00-04:00",
+  "canonical_routes": [
+    "workspace",
+    "evidence",
+    "inputs",
+    "rules",
+    "coverage"
+  ],
+  "reference_only_routes": [
+    "brand",
+    "intro"
+  ],
+  "real_data_allowed": false,
+  "paid_api_calls_allowed": false,
+  "live_integrations_allowed": false,
+  "deployment_allowed": false,
+  "source_system_writes_allowed": false,
+  "outbound_messages_allowed": false,
+  "public_pricing_allowed": false,
+  "demo_engine_required": true,
+  "llm_required": false,
+  "prohibited_features": [
+    "scheduling",
+    "credentialing",
+    "payroll",
+    "clinical decisions",
+    "homecare billing",
+    "insurance claims",
+    "automated collections",
+    "LLM contract extraction",
+    "fake trend dashboards"
+  ],
+  "review_states": [
+    "needs_review",
+    "confirmed",
+    "dismissed",
+    "evidence_requested"
+  ],
+  "coverage_categories": [
+    "evaluated_aligned",
+    "evaluated_flagged",
+    "abstained",
+    "not_evaluated"
+  ]
+}

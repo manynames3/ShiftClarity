@@ -1,0 +1,118 @@
+{
+  "dataset_id": "sc-demo-v1",
+  "coverage": {
+    "received_records": 14,
+    "received_minutes": 8880,
+    "evaluated_records": 12,
+    "evaluated_minutes": 7440,
+    "categories": {
+      "evaluated_aligned": {
+        "records": 6,
+        "minutes": 3600,
+        "shift_ids": [
+          "S007",
+          "S008",
+          "S009",
+          "S010",
+          "S011",
+          "S014"
+        ]
+      },
+      "evaluated_flagged": {
+        "records": 6,
+        "minutes": 3840,
+        "shift_ids": [
+          "S001",
+          "S002",
+          "S003",
+          "S004",
+          "S005",
+          "S006"
+        ]
+      },
+      "abstained": {
+        "records": 1,
+        "minutes": 720,
+        "shift_ids": [
+          "S012"
+        ]
+      },
+      "not_evaluated": {
+        "records": 1,
+        "minutes": 720,
+        "shift_ids": [
+          "S013"
+        ]
+      }
+    }
+  },
+  "findings": [
+    {
+      "id": "FND-001",
+      "reason_code": "APPROVED_RATE_MISMATCH",
+      "shift_ids": [
+        "S001",
+        "S002",
+        "S003",
+        "S004"
+      ],
+      "facility_id": "FAC-001",
+      "rule_version_id": "RULE-001-V2",
+      "expected_amount": "2600.00",
+      "invoiced_amount": "2400.00",
+      "discrepancy_amount": "200.00",
+      "currency": "USD",
+      "state": "needs_review",
+      "collectibility": "unknown"
+    },
+    {
+      "id": "FND-002",
+      "reason_code": "APPROVED_WORK_NOT_IN_INVOICE_EXTRACT",
+      "shift_ids": [
+        "S005",
+        "S006"
+      ],
+      "facility_id": "FAC-002",
+      "rule_version_id": "RULE-002-V1",
+      "expected_amount": "1560.00",
+      "invoiced_amount": "0.00",
+      "discrepancy_amount": "1560.00",
+      "currency": "USD",
+      "state": "needs_review",
+      "collectibility": "unknown"
+    }
+  ],
+  "coverage_tasks": [
+    {
+      "id": "GAP-001",
+      "shift_ids": [
+        "S012"
+      ],
+      "reason_code": "UNSUPPORTED_COMPONENT",
+      "category": "abstained",
+      "amount": null
+    },
+    {
+      "id": "GAP-002",
+      "shift_ids": [
+        "S013"
+      ],
+      "reason_code": "TIME_APPROVAL_PENDING",
+      "category": "not_evaluated",
+      "amount": null
+    }
+  ],
+  "controls": {
+    "aggregate_LINE_005": "1560.00",
+    "late_time_S010": "720.00",
+    "credit_rebill_S014": "780.00",
+    "posted_invoice_signed_total": "6240.00",
+    "supported_expected_total": "8000.00"
+  },
+  "financial_totals": {
+    "potential_underbilling": "1760.00",
+    "potential_overbilling": "0.00",
+    "collected_amount": null
+  },
+  "note": "Independent test oracle only. Do not use as an application computation shortcut."
+}

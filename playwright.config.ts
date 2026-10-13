@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'tests/e2e',workers:2,fullyParallel:true,reporter:[['list'],['json',{outputFile:'artifacts/e2e-results.json'}]],use:{channel:'chrome',baseURL:'http://127.0.0.1:5178',viewport:{width:1440,height:1000},trace:'retain-on-failure'},webServer:{command:'npm run dev -- --port 5178',url:'http://127.0.0.1:5178',reuseExistingServer:true}});

@@ -1,0 +1,8 @@
+SYNTHETIC SOURCE EXCERPT · NOT A CUSTOMER AGREEMENT
+Proposed rule entry is pending independent approval in ShiftClarity.
+Facility: Willowbend Medical Pavilion (fictional).
+Amendment: CTR-002-A02. Document date: October 12, 2026.
+Standard RN service rate for work on or after October 13, 2026: USD 68.00 per hour.
+This replaces the prior USD 65.00 standard rate for those service dates only.
+Earlier services retain their prior approved rate.
+This example is outside the canonical RUN-001 service interval.

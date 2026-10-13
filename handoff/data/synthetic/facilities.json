@@ -1,0 +1,12 @@
+[
+  {
+    "id": "FAC-001",
+    "name": "Pinehaven Care Center",
+    "fictional": true
+  },
+  {
+    "id": "FAC-002",
+    "name": "Willowbend Medical Pavilion",
+    "fictional": true
+  }
+]

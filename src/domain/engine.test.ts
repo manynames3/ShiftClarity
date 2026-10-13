@@ -1,0 +1,48 @@
+import {describe,it,expect} from 'vitest';
+import {freshInputs} from '../adapters/fixtures';
+import oracle from '../../handoff/data/synthetic/expected_results.json';
+import golden from '../../handoff/spec-tests/golden_cases.json';
+import {reconcile,expected,sum,difference,selectRule} from './engine';
+const baseline=()=>reconcile(freshInputs());
+const row=(id:string)=>baseline().records.find(r=>r.work.id===id)!;
+describe('SC-01–11, SC-24: independent canonical oracle',()=>{
+ it('matches every record/minute partition',()=>expect(baseline().coverage).toEqual(oracle.coverage));
+ it('matches all financial fields without importing oracle into production',()=>{for(const f of baseline().findings){const {fingerprint,dataset_id,...fields}=f;expect(fields).toEqual(oracle.findings.find(o=>o.id===f.id));}});
+ it('matches coverage tasks and null amounts',()=>expect(baseline().tasks).toEqual(oracle.coverage_tasks));
+ it('matches controls and separated financial totals',()=>{const r=baseline();expect(r.totals).toEqual({expected:'8000.00',invoiced:'6240.00',underbilling:'1760.00',overbilling:'0.00'});expect(row('S010').expected_amount).toBe('720.00');expect(row('S014').invoiced_amount).toBe('780.00');});
+ it('records source/rule/calendar/engine manifest',()=>{const r=baseline();expect(r.batch_ids).toHaveLength(3);expect(r.rule_version_ids).toHaveLength(3);expect(r.engine_version).toBe('sc-engine-1.0.0');expect(r.status).toBe('completed');});
+});
+describe('supplied golden cases — financial engine',()=>{
+ for(const id of ['G01','G10','G11','G12'])it(`${id} ${golden.find(g=>g.id===id)!.title}`,()=>{const g=golden.find(g=>g.id===id)!;const i=g.input;const a=expected(i.minutes!,i.rate!);if(g.expected.amount)expect(a).toBe(g.expected.amount);if(g.expected.difference)expect(difference(a,i.billed||i.allocated_billed!)).toBe(g.expected.difference);});
+ for(const id of ['G02','G03'])it(id,()=>{const g=golden.find(g=>g.id===id)!;const input=freshInputs();const w={...input.work[0],service_date:g.input.service_date!};const r=selectRule(w,input.rules)[0];expect(r.id).toBe(g.expected.rule);expect(expected(g.input.minutes!,r.rate)).toBe(g.expected.amount);});
+ it('G04: exact aggregate allocation',()=>{const a=baseline().allocations.filter(a=>a.line_id==='LINE-005');expect(a.map(a=>a.amount)).toEqual(['520.00','520.00','520.00']);expect(sum(a.map(a=>a.amount))).toBe('1560.00');});
+ it('G05: signed credit/rebill',()=>expect(sum(['720.00','-720.00','780.00'])).toBe('780.00'));
+ it('G06: incomplete extract never asserts missing billing',()=>{const i=freshInputs();i.manifest.invoice_coverage_complete=false;const r=reconcile(i);for(const id of ['S005','S006']){const w=r.records.find(r=>r.work.id===id)!;expect(w.category).toBe('not_evaluated');expect(w.reason_code).toBe('INVOICE_SOURCE_INCOMPLETE');expect(w.expected_amount).toBeNull();}expect(r.findings).toHaveLength(0);});
+ it('G07: before cutoff',()=>{const i=freshInputs();i.manifest.as_of='2026-10-12T11:00:00-04:00';expect(reconcile(i).records.find(r=>r.work.id==='S005')?.reason_code).toBe('BILLING_CYCLE_OPEN');});
+ it('G08: pending approval',()=>{expect(row('S013').category).toBe('not_evaluated');expect(row('S013').expected_amount).toBeNull();});
+ it('G09: unsupported callback',()=>{expect(row('S012').category).toBe('abstained');expect(row('S012').expected_amount).toBeNull();});
+ it('G13: duplicate and reordered snapshots invariant',()=>{const i=freshInputs();i.work.push(...structuredClone(i.work));i.invoices.push(...structuredClone(i.invoices));expect(reconcile(i)).toEqual(baseline());i.work.reverse();i.rules.reverse();i.invoices.reverse();i.batches.reverse();expect(reconcile(i)).toEqual(baseline());});
+ it('G14: conflicting terms abstain',()=>{const i=freshInputs();i.rules.push({...i.rules[1],id:'CONFLICT',rate:'70.0000',supersedes:null});const r=reconcile(i).records.find(r=>r.work.id==='S002')!;expect(r.category).toBe('abstained');expect(r.reason_code).toBe('CONFLICTING_APPROVED_RULES');expect(r.expected_amount).toBeNull();});
+ it('G18: ambiguous references cause abstention',()=>{const i=freshInputs();i.invoices[0].shift_ids=[];expect(reconcile(i).records.find(r=>r.work.id==='S001')?.reason_code).toBe('AMBIGUOUS_REFERENCE');});
+ it('G19: negative minutes rejected with row',()=>{const i=freshInputs();i.work[0].worked_minutes=-60;expect(()=>reconcile(i)).toThrow('S001: INVALID_WORKED_MINUTES');});
+ it('G20: currency mismatch abstains',()=>{const i=freshInputs();i.invoices[0].currency='EUR';const r=reconcile(i).records[0];expect(r.category).toBe('abstained');expect(r.reason_code).toBe('CURRENCY_MISMATCH');expect(r.expected_amount).toBeNull();});
+});
+describe('negative cases and properties',()=>{
+ it('abstains from mixed-rate aggregates',()=>{const i=freshInputs();i.invoices[4].shift_ids=['S007','S010'];expect(reconcile(i).records.find(r=>r.work.id==='S007')?.reason_code).toBe('AMBIGUOUS_AGGREGATE');});
+ it('does not count draft and void lines',()=>{const i=freshInputs();i.invoices.push({...i.invoices[0],id:'DRAFT',state:'draft'},{...i.invoices[0],id:'VOID',state:'void'});expect(reconcile(i).findings).toEqual(baseline().findings);expect(reconcile(i).totals.invoiced).toBe('6240.00');});
+ it('does not infer missing billing from a stale extract',()=>{const i=freshInputs();i.batches[1].source_as_of='2026-10-12T10:00:00-04:00';expect(reconcile(i).findings).toHaveLength(0);});
+ it('does not infer missing billing from incomplete work coverage',()=>{const i=freshInputs();i.batches[0].declared_complete=false;expect(reconcile(i).findings).toHaveLength(0);});
+ it('rejects conflicting duplicate revisions rather than last-write-wins',()=>{const i=freshInputs();i.work.push({...i.work[0],worked_minutes:601});expect(()=>reconcile(i)).toThrow('CONFLICTING_SOURCE_REVISION');});
+ it('invalid money and credit signs fail clearly',()=>{const i=freshInputs();i.invoices[0].amount='600x';expect(()=>reconcile(i)).toThrow('INVALID_INVOICE_LINE');i.invoices[0].amount='-600.00';expect(()=>reconcile(i)).toThrow('INVALID_INVOICE_SIGN');});
+ it('unapproved rules cannot price work',()=>{const i=freshInputs();i.rules[1].state='pending_approval';expect(reconcile(i).records[0].expected_amount).toBeNull();});
+ it('explicit supersession keeps the prior stored version unchanged',()=>{const i=freshInputs(),prior=structuredClone(i.rules[1]);i.rules.push({...i.rules[1],id:'FUTURE',rate:'68.0000',effective_from:'2026-10-13',supersedes:i.rules[1].id});expect(selectRule({...i.work[0],service_date:'2026-10-13'},i.rules)[0].rate).toBe('68.0000');expect(i.rules[1]).toEqual(prior);});
+ it('cross-boundary work abstains without segmentation policy',()=>{const i=freshInputs();i.work[9].service_end_date='2026-10-05';expect(reconcile(i).records.find(r=>r.work.id==='S010')?.reason_code).toBe('RATE_BOUNDARY_REQUIRES_SEGMENTATION');});
+ it('exact signed allocations reconcile every posted line',()=>{const r=baseline();for(const l of freshInputs().invoices)expect(sum(r.allocations.filter(a=>a.line_id===l.id).map(a=>a.amount))).toBe(l.amount);});
+ it('coverage and money invariants hold across 50 deterministic invoice variations',()=>{for(let k=0;k<50;k++){const i=freshInputs();i.invoices[0].amount=`${550+k*4}.00`;const r=reconcile(i),c=r.coverage;expect(Object.values(c.categories).reduce((s,c)=>s+c.records,0)).toBe(c.received_records);expect(Object.values(c.categories).reduce((s,c)=>s+c.minutes,0)).toBe(c.received_minutes);for(const f of r.findings)expect(difference(f.expected_amount,f.invoiced_amount)).toBe(f.discrepancy_amount);}});
+ it('reordering sources and irrelevant work-entry time preserve finding fingerprints',()=>{const i=freshInputs();i.work.reverse();i.invoices.reverse();i.work.find(w=>w.id==='S001')!.recorded_at='2026-10-09T09:00:00-04:00';expect(reconcile(i).findings.map(f=>f.fingerprint)).toEqual(baseline().findings.map(f=>f.fingerprint));});
+});
+it('SC-11: declared invoice completeness does not cover a narrower service interval',()=>{const i=freshInputs();i.batches[1].service_from='2026-10-06';expect(reconcile(i).findings).toHaveLength(0);});
+it('SC-08: each source batch independently supplies work coverage',()=>{const i=freshInputs();i.batches.push({...i.batches[0],id:'BATCH-PARTIAL',declared_complete:false});i.work[0].batch_id='BATCH-PARTIAL';expect(reconcile(i).records[0].reason_code).toBe('WORK_SOURCE_INCOMPLETE');});
+it('SC-09: credit without supported stable lineage abstains',()=>{const i=freshInputs();i.invoices[8].chain_id=null;expect(reconcile(i).records.find(r=>r.work.id==='S014')?.reason_code).toBe('UNSUPPORTED_CREDIT_LINEAGE');});
+it('SC-06: retroactive rule approval abstains without a supported policy',()=>{const i=freshInputs();i.rules[1].approved_at='2026-10-09T10:00:00-04:00';expect(reconcile(i).records[0].reason_code).toBe('RETROACTIVE_RULE_APPROVAL_UNSUPPORTED');});
+it('SC-08: a missing approval timestamp is not approved work evidence',()=>{const i=freshInputs();i.work[0].approved_at=null;expect(reconcile(i).records[0].category).toBe('not_evaluated');});

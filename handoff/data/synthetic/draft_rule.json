@@ -1,0 +1,17 @@
+{
+  "id": "RULE-002-V2-DRAFT",
+  "contract_id": "CTR-002",
+  "facility_id": "FAC-002",
+  "role": "RN",
+  "component": "standard",
+  "rate": "68.0000",
+  "currency": "USD",
+  "effective_from": "2026-10-13",
+  "effective_to": null,
+  "state": "pending_approval",
+  "source_excerpt_id": "EX-004",
+  "author_id": "DEMO-AUTHOR",
+  "approver_id": null,
+  "supersedes": "RULE-002-V1",
+  "included_in_RUN_001": false
+}

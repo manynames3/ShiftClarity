@@ -1,0 +1,14 @@
+import {it,expect} from 'vitest';
+import {freshInputs} from './fixtures';
+import {parseCustom,manualInputs} from './custom';
+import {reconcile} from '../domain/engine';
+const entry={minutes:600,rate:'65.0000',billed:'600.00',serviceDate:'2026-10-06',approved:true,complete:true,excerpt:'Standard RN rate USD 65.00',author:'AUTHOR-001',approver:'APPROVER-002'};
+it('own-data bundle validates independently and matches fixture math',()=>{const r=reconcile(parseCustom(JSON.stringify(freshInputs())));expect(r.coverage.received_records).toBe(14);expect(r.findings[0].discrepancy_amount).toBe('200.00');});
+it('manual entry computes actual minutes/rate/billed comparison',()=>{const r=reconcile(manualInputs(entry,freshInputs()));expect(r.findings[0].discrepancy_amount).toBe('50.00');expect(r.manifest.synthetic).toBe(false);});
+it('manual incomplete evidence stays unknown',()=>{const r=reconcile(manualInputs({...entry,complete:false,billed:'0.00'},freshInputs()));expect(r.findings).toHaveLength(0);expect(r.tasks[0].amount).toBeNull();});
+it('manual overbilling remains visible',()=>{const r=reconcile(manualInputs({...entry,billed:'700.00'},freshInputs()));expect(r.findings[0].discrepancy_amount).toBe('-50.00');expect(r.totals.overbilling).toBe('50.00');});
+it('rejects missing fields, extra sensitive fields, numeric money and control mismatch',()=>{const data=freshInputs();const raw=JSON.parse(JSON.stringify(data));raw.work[0].patient_name='excluded';expect(()=>parseCustom(JSON.stringify(raw))).toThrow('unsupported field');delete raw.work[0].patient_name;raw.rules[0].rate=60;expect(()=>parseCustom(JSON.stringify(raw))).toThrow('rate');raw.rules[0].rate='60.0000';raw.batches[0].control_total_minutes=1;expect(()=>parseCustom(JSON.stringify(raw))).toThrow('control total');});
+it('rejects unsafe identifiers, malformed JSON and oversized files',()=>{const raw=JSON.parse(JSON.stringify(freshInputs()));raw.work[0].worker_id='Person Full Name';expect(()=>parseCustom(JSON.stringify(raw))).toThrow('pseudonymous');expect(()=>parseCustom('{')).toThrow('Invalid JSON');expect(()=>parseCustom('x'.repeat(1024*1024+1))).toThrow('1 MiB');});
+it('self-authored rule approval metadata is denied at validation',()=>expect(()=>manualInputs({...entry,approver:entry.author},freshInputs())).toThrow('INVALID_RULE_APPROVAL'));
+it('empty invoice extract with complete declarations supports missing-billing review',()=>{const r=reconcile(manualInputs({...entry,billed:'0.00'},freshInputs()));expect(r.findings[0].reason_code).toBe('APPROVED_WORK_NOT_IN_INVOICE_EXTRACT');expect(r.findings[0].discrepancy_amount).toBe('650.00');});
+it('own-data decimal rate strings normalize to the canonical four-place representation',()=>{const i=manualInputs({...entry,rate:'65'},freshInputs());expect(i.rules[0].rate).toBe('65.0000');expect(reconcile(i).findings[0].discrepancy_amount).toBe('50.00');});

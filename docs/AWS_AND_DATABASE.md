@@ -1,0 +1,37 @@
+# AWS synthetic pilot and database
+
+Updated October 13, 2026. The synthetic pilot is deployed at https://4p30g92j37.execute-api.us-east-1.amazonaws.com/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
+
+## Deployed arrangement
+
+The user approved Lambda/SQS and Mangum to minimize idle cost. One immutable, verified x86 image contains FastAPI, the shared Node calculator and the original branded React interface. HTTP API provides the AWS-generated HTTPS origin. The web and FIFO worker functions use 1024 MiB, with no provisioned concurrency or polling application server. A single FIFO group serializes worker notifications; PostgreSQL transactions, leases and fingerprints remain the publication authority. An early message retries until its job is committed. A failed SQS send rolls back job creation. Completed or terminal jobs acknowledge replay without duplicate publication.
+
+Cognito Lite uses private admin-created test accounts, mandatory software-token MFA, registered authorization-code callbacks and original logo/colors. Classic SSO is cleared before each fresh code/PKCE flow. The verified token's signed username is looked up and its returned sub must match. Cognito confirms a verified authenticator before granting a workspace session. Database memberships determine permissions; a signed identity alone grants no membership. Sessions expire after 15 minutes.
+
+Private S3 uses blocked public access, bucket-owner enforcement, AES256 encryption, TLS-only policy and organization-scoped runtime access. Quarantine originals expire after one day and accepted originals after 30 days. Authorized API downloads have expiry checks and no-store. There are no public source links. Public content-hashed build assets alone are cached to reduce repeat requests. HTTP API uses a 60-request burst and 10 requests/second target; this is best-effort traffic control, not a hard spending cap.
+
+The database URL is a restricted role in Secrets Manager; it is fetched by the function at cold initialization rather than baked into its image. TLS uses verify-full and the pinned trusted CA bundle. Owner credentials are restricted to ignored, owner-only maintenance files. Terraform state is encrypted and versioned in a private S3 bucket with native locking; it contains a Cognito client secret and must remain private.
+
+## Neon choice and limits
+
+The verified Free organization hosts an isolated project in AWS us-east-1, with separate local application and cloud branches. The cloud runtime password is distinct and its source bytes are in S3. All computes are capped at 0.25 CU. The observed branch limit is 512 MiB and restore history six hours. Free-plan suspension settings were not editable; endpoint metadata reports zero, so automatic behavior is verified by actual state rather than inferred. Cloud compute was observed idle without an explicit suspend call on October 13; no precise timeout is inferred. Unused base/local compute is suspended when appropriate. AWS credits do not cover a separate Neon bill; no paid Neon upgrade occurred.
+
+[Neon's Free plan announcement](https://neon.com/blog/neon-free-plan-1-gb-per-project) advertises 100 CU-hours/month per project and a six-hour restore window. Observed account limits take precedence over marketing allowances. The free history window does not replace a backup policy for real records.
+
+## Costs and visibility
+
+[Lambda event functions](https://aws.amazon.com/lambda/pricing/) have no idle execution charge without provisioned capacity. [HTTP API](https://aws.amazon.com/api-gateway/pricing/) is usage-priced. [Secrets Manager](https://aws.amazon.com/secrets-manager/pricing/) has a per-secret baseline plus calls. Image/object/state storage, logs, the alarm and any exhausted account-wide free allowances add costs. Check current regional prices, account credit expiry and actual billed usage before expanding the pilot. This is a near-zero-idle design, not a zero-bill guarantee or all-in quote.
+
+[Cognito](https://aws.amazon.com/cognito/pricing/) and [SQS](https://aws.amazon.com/sqs/pricing/) have shared account/organization free allowances; another project may consume them. TOTP avoids SMS/email MFA charges. No NAT gateway, load balancer, DNS domain, always-on VM, provisioned Lambda capacity or paid database plan was created. Logs retain seven days. The $5 budget is account-wide visibility, not a cap; no email/SNS recipient was configured. The dead-letter alarm is visible in CloudWatch, without an external notification subscription. An incident recipient, hard response policy and real-data operating plan remain separate decisions.
+
+## Reproduce and operate
+
+The [verification record](VERIFICATION.md) summarizes the deployed checks. Detailed image/OS scan reports remain in local ignored artifacts. scripts/verify-container.py --lambda checks the actual AWS runtime emulator, nonroot/read-only execution, restricted Neon connection, UI, denied anonymous API and shared calculator. The default Docker target remains a locally runnable server; AWS uses --target lambda, linux/amd64 and provenance=false. Never publish an unverified image or include .local in its context.
+
+The protected deployment files live in .local. Refresh temporary deployment credentials using scripts/bootstrap-aws-access.py, which only manages the dedicated role. It scopes established Cognito/API resources after bootstrap. Export AWS_SHARED_CREDENTIALS_FILE to the absolute .local/aws-deploy-credentials path and AWS_PROFILE=shiftclarity-deploy for subsequent commands. All application operations must use the assumed role.
+
+Build with docker buildx build --platform linux/amd64 --target lambda --provenance=false --load -t shiftclarity:lambda-verified ., verify with backend/.venv/bin/python scripts/verify-container.py --lambda, then run scripts/push-verified-image.py through the role. It checks that the image ID matches verification before uploading and writes the immutable digest to private .local/aws.tfvars.json. Use terraform -chdir=infra plan -var-file=../.local/aws.tfvars.json, inspect its exact changes, then apply that saved plan. Existing state is in the private remote backend.
+
+Initial scripts/bootstrap-aws-storage.py and prepare-cloud-database.py established only the isolated state/image containers and cloud branch secret. They must not be pointed at unrelated resources. scripts/initialize-aws-pilot.py creates private test accounts with messages suppressed, verified source bytes and issuer/sub mappings. The cloud branch guard rejects unrelated hosts. Sign-in secrets and authenticator setup keys are in private .local/AWS_SIGN_IN.md; never share or commit that file.
+
+Read-only deployment verification covers private S3 policies and anonymous denial, function digest/settings, empty queue/dead-letter status, registered callbacks, required MFA and Terraform drift. scripts/neon-recovery-check.py --cloud restores the authorized Neon branch and S3 source bytes into an isolated local rehearsal database and directory. It never overwrites the live branch. Recovery artifacts record an actual rehearsal, not a production RPO/RTO. Stage 5 measurement, authorized customer records, production operations and certification claims remain gated.

@@ -1,0 +1,8 @@
+Approved rate amendment · CTR-001-A02
+
+SYNTHETIC DOCUMENT. Not a customer agreement.
+Facility: Pinehaven Care Center (fictional).
+Effective October 5, 2026, the standard RN service rate is USD 65.00 per hour.
+This replaces the prior standard RN rate of USD 60.00 for services on or after that date.
+Earlier service dates retain the prior rate, irrespective of the time-entry date.
+Approved by DEMO-APPROVER on October 3, 2026. All other components are outside this sample rule.

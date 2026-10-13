@@ -1,0 +1,422 @@
+[
+  {
+    "view": "workspace",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 1252
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "workspace-1280.png"
+  },
+  {
+    "view": "evidence",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 1402
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "evidence-1280.png"
+  },
+  {
+    "view": "inputs",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 1410
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "inputs-1280.png"
+  },
+  {
+    "view": "rules",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 1224
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "rules-1280.png"
+  },
+  {
+    "view": "coverage",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 1319
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "coverage-1280.png"
+  },
+  {
+    "view": "brand",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 923
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "brand-1280.png"
+  },
+  {
+    "view": "intro",
+    "viewport": [
+      1280,
+      900
+    ],
+    "metrics": {
+      "width": 1280,
+      "scroll": 1280,
+      "height": 1045
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "intro-1280.png"
+  },
+  {
+    "view": "workspace",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1449
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "workspace-1024.png"
+  },
+  {
+    "view": "evidence",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1994
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "evidence-1024.png"
+  },
+  {
+    "view": "inputs",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1532
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "inputs-1024.png"
+  },
+  {
+    "view": "rules",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1761
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "rules-1024.png"
+  },
+  {
+    "view": "coverage",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1297
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "coverage-1024.png"
+  },
+  {
+    "view": "brand",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 916
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "brand-1024.png"
+  },
+  {
+    "view": "intro",
+    "viewport": [
+      1024,
+      900
+    ],
+    "metrics": {
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1020
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "intro-1024.png"
+  },
+  {
+    "view": "workspace",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 1895
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "workspace-390.png"
+  },
+  {
+    "view": "evidence",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 2396
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "evidence-390.png"
+  },
+  {
+    "view": "inputs",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 1848
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "inputs-390.png"
+  },
+  {
+    "view": "rules",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 1894
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "rules-390.png"
+  },
+  {
+    "view": "coverage",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 1846
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "coverage-390.png"
+  },
+  {
+    "view": "brand",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 1469
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "brand-390.png"
+  },
+  {
+    "view": "intro",
+    "viewport": [
+      390,
+      844
+    ],
+    "metrics": {
+      "width": 390,
+      "scroll": 390,
+      "height": 1861
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": "intro-390.png"
+  },
+  {
+    "view": "workspace",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 2130
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  },
+  {
+    "view": "evidence",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 2704
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  },
+  {
+    "view": "inputs",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 2050
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  },
+  {
+    "view": "rules",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 2077
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  },
+  {
+    "view": "coverage",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 2018
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  },
+  {
+    "view": "brand",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 1564
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  },
+  {
+    "view": "intro",
+    "viewport": [
+      320,
+      844
+    ],
+    "metrics": {
+      "width": 320,
+      "scroll": 320,
+      "height": 2064
+    },
+    "errors": [],
+    "overflow_elements": [],
+    "file": null
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "id": "EX-001",
+    "document_id": "DOC-001",
+    "title": "Initial rate schedule \u00b7 CTR-001",
+    "lines": [
+      "SYNTHETIC DOCUMENT. Not a customer agreement.",
+      "Facility: Pinehaven Care Center (fictional).",
+      "Standard RN service rate: USD 60.00 per hour.",
+      "Effective service dates: October 1 through October 4, 2026.",
+      "All other components require separate approval."
+    ]
+  },
+  {
+    "id": "EX-002",
+    "document_id": "DOC-002",
+    "title": "Approved rate amendment \u00b7 CTR-001-A02",
+    "lines": [
+      "SYNTHETIC DOCUMENT. Not a customer agreement.",
+      "Facility: Pinehaven Care Center (fictional).",
+      "Effective October 5, 2026, the standard RN service rate is USD 65.00 per hour.",
+      "This replaces the prior standard RN rate of USD 60.00 for services on or after that date.",
+      "Earlier service dates retain the prior rate, irrespective of the time-entry date.",
+      "Approved by DEMO-APPROVER on October 3, 2026. All other components are outside this sample rule."
+    ]
+  },
+  {
+    "id": "EX-003",
+    "document_id": "DOC-003",
+    "title": "Approved rate schedule \u00b7 CTR-002",
+    "lines": [
+      "SYNTHETIC DOCUMENT. Not a customer agreement.",
+      "Facility: Willowbend Medical Pavilion (fictional).",
+      "Standard RN service rate: USD 65.00 per hour, effective October 1, 2026.",
+      "Callback, holiday and overtime terms are not included in this sample rule."
+    ]
+  },
+  {
+    "id": "EX-004",
+    "document_id": "DOC-004",
+    "label": "Synthetic future rate amendment draft",
+    "text": "DRAFT. Proposed standard RN rate: USD 68.00 per hour, effective October 13, 2026. This is not an approved rule and must not be used by RUN-001.",
+    "synthetic": true
+  }
+]

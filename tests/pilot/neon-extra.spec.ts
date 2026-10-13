@@ -1,0 +1,20 @@
+import {test,expect} from '@playwright/test';
+import {readFile} from 'node:fs/promises';
+import {login} from './auth';
+test('live Neon bulk revision import preserves amounts and review history',async({page})=>{
+ test.skip(process.env.SHIFTCLARITY_NEON_QA!=='1','Explicit live synthetic Neon check');
+ await login(page,'reviewer');
+ const before=await (await page.request.get('/api/v1/workspace')).json();
+ const bundle=JSON.parse(await readFile('artifacts/pilot-template.json','utf8'));
+ bundle.manifest.note='Synthetic bulk revision integration check';
+ await page.goto('/pilot/?view=inputs');
+ await page.getByRole('button',{name:'Import synthetic snapshot',exact:true}).click();
+ await page.getByLabel('Synthetic snapshot bundle').setInputFiles({name:'bulk-check.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bundle))});
+ await expect(page.getByRole('status')).toContainText('Validated snapshot published',{timeout:40000});
+ const after=await (await page.request.get('/api/v1/workspace')).json();
+ expect(after.state.run.totals).toEqual(before.state.run.totals);
+ expect(after.state.reviews).toEqual(before.state.reviews);
+ expect(after.state.run.coverage.received_records).toBe(14);
+ expect(after.state.run.coverage.evaluated_records).toBe(12);
+ expect(after.state.run.id).not.toEqual(before.state.run.id);
+});

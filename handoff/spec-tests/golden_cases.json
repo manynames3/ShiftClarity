@@ -1,0 +1,335 @@
+[
+  {
+    "id": "G01",
+    "title": "New rate, old invoice",
+    "input": {
+      "minutes": 600,
+      "rate": "65.0000",
+      "billed": "600.00"
+    },
+    "expected": {
+      "amount": "650.00",
+      "difference": "50.00"
+    },
+    "requirements": [
+      "SC-06",
+      "SC-07"
+    ]
+  },
+  {
+    "id": "G02",
+    "title": "Late entry before rate boundary",
+    "input": {
+      "service_date": "2026-10-04",
+      "entry_date": "2026-10-07",
+      "minutes": 720
+    },
+    "expected": {
+      "rule": "RULE-001-V1",
+      "amount": "720.00"
+    },
+    "requirements": [
+      "SC-06"
+    ]
+  },
+  {
+    "id": "G03",
+    "title": "Boundary date uses amendment",
+    "input": {
+      "service_date": "2026-10-05",
+      "minutes": 720
+    },
+    "expected": {
+      "rule": "RULE-001-V2",
+      "amount": "780.00"
+    },
+    "requirements": [
+      "SC-06"
+    ]
+  },
+  {
+    "id": "G04",
+    "title": "Correct aggregate",
+    "input": {
+      "shift_ids": [
+        "S007",
+        "S008",
+        "S009"
+      ],
+      "billed": "1560.00"
+    },
+    "expected": {
+      "finding": false,
+      "allocated_each": "520.00"
+    },
+    "requirements": [
+      "SC-10"
+    ]
+  },
+  {
+    "id": "G05",
+    "title": "Credit and rebill",
+    "input": {
+      "amounts": [
+        "720.00",
+        "-720.00",
+        "780.00"
+      ]
+    },
+    "expected": {
+      "net": "780.00",
+      "finding": false
+    },
+    "requirements": [
+      "SC-09"
+    ]
+  },
+  {
+    "id": "G06",
+    "title": "Incomplete extract blocks missing billing",
+    "input": {
+      "invoice_coverage_complete": false,
+      "shift_ids": [
+        "S005",
+        "S006"
+      ]
+    },
+    "expected": {
+      "financial_finding": false,
+      "category": "not_evaluated",
+      "reason": "INVOICE_SOURCE_INCOMPLETE",
+      "amount": null
+    },
+    "requirements": [
+      "SC-04",
+      "SC-11"
+    ]
+  },
+  {
+    "id": "G07",
+    "title": "Before cutoff",
+    "input": {
+      "as_of": "2026-10-12T11:00:00-04:00",
+      "shift_ids": [
+        "S005",
+        "S006"
+      ]
+    },
+    "expected": {
+      "financial_finding": false,
+      "reason": "BILLING_CYCLE_OPEN"
+    },
+    "requirements": [
+      "SC-11"
+    ]
+  },
+  {
+    "id": "G08",
+    "title": "Pending time approval",
+    "input": {
+      "shift_id": "S013"
+    },
+    "expected": {
+      "category": "not_evaluated",
+      "amount": null
+    },
+    "requirements": [
+      "SC-08"
+    ]
+  },
+  {
+    "id": "G09",
+    "title": "Unsupported callback",
+    "input": {
+      "shift_id": "S012"
+    },
+    "expected": {
+      "category": "abstained",
+      "amount": null
+    },
+    "requirements": [
+      "SC-06"
+    ]
+  },
+  {
+    "id": "G10",
+    "title": "Potential overbilling is not hidden",
+    "input": {
+      "minutes": 600,
+      "rate": "65.0000",
+      "billed": "700.00"
+    },
+    "expected": {
+      "amount": "650.00",
+      "difference": "-50.00",
+      "direction": "overbilling"
+    },
+    "requirements": [
+      "SC-07"
+    ]
+  },
+  {
+    "id": "G11",
+    "title": "Whole-minute decimal calculation",
+    "input": {
+      "minutes": 61,
+      "rate": "65.0000",
+      "rounding": "HALF_UP_AT_LINE"
+    },
+    "expected": {
+      "amount": "66.08"
+    },
+    "requirements": [
+      "SC-07"
+    ]
+  },
+  {
+    "id": "G12",
+    "title": "Partial invoice",
+    "input": {
+      "minutes": 720,
+      "rate": "65.0000",
+      "allocated_billed": "390.00",
+      "complete": true,
+      "cutoff_passed": true
+    },
+    "expected": {
+      "difference": "390.00"
+    },
+    "requirements": [
+      "SC-10",
+      "SC-11"
+    ]
+  },
+  {
+    "id": "G13",
+    "title": "Repeated and overlapping imports",
+    "input": {
+      "operations": [
+        "load canonical snapshot",
+        "reimport same snapshot",
+        "load same rows in different order"
+      ]
+    },
+    "expected": {
+      "records": 14,
+      "findings": 2,
+      "unchanged_fingerprint": true
+    },
+    "requirements": [
+      "SC-24",
+      "SC-26"
+    ]
+  },
+  {
+    "id": "G14",
+    "title": "Conflicting applicable rules",
+    "input": {
+      "overlapping_approved_rate": "70.0000",
+      "facility_id": "FAC-001",
+      "service_date": "2026-10-06"
+    },
+    "expected": {
+      "category": "abstained",
+      "reason": "CONFLICTING_APPROVED_RULES",
+      "amount": null
+    },
+    "requirements": [
+      "SC-06"
+    ]
+  },
+  {
+    "id": "G15",
+    "title": "No self approval",
+    "input": {
+      "author_id": "DEMO-AUTHOR",
+      "acting_approver_id": "DEMO-AUTHOR"
+    },
+    "expected": {
+      "allowed": false,
+      "reason": "SEPARATE_APPROVER_REQUIRED"
+    },
+    "requirements": [
+      "SC-18"
+    ]
+  },
+  {
+    "id": "G16",
+    "title": "Material evidence change reopens",
+    "input": {
+      "previous_state": "dismissed",
+      "new_invoice_amount": "590.00"
+    },
+    "expected": {
+      "state": "needs_review",
+      "previous_history_preserved": true
+    },
+    "requirements": [
+      "SC-14"
+    ]
+  },
+  {
+    "id": "G17",
+    "title": "Failed run does not publish partial result",
+    "input": {
+      "prior_run": "RUN-001",
+      "next_run_fails_after_rows": 7
+    },
+    "expected": {
+      "visible_run": "RUN-001",
+      "stale_warning": true,
+      "partial_published": false
+    },
+    "requirements": [
+      "SC-16",
+      "SC-29"
+    ]
+  },
+  {
+    "id": "G18",
+    "title": "Missing identity is not an exact match",
+    "input": {
+      "invoice_shift_ids": [],
+      "matching_display_name": true
+    },
+    "expected": {
+      "category": "abstained",
+      "reason": "AMBIGUOUS_REFERENCE",
+      "amount": null
+    },
+    "requirements": [
+      "SC-10"
+    ]
+  },
+  {
+    "id": "G19",
+    "title": "Negative minutes rejected",
+    "input": {
+      "worked_minutes": -60
+    },
+    "expected": {
+      "accepted": false,
+      "reason": "INVALID_WORKED_MINUTES"
+    },
+    "requirements": [
+      "SC-07",
+      "SC-16"
+    ]
+  },
+  {
+    "id": "G20",
+    "title": "Currency mismatch rejected from comparison",
+    "input": {
+      "invoice_currency": "EUR",
+      "rule_currency": "USD"
+    },
+    "expected": {
+      "category": "abstained",
+      "reason": "CURRENCY_MISMATCH",
+      "amount": null
+    },
+    "requirements": [
+      "SC-07"
+    ]
+  }
+]

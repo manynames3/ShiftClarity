@@ -1,0 +1,12 @@
+.local
+node_modules
+backend/.venv
+backend/tests
+artifacts
+test-results
+playwright-report
+infra/.terraform
+**/__pycache__
+**/*.tfvars
+**/*.tfstate*
+.git

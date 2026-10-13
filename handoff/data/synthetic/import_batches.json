@@ -1,0 +1,32 @@
+[
+  {
+    "id": "BATCH-TIME-001",
+    "source": "work_records.csv",
+    "records": 14,
+    "state": "validated",
+    "source_as_of": "2026-10-12T16:00:00-04:00",
+    "service_from": "2026-10-01",
+    "service_to_exclusive": "2026-10-11",
+    "declared_complete": true,
+    "control_total_minutes": 8880
+  },
+  {
+    "id": "BATCH-INV-001",
+    "source": "invoice_lines.csv",
+    "records": 10,
+    "state": "validated",
+    "source_as_of": "2026-10-12T16:00:00-04:00",
+    "service_from": "2026-10-01",
+    "service_to_exclusive": "2026-10-11",
+    "declared_complete": true,
+    "signed_control_total": "6240.00"
+  },
+  {
+    "id": "BATCH-RULE-001",
+    "source": "rate_rules.json",
+    "records": 3,
+    "state": "validated",
+    "source_as_of": "2026-10-12T16:00:00-04:00",
+    "declared_complete": true
+  }
+]

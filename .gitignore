@@ -1,0 +1,27 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+.DS_Store
+.local/
+backend/.venv/
+backend/engine.mjs
+__pycache__/
+.pytest_cache/
+infra/.terraform/
+*.tfstate*
+*.tfvars
+!infra/example.tfvars
+
+# Private/generated runtime and verification output
+artifacts/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.pgpass
+*.pg_service.conf
+*.dump
