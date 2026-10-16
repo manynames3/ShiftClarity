@@ -16,19 +16,19 @@ locals {
   app_origin = var.public_origin != "" ? var.public_origin : aws_apigatewayv2_api.pilot.api_endpoint
 }
 variable "public_origin" {
-  type = string
+  type    = string
   default = ""
   validation {
-    condition = var.public_origin == "" || can(regex("^https://[a-z0-9.-]+$", var.public_origin))
+    condition     = var.public_origin == "" || can(regex("^https://[a-z0-9.-]+$", var.public_origin))
     error_message = "Public origin must be an HTTPS origin without a path."
   }
 }
 variable "edge_proxy_secret" {
-  type = string
+  type      = string
   sensitive = true
-  default = ""
+  default   = ""
   validation {
-    condition = var.public_origin == "" ? var.edge_proxy_secret == "" : length(var.edge_proxy_secret) >= 43
+    condition     = var.public_origin == "" ? var.edge_proxy_secret == "" : length(var.edge_proxy_secret) >= 43
     error_message = "A public edge origin requires a private edge credential."
   }
 }
@@ -47,6 +47,37 @@ variable "database_secret_arn" {
 variable "monthly_budget_usd" {
   default     = "5"
   description = "Visibility budget; this does not cap spending or verify promotional credits."
+}
+variable "notification_email" {
+  type        = string
+  default     = ""
+  description = "Optional owner-approved address for AWS budget and failed-job notices."
+  validation {
+    condition     = var.notification_email == "" || can(regex("^[^@ ]+@[^@ ]+[.][^@ ]+$", var.notification_email))
+    error_message = "Notification email must be a valid address or blank."
+  }
+}
+data "aws_caller_identity" "current" {}
+resource "aws_sns_topic" "alerts" {
+  count = var.notification_email == "" ? 0 : 1
+  name  = "${var.name}-alerts"
+}
+resource "aws_sns_topic_subscription" "email" {
+  count     = var.notification_email == "" ? 0 : 1
+  topic_arn = aws_sns_topic.alerts[0].arn
+  protocol  = "email"
+  endpoint  = var.notification_email
+}
+resource "aws_sns_topic_policy" "alerts" {
+  count = var.notification_email == "" ? 0 : 1
+  arn   = aws_sns_topic.alerts[0].arn
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      { Sid = "AllowAccountBudgetNotifications", Effect = "Allow", Principal = { Service = "budgets.amazonaws.com" }, Action = "SNS:Publish", Resource = aws_sns_topic.alerts[0].arn, Condition = { StringEquals = { "aws:SourceAccount" = data.aws_caller_identity.current.account_id }, ArnLike = { "aws:SourceArn" = "arn:aws:budgets::${data.aws_caller_identity.current.account_id}:*" } } },
+      { Sid = "AllowAccountQueueAlarmNotifications", Effect = "Allow", Principal = { Service = "cloudwatch.amazonaws.com" }, Action = "SNS:Publish", Resource = aws_sns_topic.alerts[0].arn, Condition = { StringEquals = { "aws:SourceAccount" = data.aws_caller_identity.current.account_id }, ArnLike = { "aws:SourceArn" = "arn:aws:cloudwatch:${var.region}:${data.aws_caller_identity.current.account_id}:alarm:*" } } }
+    ]
+  })
 }
 
 resource "aws_s3_bucket" "private" {
@@ -283,8 +314,30 @@ resource "aws_budgets_budget" "pilot" {
   limit_amount = var.monthly_budget_usd
   limit_unit   = "USD"
   time_unit    = "MONTHLY"
+  dynamic "notification" {
+    for_each = var.notification_email == "" ? [] : [1]
+    content {
+      comparison_operator       = "GREATER_THAN"
+      notification_type         = "ACTUAL"
+      threshold                 = 80
+      threshold_type            = "PERCENTAGE"
+      subscriber_sns_topic_arns = [aws_sns_topic.alerts[0].arn]
+    }
+  }
+  dynamic "notification" {
+    for_each = var.notification_email == "" ? [] : [1]
+    content {
+      comparison_operator       = "GREATER_THAN"
+      notification_type         = "FORECASTED"
+      threshold                 = 100
+      threshold_type            = "PERCENTAGE"
+      subscriber_sns_topic_arns = [aws_sns_topic.alerts[0].arn]
+    }
+  }
+  depends_on = [aws_sns_topic_policy.alerts]
 }
 resource "aws_cloudwatch_metric_alarm" "queue_dead_letters" {
+  alarm_actions       = var.notification_email == "" ? [] : [aws_sns_topic.alerts[0].arn]
   alarm_name          = "${var.name}-dead-letters"
   namespace           = "AWS/SQS"
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -295,6 +348,7 @@ resource "aws_cloudwatch_metric_alarm" "queue_dead_letters" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   treat_missing_data  = "notBreaching"
   dimensions          = { QueueName = aws_sqs_queue.dead.name }
+  depends_on          = [aws_sns_topic_policy.alerts]
 }
 output "cognito_pool" { value = aws_cognito_user_pool.pilot.id }
 output "cognito_client" { value = aws_cognito_user_pool_client.web.id }

@@ -6,6 +6,18 @@ import type {PilotController} from './ServerApp';
 import {initialDemo} from './domain/demo';
 import {freshInputs,draftRule} from './adapters/fixtures';
 
+it('provides a global sign-out action to persistent pilot users',async()=>{
+ const originalUrl=location.href;
+ history.replaceState({},'','/pilot/?view=rules');
+ const state=initialDemo(freshInputs(),draftRule),noop=async()=>{},logout=vi.fn(noop);
+ const pilot:PilotController={state,version:1,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
+  session:{actor:'DEMO-REVIEWER',roles:['reviewer'],csrf:'test-only',synthetic:true},members:['DEMO-REVIEWER'],
+  decide:noop,approve:noop,task:noop,importFile:noop,export:noop,logout,source:noop,propose:noop};
+ const view=render(<App pilot={pilot}/>);
+ try{await userEvent.setup().click(screen.getByRole('button',{name:'Sign out'}));expect(logout).toHaveBeenCalledOnce();}
+ finally{view.unmount();history.replaceState({},'',originalUrl);}
+});
+
 it('keeps a delayed server review visibly pending and prevents a duplicate submission',async()=>{
  const originalUrl=location.href;
  const prototype=HTMLDialogElement.prototype;

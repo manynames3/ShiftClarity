@@ -12,4 +12,6 @@ The user explicitly requested phase 4 with realistic synthetic data and approved
 
 Competitor complaints inform failure cases; they are not proof of a customer's actual recurring problem. This application accepts fictional minimized data only. Real records and sensitive notes require the separate real-data gate.
 
+The target timekeeping, VMS and invoicing products are not yet known. There is no single stack assumed by this exercise: keep the import vendor-neutral, then identify William's exact systems, export format and billing cutoff before designing a connector.
+
 AWS hosts the synthetic pilot through a dedicated deployment role, with Cognito, private S3, Lambda/SQS, and a separate Neon Free branch. These choices support intermittent fictional presentations with minimal idle infrastructure. The October 13 publication approval covers this public source repository and documentation. Real data, paid database upgrades, outgoing communications, production use, and measured-value claims remain separate approvals. See [AWS operations](AWS_AND_DATABASE.md) and [verification](VERIFICATION.md).

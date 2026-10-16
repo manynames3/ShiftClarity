@@ -80,7 +80,7 @@ npm run pilot
 
 Open **http://127.0.0.1:5180/pilot/**. The launcher prepares a dedicated loopback database, verifies the pinned local identity-provider download, and starts the app. Generated local credentials stay in ignored, owner-only `.local/` files. See the [development guide](docs/DEVELOPMENT.md) for roles, OTP enrollment, and isolated test setup.
 
-Pilot imports accept the downloadable normalized **synthetic JSON** template, up to 1 MiB. Imported approval claims cannot grant rule approval. The standalone demo also offers a constrained manual/JSON preview. Use fictional, minimized records throughout this release.
+Pilot imports accept the downloadable normalized **synthetic JSON** template, up to 1 MiB. The [manual staffing exercise](examples/synthetic-healthcare-staffing/README.md) includes a ready-to-import bundle and independent expected results. Imported approval claims cannot grant rule approval. The standalone demo also offers a constrained manual/JSON preview. Use fictional, minimized records throughout this release.
 
 ## How it is built
 

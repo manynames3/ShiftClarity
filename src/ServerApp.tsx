@@ -12,7 +12,7 @@ export interface PilotController {
  decide:(f:Finding,action:string,reason:string,owner:string,version:number)=>Promise<void>;
  approve:(action:'approve'|'reject',reason:string)=>Promise<void>;
  task:(t:Task,reason:string,owner:string)=>Promise<void>;
- importFile:(file:File)=>Promise<void>;
+ importFile:(file:File,onProgress?:(message:string)=>void)=>Promise<void>;
  export:()=>Promise<void>;logout:()=>Promise<void>;
  source:(title:string,text:string)=>Promise<void>;
  propose:(supersedes:string,source_excerpt_id:string,rate:string,effective_from:string)=>Promise<void>;
@@ -49,12 +49,14 @@ export default function ServerApp(){
  async function write(path:string,body:unknown){
   try{await request<Snapshot>(path,body);await refresh();}catch(e){await refresh().catch(()=>{});throw e;}
  }
- async function importFile(file:File){
+ async function importFile(file:File,onProgress?:(message:string)=>void){
   if(file.size>1024*1024)throw new Error('File exceeds the 1 MiB limit.');
   if(!file.name.toLowerCase().endsWith('.json'))throw new Error('Choose a normalized JSON bundle.');
+  onProgress?.('Uploading and validating the synthetic snapshot…');
   const imported=await request<{id:string;status:string;help?:string}>('/api/v1/imports',await file.text(),true);
   await refresh();
   if(imported.status!=='validated')throw new Error((imported.help||'Import rejected. Check the template, source controls and registered versions.')+' The prior completed run is retained.');
+  onProgress?.('Source checks passed. Calculating findings…');
   const job=await request<{id:string}>('/api/v1/runs',{import_id:imported.id});
   for(let i=0;i<60;i++){
    await new Promise(resolve=>setTimeout(resolve,500));

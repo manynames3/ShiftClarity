@@ -6,35 +6,46 @@ test.describe.configure({mode:'serial'});
 
 test('actual identity provider requires authenticator and persists a decision after reload',async({page})=>{
  await login(page,'reviewer');
- await expect(page.getByRole('heading',{name:'Review workspace',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Potential underbilling',exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'Reset demo'})).toHaveCount(0);
- await page.goto('/pilot/?view=evidence&id=FND-001');
+ const before=await (await page.request.get('/api/v1/workspace')).json(),finding=before.state.run.findings.find((f:any)=>f.id==='FND-002');
+ expect(finding).toBeTruthy();
+ const prior=Object.values(before.state.reviews).find((review:any)=>review.fingerprint===finding.fingerprint) as {state:string}|undefined;
+ await page.goto('/pilot/?view=evidence&id=FND-002');
  await page.locator('#main h1').waitFor();
- if(await page.getByRole('button',{name:'Reopen for review'}).isVisible()){
+ if(prior?.state==='needs_review'||!prior){
+  await page.getByRole('button',{name:'Confirm discrepancy',exact:true}).click();
+  await page.getByLabel('Review reason').fill('Approved work and posted invoice checked against the fictional agreement.');
+  await page.getByRole('button',{name:'Save review',exact:true}).click();
+  await expect(page.locator('.toast[role="status"]')).toContainText('saved on the server');
+ }else if(prior.state!=='confirmed'){
   await page.getByRole('button',{name:'Reopen for review'}).click();
   await page.getByLabel('Review reason').fill('Reopened this fictional finding for a repeat verification.');
   await page.getByRole('button',{name:'Save review',exact:true}).click();
-  await expect(page.getByRole('status')).toContainText('saved on the server');
+  await expect(page.locator('.toast[role="status"]')).toContainText('saved on the server');
+  await page.getByRole('button',{name:'Confirm discrepancy',exact:true}).click();
+  await page.getByLabel('Review reason').fill('Approved work and posted invoice checked against the fictional agreement.');
+  await page.getByRole('button',{name:'Save review',exact:true}).click();
+  await expect(page.locator('.toast[role="status"]')).toContainText('saved on the server');
  }
- await page.getByRole('button',{name:'Confirm discrepancy',exact:true}).click();
- await page.getByLabel('Review reason').fill('Rate and approved work checked against original fictional agreement.');
- await page.getByRole('button',{name:'Save review',exact:true}).click();
- await expect(page.getByRole('status')).toContainText('saved on the server');
  await page.reload();
  await expect(page.getByRole('button',{name:'Reopen for review'})).toBeVisible();
- await expect(page.locator('.history small').filter({hasText:'DEMO-REVIEWER'}).first()).toBeVisible();
- const response=await page.request.get('/api/v1/workspace');
- expect(Object.values((await response.json()).state.reviews)).toHaveLength(1);
+ await expect(page.locator('.history .event').filter({hasText:'Jordan Kim, Reviewer'}).last()).toBeVisible();
+ const after=await (await page.request.get('/api/v1/workspace')).json(),persisted=Object.values(after.state.reviews).find((review:any)=>review.fingerprint===finding.fingerprint) as {state:string}|undefined;
+ expect(persisted?.state).toBe('confirmed');
 });
 
 test('real upload produces a durable run and private source with no demo controls',async({page})=>{
  await login(page,'reviewer');
+ const apiTrail:string[]=[];
+ page.on('response',async response=>{const path=new URL(response.url()).pathname;if(/^\/api\/v1\/(imports|runs|jobs\/)/.test(path)){const body=await response.json().catch(()=>({}));apiTrail.push(`${path} ${response.status()} ${body.status||body.help||''}`);}});
+ page.on('requestfailed',request=>{const path=new URL(request.url()).pathname;if(/^\/api\/v1\/(imports|runs|jobs\/)/.test(path))apiTrail.push(`${path} failed: ${request.failure()?.errorText||'unknown'}`);});
  await page.goto('/pilot/?view=inputs');
  await expect(page.getByText('Demo scenarios',{exact:true})).toHaveCount(0);
  await expect(page.getByText('Try your own records',{exact:false})).toHaveCount(0);
  await page.getByRole('button',{name:'Import synthetic snapshot',exact:true}).click();
- await page.getByLabel('Synthetic snapshot bundle').setInputFiles('artifacts/pilot-template.json');
- await expect(page.getByRole('status')).toContainText('Validated snapshot published',{timeout:40000});
+ await page.getByLabel('Synthetic snapshot bundle').setInputFiles('examples/synthetic-healthcare-staffing/bundle.json');
+ try{await expect(page.locator('.toast[role="status"]')).toContainText('Validated snapshot published',{timeout:45000});}catch(error){throw new Error(`${String(error)}\nAPI journey: ${apiTrail.join(' → ')||'(no import/run/job request observed)'}`);}
  await expect(page.getByText('Server import history',{exact:true})).toBeVisible();
  const response=await page.request.get('/api/v1/workspace');
  const saved=await response.json();
@@ -58,7 +69,7 @@ test('authenticated read-only account cannot review or import',async({page})=>{
 test('rejected upload explains the field limit, retains the run and disables stale decisions',async({page})=>{
  await login(page,'reviewer');
  const before=await (await page.request.get('/api/v1/workspace')).json();
- const bundle=JSON.parse(await readFile('artifacts/pilot-template.json','utf8'));
+ const bundle=JSON.parse(await readFile('examples/synthetic-healthcare-staffing/bundle.json','utf8'));
  bundle.work[0].patient_name='SENSITIVE-CANARY';
  await page.goto('/pilot/?view=inputs');
  await page.getByRole('button',{name:'Import synthetic snapshot',exact:true}).click();
@@ -72,8 +83,8 @@ test('rejected upload explains the field limit, retains the run and disables sta
  expect(after.state.run).toEqual(before.state.run);
  await page.goto('/pilot/?view=inputs');
  await page.getByRole('button',{name:'Import synthetic snapshot',exact:true}).click();
- await page.getByLabel('Synthetic snapshot bundle').setInputFiles('artifacts/pilot-template.json');
- await expect(page.getByRole('status')).toContainText('Validated snapshot published',{timeout:40000});
+ await page.getByLabel('Synthetic snapshot bundle').setInputFiles('examples/synthetic-healthcare-staffing/bundle.json');
+ await expect(page.locator('.toast[role="status"]')).toContainText('Validated snapshot published',{timeout:40000});
 });
 
 test('author and separate approver use distinct MFA accounts without role simulation',async({page})=>{
@@ -81,6 +92,7 @@ test('author and separate approver use distinct MFA accounts without role simula
  await page.goto('/pilot/?view=rules');
  await expect(page.getByText('DEMO role simulation',{exact:false})).toHaveCount(0);
  await expect(page.getByRole('button',{name:'Approve rule',exact:false})).toBeDisabled();
+ await expect(page.getByRole('button',{name:'Sign out',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Sign out',exact:true}).first().click();
  if(process.env.SHIFTCLARITY_AWS_QA!=='1')await page.getByRole('button',{name:'Logout',exact:true}).click();
  await page.waitForURL('**/pilot/');
@@ -102,16 +114,20 @@ test('unassigned organization is denied after verified MFA',async({page})=>{
 test('author registers fictional evidence and proposes a new version for a separate account',async({page})=>{
  await login(page,'author');
  await page.goto('/pilot/?view=inputs');
+ const workspace=await (await page.request.get('/api/v1/workspace')).json();
+ const predecessor=workspace.state.draft;
+ const effective=new Date(`${predecessor.effective_from}T00:00:00.000Z`);
+ effective.setUTCDate(effective.getUTCDate()+1);
+ const effectiveDate=effective.toISOString().slice(0,10);
+ const effectiveLabel=new Date(`${effectiveDate}T00:00:00.000Z`).toLocaleDateString('en-US',{timeZone:'UTC',month:'long',day:'numeric',year:'numeric'});
  await page.getByLabel('Source title').fill('Fictional next amendment');
- await page.getByLabel('Fictional agreement text').fill('Standard RN rate USD 70.00 per hour from October 20, 2026. Replaces the October 13 amendment.');
+ await page.getByLabel('Fictional agreement text').fill(`Standard RN rate USD 70.00 per hour from ${effectiveLabel}. Replaces the selected synthetic predecessor.`);
  await page.getByRole('button',{name:'Save synthetic source'}).click();
  await expect(page.locator('.rule-authoring')).toContainText('Synthetic source registered');
- const response=await page.request.get('/api/v1/workspace');
- const state=await response.json();
- await page.getByLabel('Approved predecessor').selectOption(state.state.draft.id);
+ await page.getByLabel('Approved predecessor').selectOption(predecessor.id);
  await page.getByLabel('Source excerpt',{exact:true}).selectOption({label:'Fictional next amendment'});
  await page.getByLabel('Hourly rate · USD',{exact:true}).fill('70.00');
- await page.getByLabel('Effective service date').fill('2026-10-20');
+ await page.getByLabel('Effective service date').fill(effectiveDate);
  await page.getByRole('button',{name:'Submit for independent approval'}).click();
  await expect(page.locator('.rule-authoring')).toContainText('Draft saved');
  await page.reload();

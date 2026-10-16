@@ -1,0 +1,541 @@
+{
+  "work": [
+    {
+      "id": "S001",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W001",
+      "assignment_id": "ASG-001",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-05",
+      "timezone": "America/New_York",
+      "worked_minutes": 600,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-06T09:00:00-04:00",
+      "approved_at": "2026-10-06T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S002",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W002",
+      "assignment_id": "ASG-002",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-06",
+      "timezone": "America/New_York",
+      "worked_minutes": 600,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-07T09:00:00-04:00",
+      "approved_at": "2026-10-07T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S003",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W003",
+      "assignment_id": "ASG-003",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-07",
+      "timezone": "America/New_York",
+      "worked_minutes": 600,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-08T09:00:00-04:00",
+      "approved_at": "2026-10-08T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S004",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W004",
+      "assignment_id": "ASG-004",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-08",
+      "timezone": "America/New_York",
+      "worked_minutes": 600,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-09T09:00:00-04:00",
+      "approved_at": "2026-10-09T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S005",
+      "source_revision": "1",
+      "facility_id": "FAC-002",
+      "worker_id": "W005",
+      "assignment_id": "ASG-005",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-06",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-07T09:00:00-04:00",
+      "approved_at": "2026-10-07T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S006",
+      "source_revision": "1",
+      "facility_id": "FAC-002",
+      "worker_id": "W006",
+      "assignment_id": "ASG-006",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-07",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-08T09:00:00-04:00",
+      "approved_at": "2026-10-08T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S007",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W007",
+      "assignment_id": "ASG-007",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-05",
+      "timezone": "America/New_York",
+      "worked_minutes": 480,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-06T09:00:00-04:00",
+      "approved_at": "2026-10-06T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S008",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W008",
+      "assignment_id": "ASG-008",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-06",
+      "timezone": "America/New_York",
+      "worked_minutes": 480,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-07T09:00:00-04:00",
+      "approved_at": "2026-10-07T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S009",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W009",
+      "assignment_id": "ASG-009",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-07",
+      "timezone": "America/New_York",
+      "worked_minutes": 480,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-08T09:00:00-04:00",
+      "approved_at": "2026-10-08T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S010",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W010",
+      "assignment_id": "ASG-010",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-04",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-07T09:00:00-04:00",
+      "approved_at": "2026-10-05T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S011",
+      "source_revision": "1",
+      "facility_id": "FAC-001",
+      "worker_id": "W011",
+      "assignment_id": "ASG-011",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-09",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-10T09:00:00-04:00",
+      "approved_at": "2026-10-10T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S012",
+      "source_revision": "1",
+      "facility_id": "FAC-002",
+      "worker_id": "W012",
+      "assignment_id": "ASG-012",
+      "role": "RN",
+      "component": "callback",
+      "service_date": "2026-10-08",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-09T09:00:00-04:00",
+      "approved_at": "2026-10-09T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S013",
+      "source_revision": "1",
+      "facility_id": "FAC-002",
+      "worker_id": "W013",
+      "assignment_id": "ASG-013",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-09",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "pending",
+      "recorded_at": "2026-10-10T09:00:00-04:00",
+      "approved_at": null,
+      "batch_id": "BATCH-TIME-001"
+    },
+    {
+      "id": "S014",
+      "source_revision": "1",
+      "facility_id": "FAC-002",
+      "worker_id": "W014",
+      "assignment_id": "ASG-014",
+      "role": "RN",
+      "component": "standard",
+      "service_date": "2026-10-10",
+      "timezone": "America/New_York",
+      "worked_minutes": 720,
+      "approval_state": "approved",
+      "recorded_at": "2026-10-11T09:00:00-04:00",
+      "approved_at": "2026-10-11T10:00:00-04:00",
+      "batch_id": "BATCH-TIME-001"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "LINE-001",
+      "invoice_id": "INV-001",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "600.00",
+      "currency": "USD",
+      "minutes": 600,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S001"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-002",
+      "invoice_id": "INV-001",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "600.00",
+      "currency": "USD",
+      "minutes": 600,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S002"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-003",
+      "invoice_id": "INV-001",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "600.00",
+      "currency": "USD",
+      "minutes": 600,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S003"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-004",
+      "invoice_id": "INV-001",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "600.00",
+      "currency": "USD",
+      "minutes": 600,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S004"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-005",
+      "invoice_id": "INV-002",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "1560.00",
+      "currency": "USD",
+      "minutes": 1440,
+      "unit_rate": "65.0000",
+      "shift_ids": [
+        "S007",
+        "S008",
+        "S009"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-006",
+      "invoice_id": "INV-003",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "720.00",
+      "currency": "USD",
+      "minutes": 720,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S010"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-007",
+      "invoice_id": "INV-004",
+      "facility_id": "FAC-001",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "780.00",
+      "currency": "USD",
+      "minutes": 720,
+      "unit_rate": "65.0000",
+      "shift_ids": [
+        "S011"
+      ],
+      "chain_id": null,
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-008",
+      "invoice_id": "INV-005",
+      "facility_id": "FAC-002",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "720.00",
+      "currency": "USD",
+      "minutes": 720,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S014"
+      ],
+      "chain_id": "CHAIN-001",
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-009",
+      "invoice_id": "CR-005",
+      "facility_id": "FAC-002",
+      "state": "posted",
+      "document_kind": "credit",
+      "amount": "-720.00",
+      "currency": "USD",
+      "minutes": 720,
+      "unit_rate": "60.0000",
+      "shift_ids": [
+        "S014"
+      ],
+      "chain_id": "CHAIN-001",
+      "batch_id": "BATCH-INV-001"
+    },
+    {
+      "id": "LINE-010",
+      "invoice_id": "INV-006",
+      "facility_id": "FAC-002",
+      "state": "posted",
+      "document_kind": "invoice",
+      "amount": "780.00",
+      "currency": "USD",
+      "minutes": 720,
+      "unit_rate": "65.0000",
+      "shift_ids": [
+        "S014"
+      ],
+      "chain_id": "CHAIN-001",
+      "batch_id": "BATCH-INV-001"
+    }
+  ],
+  "rules": [
+    {
+      "id": "RULE-001-V1",
+      "contract_id": "CTR-001",
+      "facility_id": "FAC-001",
+      "role": "RN",
+      "component": "standard",
+      "rate": "60.0000",
+      "currency": "USD",
+      "effective_from": "2026-10-01",
+      "effective_to": "2026-10-05",
+      "state": "approved",
+      "source_excerpt_id": "EX-001",
+      "author_id": "DEMO-AUTHOR",
+      "approver_id": "DEMO-APPROVER",
+      "recorded_at": "2026-09-20T10:00:00-04:00",
+      "approved_at": "2026-09-21T10:00:00-04:00",
+      "supersedes": null
+    },
+    {
+      "id": "RULE-001-V2",
+      "contract_id": "CTR-001",
+      "facility_id": "FAC-001",
+      "role": "RN",
+      "component": "standard",
+      "rate": "65.0000",
+      "currency": "USD",
+      "effective_from": "2026-10-05",
+      "effective_to": null,
+      "state": "approved",
+      "source_excerpt_id": "EX-002",
+      "author_id": "DEMO-AUTHOR",
+      "approver_id": "DEMO-APPROVER",
+      "recorded_at": "2026-10-02T10:00:00-04:00",
+      "approved_at": "2026-10-03T10:00:00-04:00",
+      "supersedes": "RULE-001-V1"
+    },
+    {
+      "id": "RULE-002-V1",
+      "contract_id": "CTR-002",
+      "facility_id": "FAC-002",
+      "role": "RN",
+      "component": "standard",
+      "rate": "65.0000",
+      "currency": "USD",
+      "effective_from": "2026-10-01",
+      "effective_to": null,
+      "state": "approved",
+      "source_excerpt_id": "EX-003",
+      "author_id": "DEMO-AUTHOR",
+      "approver_id": "DEMO-APPROVER",
+      "recorded_at": "2026-09-21T10:00:00-04:00",
+      "approved_at": "2026-09-22T10:00:00-04:00",
+      "supersedes": null
+    }
+  ],
+  "batches": [
+    {
+      "id": "BATCH-TIME-001",
+      "source": "work_records.csv",
+      "records": 14,
+      "state": "validated",
+      "source_as_of": "2026-10-12T16:00:00-04:00",
+      "service_from": "2026-10-01",
+      "service_to_exclusive": "2026-10-11",
+      "declared_complete": true,
+      "control_total_minutes": 8880
+    },
+    {
+      "id": "BATCH-INV-001",
+      "source": "invoice_lines.csv",
+      "records": 10,
+      "state": "validated",
+      "source_as_of": "2026-10-12T16:00:00-04:00",
+      "service_from": "2026-10-01",
+      "service_to_exclusive": "2026-10-11",
+      "declared_complete": true,
+      "signed_control_total": "6240.00"
+    },
+    {
+      "id": "BATCH-RULE-001",
+      "source": "rate_rules.json",
+      "records": 3,
+      "state": "validated",
+      "source_as_of": "2026-10-12T16:00:00-04:00",
+      "declared_complete": true
+    }
+  ],
+  "excerpts": [
+    {
+      "id": "EX-001",
+      "document_id": "DOC-001",
+      "title": "Initial rate schedule \u00b7 CTR-001",
+      "lines": [
+        "SYNTHETIC DOCUMENT. Not a customer agreement.",
+        "Facility: Pinehaven Care Center (fictional).",
+        "Standard RN service rate: USD 60.00 per hour.",
+        "Effective service dates: October 1 through October 4, 2026.",
+        "All other components require separate approval."
+      ]
+    },
+    {
+      "id": "EX-002",
+      "document_id": "DOC-002",
+      "title": "Approved rate amendment \u00b7 CTR-001-A02",
+      "lines": [
+        "SYNTHETIC DOCUMENT. Not a customer agreement.",
+        "Facility: Pinehaven Care Center (fictional).",
+        "Effective October 5, 2026, the standard RN service rate is USD 65.00 per hour.",
+        "This replaces the prior standard RN rate of USD 60.00 for services on or after that date.",
+        "Earlier service dates retain the prior rate, irrespective of the time-entry date.",
+        "Approved by DEMO-APPROVER on October 3, 2026. All other components are outside this sample rule."
+      ]
+    },
+    {
+      "id": "EX-003",
+      "document_id": "DOC-003",
+      "title": "Approved rate schedule \u00b7 CTR-002",
+      "lines": [
+        "SYNTHETIC DOCUMENT. Not a customer agreement.",
+        "Facility: Willowbend Medical Pavilion (fictional).",
+        "Standard RN service rate: USD 65.00 per hour, effective October 1, 2026.",
+        "Callback, holiday and overtime terms are not included in this sample rule."
+      ]
+    },
+    {
+      "id": "EX-004",
+      "document_id": "DOC-004",
+      "label": "Synthetic future rate amendment draft",
+      "text": "DRAFT. Proposed standard RN rate: USD 68.00 per hour, effective October 13, 2026. This is not an approved rule and must not be used by RUN-001.",
+      "synthetic": true
+    }
+  ],
+  "manifest": {
+    "dataset_id": "sc-demo-v1",
+    "synthetic": true,
+    "version": "1.0.0",
+    "run_id": "RUN-001",
+    "as_of": "2026-10-12T17:00:00-04:00",
+    "timezone": "America/New_York",
+    "currency": "USD",
+    "service_from": "2026-10-01",
+    "service_to_exclusive": "2026-10-11",
+    "billing_cutoff": "2026-10-12T12:00:00-04:00",
+    "invoice_source_as_of": "2026-10-12T16:00:00-04:00",
+    "invoice_coverage_complete": true,
+    "workspace_label": "Assist Healthcare \u00b7 Sample workspace",
+    "note": "All facilities, workers, documents and amounts are fictional. Not evidence of Assist's records."
+  }
+}

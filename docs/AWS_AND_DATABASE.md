@@ -24,13 +24,30 @@ The verified Free organization hosts an isolated project in AWS us-east-1, with 
 
 [Lambda event functions](https://aws.amazon.com/lambda/pricing/) have no idle execution charge without provisioned capacity. [HTTP API](https://aws.amazon.com/api-gateway/pricing/) is usage-priced. [Secrets Manager](https://aws.amazon.com/secrets-manager/pricing/) has a per-secret baseline plus calls. Image/object/state storage, logs, the alarm and any exhausted account-wide free allowances add costs. Check current regional prices, account credit expiry and actual billed usage before expanding the pilot. This is a near-zero-idle design, not a zero-bill guarantee or all-in quote.
 
-[Cognito](https://aws.amazon.com/cognito/pricing/) and [SQS](https://aws.amazon.com/sqs/pricing/) have shared account/organization free allowances; another project may consume them. TOTP avoids SMS/email MFA charges. No NAT gateway, load balancer, DNS domain, always-on VM, provisioned Lambda capacity or paid database plan was created. Logs retain seven days. The $5 budget is account-wide visibility, not a cap; no email/SNS recipient was configured. The dead-letter alarm is visible in CloudWatch, without an external notification subscription. An incident recipient, hard response policy and real-data operating plan remain separate decisions.
+[Cognito](https://aws.amazon.com/cognito/pricing/) and [SQS](https://aws.amazon.com/sqs/pricing/) have shared account/organization free allowances; another project may consume them. TOTP avoids SMS/email MFA charges. No NAT gateway, load balancer, DNS domain, always-on VM, provisioned Lambda capacity or paid database plan was created. Logs retain seven days. The deployed stack currently has no active email/SNS subscription; the $5 budget is account-wide visibility, not a cap. The dead-letter alarm is visible in CloudWatch. A hard response policy and real-data operating plan remain separate decisions.
+
+Terraform now defines budget email alerts at 80% actual spend and 100% forecasted spend, plus email notification for the SQS dead-letter alarm. The deployed alert setup is pending SNS permissions on the dedicated deployment role; even after deployment, the email subscription remains inactive until the owner confirms AWS's subscription message. Until both steps are complete, alerts are console-only. The monthly budget is a warning, never a spending cap.
 
 ## Reproduce and operate
 
 The [verification record](VERIFICATION.md) summarizes the deployed checks. Detailed image/OS scan reports remain in local ignored artifacts. scripts/verify-container.py --lambda checks the actual AWS runtime emulator, nonroot/read-only execution, restricted Neon connection, UI, denied anonymous API and shared calculator. The default Docker target remains a locally runnable server; AWS uses --target lambda, linux/amd64 and provenance=false. Never publish an unverified image or include .local in its context.
 
 The protected deployment files live in .local. Refresh temporary deployment credentials using scripts/bootstrap-aws-access.py, which only manages the dedicated role. It scopes established Cognito/API resources after bootstrap. Export AWS_SHARED_CREDENTIALS_FILE to the absolute .local/aws-deploy-credentials path and AWS_PROFILE=shiftclarity-deploy for subsequent commands. All application operations must use the assumed role.
+
+That role's SNS access is limited to the single synthetic-pilot alert topic. If granting it manually, use this statement in its inline policy:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": [
+    "sns:CreateTopic", "sns:DeleteTopic", "sns:GetTopicAttributes",
+    "sns:SetTopicAttributes", "sns:Subscribe", "sns:Unsubscribe",
+    "sns:ListSubscriptionsByTopic", "sns:GetSubscriptionAttributes",
+    "sns:TagResource", "sns:UntagResource", "sns:ListTagsForResource"
+  ],
+  "Resource": "arn:aws:sns:us-east-1:636305658578:shiftclarity-synthetic-alerts"
+}
+```
 
 Build with docker buildx build --platform linux/amd64 --target lambda --provenance=false --load -t shiftclarity:lambda-verified ., verify with backend/.venv/bin/python scripts/verify-container.py --lambda, then run scripts/push-verified-image.py through the role. It checks that the image ID matches verification before uploading and writes the immutable digest to private .local/aws.tfvars.json. Use terraform -chdir=infra plan -var-file=../.local/aws.tfvars.json, inspect its exact changes, then apply that saved plan. Existing state is in the private remote backend.
 

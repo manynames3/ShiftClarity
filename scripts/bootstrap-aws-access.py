@@ -58,6 +58,8 @@ policy={"Version":"2012-10-17","Statement":[
     allow(["logs:DescribeLogGroups"],"*"),
     allow(["cognito-idp:DescribeUserPoolDomain"],"*"),
     allow(["budgets:ViewBudget","budgets:ModifyBudget","budgets:TagResource","budgets:ListTagsForResource"],f"arn:aws:budgets::{account}:budget/shiftclarity-*"),
+    allow(["sns:CreateTopic","sns:DeleteTopic","sns:GetTopicAttributes","sns:SetTopicAttributes","sns:Subscribe","sns:Unsubscribe","sns:ListSubscriptionsByTopic","sns:GetSubscriptionAttributes","sns:TagResource","sns:UntagResource","sns:ListTagsForResource"],
+          f"arn:aws:sns:us-east-1:{account}:shiftclarity-synthetic-alerts"),
     allow(["cloudwatch:PutMetricAlarm","cloudwatch:DescribeAlarms","cloudwatch:DeleteAlarms","cloudwatch:ListTagsForResource","cloudwatch:TagResource"],
           f"arn:aws:cloudwatch:us-east-1:{account}:alarm:shiftclarity-*")
 ]}
