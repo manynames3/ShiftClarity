@@ -6,6 +6,8 @@ Working branch: `codex/demo-product-polish`. This request applies to the standal
 
 - **Item 1 — demo framing:** completed. Added one dismissible fictional-data disclosure with reset, session-only dismissal, and removed the old persistent demo labels. Baseline “before” screenshots are captured for the final image set.
 - **Verification:** `npm test` (70 passed), `npm run build` (passed), `npm run test:e2e` (22 passed).
+- **Item 2 — navigation:** completed. Desktop now has one four-link sidebar; mobile uses the same routes in a hamburger drawer. Evidence remains a finding detail with a Workspace breadcrumb. About and parent-brand copy moved to the content footer.
+- **Verification:** `npm test` (70 passed), `npm run build` (passed), `npm run test:e2e` (23 passed, including desktop/mobile navigation).
 
 ## October 13 Cloudflare full-pilot checkpoint
 
