@@ -103,6 +103,8 @@ The full pilot opens at [shiftclarity.pages.dev](https://shiftclarity.pages.dev/
 
 ## Verification
 
+The October 16 visual-reference correction passed **80 unit/component/domain tests, 41 standalone browser checks**, the production build, Lambda runtime checks, and live Pages health/UI/access-denial checks. The product routes and mobile evidence were visually inspected against the approved image.
+
 Recorded verification for the October 13, 2026 synthetic release includes **52 backend tests, 70 domain/component tests, 20 handoff integrity tests, 21 standalone browser cases, and 8 live AWS browser journeys**. It also includes responsive product captures, container execution, a matched Neon/S3 restore rehearsal, and a Terraform drift check.
 
 ```sh
