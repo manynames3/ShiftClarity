@@ -1,5 +1,19 @@
 # Product screenshots
 
+## Current approved overview · October 16, 2026
+
+These are unmodified 1505×1045 browser captures of the production frontend build running locally with the standalone synthetic fixture. They show the approved open overview and shared horizontal navigation. They do not depict an authenticated or persisted pilot session. The signed-in pilot shares these components and styles.
+
+| File | View and state |
+|---|---|
+| [review-workspace.png](review-workspace.png) | Two findings awaiting review, prominent potential-underbilling summary, coverage in the right margin |
+| [finding-evidence.png](finding-evidence.png) | $2,600 expected, $2,400 invoiced, $200 potential difference, source text and decision controls |
+| [review-coverage.png](review-coverage.png) | 12/14 records and 124/148 hours checked; unsupported callback and pending approval retain unknown value |
+| [approved-inputs.png](approved-inputs.png) | Validated synthetic source batches and immutable rule versions |
+| [rule-approval.png](rule-approval.png) | Pending October 13 proposal with source/predecessor and self-approval denial |
+
+The [approved image](../design-reference/README.md) is stored separately from implemented screenshots. Dates, SVG branding and role labels in the app come from the real fixture and product semantics rather than generated concept text.
+
 ## October 15 standalone demo polish · before and after
 
 The before captures show the local standalone demo before the eight-item polish. The after captures show the finished local demo with the same fictional records; all outcome values and engine behavior remain unchanged. The 1440×1080 Workspace captures show the complete findings table in the first viewport. Evidence and Coverage are full-page captures; mobile Workspace is a 390×844 viewport capture. The additional 1920×1080 Workspace capture verifies the wide desktop layout.
@@ -11,17 +25,4 @@ The before captures show the local standalone demo before the eight-item polish.
 | Coverage | [1440×1080](before-demo-coverage-1440.png) | [full page, 1440px wide](after-demo-coverage-1440.png) |
 | Workspace · mobile | [390×844](before-demo-workspace-390.png) | [390×844](after-demo-workspace-390.png) |
 
-The standalone demo’s owner, priority and age labels are illustrative workflow metadata for the two fictional findings only. They do not change the calculation. The existing captures below are separate AWS synthetic-pilot screenshots and show persisted pilot state.
-
-These are unmodified captures of the running AWS synthetic pilot, recorded during the eight live browser journeys on October 13, 2026. They show fictional data and actual persisted pilot state. They are product captures, not the supplied design renderings.
-
-| File | View and state |
-|---|---|
-| [review-workspace.png](review-workspace.png) | Two financial findings; first confirmed, second awaiting review; two coverage gaps |
-| [finding-evidence.png](finding-evidence.png) | $2,600 expected, $2,400 invoiced, $200 potential difference, source evidence and review history |
-| [review-coverage.png](review-coverage.png) | 12/14 records and 124/148 hours checked; unsupported callback and pending approval retain unknown financial value |
-| [rule-approval.png](rule-approval.png) | Pending October 20 proposal, source/predecessor retained, reviewer lacks approval permission |
-
-Original captures are the `*-1440.png` files under local `artifacts/aws-screenshots/`. SHA-256 comparison confirms these published copies match those files. The 1440-pixel width is the desktop viewport; full-page image heights vary by view.
-
-The later wording-only release update changes some workspace/local labels. The captured calculations and workflow state remain accurately described. No passwords, authenticator setup screens, or customer records are included.
+The standalone demo’s owner, priority and age labels are illustrative workflow metadata for the two fictional findings only. They do not change the calculation. The historical October 13 AWS captures remain in local ignored artifacts; the published current images above replace those older images.

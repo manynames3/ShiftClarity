@@ -29,15 +29,15 @@ ShiftClarity gives the reviewer one place to:
 
 ![Review workspace showing fictional billing findings and checked coverage](docs/images/review-workspace.png)
 
-*Fourteen fictional shifts, twelve checked, two financial findings, and two coverage gaps. One finding remains awaiting review in this captured pilot state.*
+*The redesigned standalone overview shows fourteen fictional shifts, twelve checked, two findings awaiting review, and two coverage gaps. The signed-in pilot uses the same interface with server persistence.*
 
 ## Follow the evidence
 
 The first sample case covers 40 approved hours. The applicable amendment sets the rate at $65/hour, producing **$2,600 expected** against **$2,400 invoiced**. The reviewer can inspect the source excerpt, affected shifts, invoice lines, and **$200 potential discrepancy** before recording a decision.
 
-![Evidence detail showing expected and invoiced amounts, source records, and persisted review history](docs/images/finding-evidence.png)
+![Evidence detail showing expected and invoiced amounts, source records, and decision controls](docs/images/finding-evidence.png)
 
-*The calculation and the review history remain attached to the evidence. A material evidence change reopens the finding while preserving earlier decisions.*
+*The source excerpt and calculation stay beside the decision controls. In the persistent pilot, a material evidence change reopens the finding while preserving earlier decisions.*
 
 The canonical sample also includes 24 approved hours with no qualifying invoice allocation. With its fictional completeness and billing-cutoff declarations, that case produces **$1,560 potential underbilling**. Together, the two cases total **$1,760 potential underbilling**; collection and payment outcomes are unknown.
 
@@ -55,7 +55,7 @@ An author registers fictional source text and proposes a dated rule version with
 
 ![Rule proposal showing its source, predecessor, effective date, and separate approval requirement](docs/images/rule-approval.png)
 
-*This captured proposal takes effect October 20 and is pending approval. The signed-in reviewer has no rule-approval permission.*
+*This canonical fictional proposal takes effect October 13 and is pending approval. The simulated author cannot approve their own rule; the signed-in pilot enforces that separation on the server.*
 
 ## Try it locally
 

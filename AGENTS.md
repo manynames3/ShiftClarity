@@ -1,5 +1,8 @@
 # ShiftClarity workspace instructions
 
+## Approved layout correction · October 16, 2026
+The user-supplied image at docs/design-reference/approved-overview.png is authoritative for the selected redesign. Earlier concept letters crossed: the user calls this selection B, while old exploration files call it A/Horizon. Follow the image, not those old letters. Use horizontal labeled navigation, a prominent financial summary, spacious findings and a right-hand coverage column; evidence is a separate page. Carry this visual system through all routes. This explicitly supersedes the earlier no-restyling language and the mistakenly shipped sidebar/embedded-evidence layout. The user has authorized pushing and deploying the redesign.
+
 ## Cloudflare full-pilot authorization · October 13, 2026
 The user requested a simpler Cloudflare Pages address and explicitly selected the full signed-in pilot under that URL. Configure the dedicated Pages proxy and necessary AWS/Cognito origin changes while retaining S3, Neon and the synthetic data boundary. No paid Cloudflare or Neon upgrade. Keep edge credentials private; retain exact host, CSRF, MFA and server authorization checks. The user additionally approved resuming browser verification for this new address. GitHub documentation/About updates remain authorized.
 

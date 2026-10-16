@@ -4,7 +4,7 @@ import '@fontsource-variable/inter';
 import './reference.css';
 import './styles.css';
 import './polish.css';
-import './studio.css';
+import './product.css';
 import App from './App';
 import ServerApp from './ServerApp';
 createRoot(document.getElementById('root')!).render(<React.StrictMode>{location.pathname.startsWith('/pilot')?<ServerApp/>:<App/>}</React.StrictMode>);

@@ -133,3 +133,19 @@ Cloud resource metadata, exact image equality, MFA/callbacks, empty queue/dead-l
 Evidence: artifacts/aws-backend-tests.txt, aws-domain-tests.txt, aws-fixture-tests.txt, aws-demo-regression-tests.txt, aws-browser-tests.txt, aws-e2e-results.json, lambda-container-verification.json, aws-image.json, aws-image-scan.json, aws-s3-controls.json, aws-recovery.json, aws-neon-idle.json, aws-final-drift.txt and aws-screenshots/.
 
 Actual preflight account state was PAID/ACTIVE with $110.83 credits; credit expiry and eventual billed usage remain unverified. One secret/storage/logging and any exhausted shared free allowances can incur small charges. The $5 account budget and queue alarm have console visibility but no notification recipient or hard spending cap. No customer-data authorization, production certification, independent measurement or stage 6 productization claim is made.
+
+## October 16 · approved visual-reference correction
+
+The user supplied the intended overview image after the first redesign shipped the wrong composition. Earlier exploration filenames called that image A/Horizon and called a queue/evidence split B/Review Studio; implementation followed the stored letter without reconciling the selected image. The supplied image now controls and is preserved at docs/design-reference/approved-overview.png. This explicitly supersedes the earlier sidebar/embedded-evidence layout and original restyling restriction for the user's requested redesign.
+
+The shared shell uses horizontal labeled navigation and an open white canvas. Workspace restores the prominent summary, spacious finding rows and right-hand coverage column. Evidence remains a separate route. Inputs, rules, coverage, dialogs and mobile views share the same typography, color, spacing and surface treatments. Filtering, sorting, shortcut navigation, full review states, truthful synthetic metadata and server permission checks remain available. Reviewed actions return to All findings so the saved state remains visible.
+
+Acceptance mapping: SC-01 disclosure; SC-02/19 filtering and unchanged coverage; SC-12–15 evidence/decisions; SC-18 independent rule approval; SC-21 navigation; SC-22 keyboard, contrast, responsive presentation. The calculation engine and original handoff are unchanged.
+
+Actual verification:
+- Production TypeScript/Vite build passed.
+- 80 unit/component/domain tests passed.
+- 41 Chrome browser checks passed, including all six light/dark route accessibility checks, review/reopen/undo, filters, sorting, downloads, imports, mobile workflow, minimum text scale and viewport overflow.
+- A new layout regression first failed on the unwanted sidebar, then passed for horizontal navigation, large summary, separate evidence and the right coverage margin.
+- Visual inspection of 1505×1045 desktop Workspace/Evidence/Coverage/Inputs/Rule Approval and 390×844 Workspace/Evidence. Mobile monetary overflow was caught visually, reproduced by a failing text-bounds check, fixed with a stacked comparison, and rechecked successfully.
+- Current product captures replace stale README screenshots. Their provenance is explicitly the standalone production-build preview, not an authenticated session. No generated reference dates or approval roles were copied into application data.
