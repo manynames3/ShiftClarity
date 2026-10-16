@@ -35,6 +35,12 @@ The standalone demo now uses a minimum 13px support/body type scale, 14px contro
 
 Actual verification: `npm test` **75 passed**, `npm run build` passed, and `npm run test:e2e` **26 passed**, including the new typography audit and six axe checks. No calculation engine, fixture, or expected value changed.
 
+## October 15 demo polish checkpoint · item 7
+
+The workspace content is centered on a 1280px canvas and fills the available desktop width without a dead gutter; the 390px mobile layout remains within the viewport. Local review actions now update the workspace queue/status immediately and offer a timed Undo. Findings, source evidence and the own-data validator expose explicit loading, empty and error states while retaining the last completed result when a refresh fails. `/`, `j`/`k`, Enter and `?` shortcuts are available with dialog/input guards and visible keyboard selection. The theme follows the operating-system setting until a persisted manual light/dark choice is made; the ShiftClarity mark switches to its inverse asset in dark mode.
+
+Actual verification: `npm test` **79 passed**, `npm run build` passed, and `npm run test:e2e` **38 passed**. E2E includes 1920/1440/390 viewport geometry, queue-count updates and Undo for all three review actions, keyboard shortcuts, evidence/validator states, and axe WCAG 2.2 AA scans for all six views plus the dark-mode shortcuts dialog and all six dark-mode views. No calculation engine, fixture or expected value changed.
+
 Source: ShiftClarity Build Kit v1.0, prepared October 12, 2026. All 84 supplied hashes matched. The kit is preserved unchanged under ./handoff; the original ZIP was also extracted to the requested parent handoff/ directory. Dedicated app workspace: ShiftClarity/.
 
 ## Outcome
