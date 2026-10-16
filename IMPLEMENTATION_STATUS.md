@@ -8,6 +8,8 @@ Working branch: `codex/demo-product-polish`. This request applies to the standal
 - **Verification:** `npm test` (70 passed), `npm run build` (passed), `npm run test:e2e` (22 passed).
 - **Item 2 — navigation:** completed. Desktop now has one four-link sidebar; mobile uses the same routes in a hamburger drawer. Evidence remains a finding detail with a Workspace breadcrumb. About and parent-brand copy moved to the content footer.
 - **Verification:** `npm test` (70 passed), `npm run build` (passed), `npm run test:e2e` (23 passed, including desktop/mobile navigation).
+- **Item 3 — workspace hierarchy:** completed. Added the exact-decimal potential-underbilling headline, unique affected-shift count, findings-first layout, compact summary strip, default priority/state and largest-impact ordering, and sortable difference/facility/state headings.
+- **Verification:** `npm test` (72 passed), `npm run build` (passed), `npm run test:e2e` (23 passed). At 1920×1080 the findings panel ends at y=733 and page width is 1920; at 390×844 page width remains 390. Both views were inspected.
 
 ## October 13 Cloudflare full-pilot checkpoint
 
