@@ -1,5 +1,12 @@
 # ShiftClarity implementation status
 
+## October 15 standalone demo product polish
+
+Working branch: `codex/demo-product-polish`. This request applies to the standalone `/demo/` experience; the calculation engine and canonical fixture results remain unchanged.
+
+- **Item 1 — demo framing:** completed. Added one dismissible fictional-data disclosure with reset, session-only dismissal, and removed the old persistent demo labels. Baseline “before” screenshots are captured for the final image set.
+- **Verification:** `npm test` (70 passed), `npm run build` (passed), `npm run test:e2e` (22 passed).
+
 ## October 13 Cloudflare full-pilot checkpoint
 
 The user selected the full signed-in pilot at https://shiftclarity.pages.dev/. A fixed-origin Pages Worker forwards to the existing AWS gateway, preserves secure cookies/Origin, avoids private caching and redirect following, and supplies a private edge credential. Backend exact gateway-host/credential checks precede the existing user permissions. Cognito callback/logout URLs use Pages. Terraform changed only its client and the two function images/environments in place; no data resource was replaced. No paid plan or additional Secrets Manager secret was added.
