@@ -19,22 +19,21 @@ const views=['workspace','evidence','inputs','rules','coverage'] as const;
 const labels:Record<string,string>={workspace:'Workspace',evidence:'Evidence',inputs:'Inputs & rules',rules:'Rule approval',coverage:'Coverage'};
 const navigation=['workspace','coverage','inputs','rules'] as const;
 type Modal={kind:'review';action:'confirm'|'dismiss'|'request_evidence'|'reopen';f:Finding;version:number}|{kind:'reset'|'import'|'about'|'reject'|'shortcuts'}|{kind:'task';task:Task};
-type ThemeMode='system'|'light'|'dark';
+type ThemeMode='light'|'dark';
 function readDisclosure(){try{return sessionStorage.getItem('shiftclarity-demo-disclosure')!=='dismissed';}catch{return true;}}
-function readTheme():ThemeMode{try{const saved=localStorage.getItem('shiftclarity-theme');return saved==='light'||saved==='dark'?saved:'system';}catch{return 'system';}}
+function readTheme():ThemeMode{try{const saved=localStorage.getItem('shiftclarity-theme');return saved==='dark'?'dark':'light';}catch{return 'light';}}
 function actorInitials(actor:string){const label=actorLabel(actor),names=label.split(/[^A-Za-z]+/).filter(Boolean);return (label!==actor&&names.length>1?names.slice(0,2).map(name=>name[0]).join(''):actor.replace(/^DEMO-/,'').slice(0,2)).toUpperCase();}
 export default function App({pilot}:{pilot?:PilotController}={}){
  const [memoryState,setState]=useState(()=>initialDemo(freshInputs(),draftRule)),[url,setUrl]=useState(()=>new URL(location.href)),[menu,setMenu]=useState(false),[actor,setActor]=useState('DEMO-AUTHOR'),[modal,setModal]=useState<Modal|null>(null),[notice,setNotice]=useState(''),[error,setError]=useState(''),[reason,setReason]=useState(''),[owner,setOwner]=useState('');
  const [disclosureVisible,setDisclosureVisible]=useState(readDisclosure);
- const [themeMode,setThemeMode]=useState<ThemeMode>(readTheme),[systemDark,setSystemDark]=useState(()=>{try{return matchMedia('(prefers-color-scheme: dark)').matches;}catch{return false;}});
+ const [themeMode,setThemeMode]=useState<ThemeMode>(readTheme);
  const [undo,setUndo]=useState<{state:Demo;notice:string}|null>(null),[calculating,setCalculating]=useState(false),[fileValidating,setFileValidating]=useState(false);
  const state=pilot?.state||memoryState;const activeActor=pilot?.session.actor||actor;const avatarActor=pilot?activeActor:'DEMO-REVIEWER';
  const [saving,setSaving]=useState(false);
  const lastUrl=useRef(url.href),fileInput=useRef<HTMLInputElement>(null);const view=pilot&&url.searchParams.get('view')==='custom'?'inputs':url.searchParams.get('view')==='custom'?'custom':views.includes(url.searchParams.get('view') as typeof views[number])?url.searchParams.get('view')!:'workspace';
- const dark=themeMode==='dark'||(themeMode==='system'&&systemDark);
+ const dark=themeMode==='dark';
  useEffect(()=>{const handler=()=>setUrl(new URL(location.href));window.addEventListener('popstate',handler);return()=>window.removeEventListener('popstate',handler);},[]);
  useEffect(()=>{if(lastUrl.current===url.href)return;lastUrl.current=url.href;document.querySelector<HTMLElement>('main h1')?.focus();if(url.hash)document.getElementById(url.hash.slice(1))?.scrollIntoView();else window.scrollTo(0,0);},[url]);
- useEffect(()=>{try{const query=window.matchMedia('(prefers-color-scheme: dark)'),handler=(event:MediaQueryListEvent)=>setSystemDark(event.matches);setSystemDark(query.matches);query.addEventListener('change',handler);return()=>query.removeEventListener('change',handler);}catch{return;}},[]);
  useEffect(()=>{if(!notice)return;const timer=window.setTimeout(()=>setNotice(''),5000);return()=>window.clearTimeout(timer);},[notice]);
  useEffect(()=>{if(!undo)return;const timer=window.setTimeout(()=>setUndo(null),6000);return()=>window.clearTimeout(timer);},[undo]);
  useEffect(()=>{const handler=(event:KeyboardEvent)=>{const target=event.target;if(target instanceof HTMLElement&&(target.matches('input,textarea,select,[contenteditable="true"]')||target.closest('dialog')))return;if(modal)return;if(view==='workspace'&&event.key==='/'){event.preventDefault();document.querySelector<HTMLInputElement>('[aria-label="Search findings"]')?.focus();}else if(view==='workspace'&&event.key==='?'){event.preventDefault();openModal({kind:'shortcuts'});}};window.addEventListener('keydown',handler);return()=>window.removeEventListener('keydown',handler);},[view,modal]);

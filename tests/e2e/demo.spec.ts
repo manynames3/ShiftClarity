@@ -109,12 +109,25 @@ test('item 8: fictional owner, priority and age appear without affecting the fin
  await page.setViewportSize({width:390,height:844});await expect(large.locator('td[data-label="Owner"]')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test('item 7: theme follows system preference until a manual choice is saved',async({page})=>{
- await page.emulateMedia({colorScheme:'dark'});await page.goto('/demo/');const shell=page.locator('.app-shell');await expect(shell).toHaveAttribute('data-theme','dark');await expect(page.locator('.topbar-mobile img.wordmark')).toHaveAttribute('src','/brand/shiftclarity-wordmark-inverse.svg');await page.getByRole('button',{name:'Use light mode'}).click();await expect(shell).toHaveAttribute('data-theme','light');await page.reload();await expect(shell).toHaveAttribute('data-theme','light');await page.getByRole('button',{name:'Use dark mode'}).click();await expect(shell).toHaveAttribute('data-theme','dark');await page.reload();await expect(shell).toHaveAttribute('data-theme','dark');
+test('item 7: approved light theme is default even on a dark device; explicit choice persists',async({page})=>{
+ await page.emulateMedia({colorScheme:'dark'});await page.goto('/demo/');const shell=page.locator('.app-shell');await expect(shell).toHaveAttribute('data-theme','light');await expect(page.locator('.topbar-mobile img.wordmark')).toHaveAttribute('src','/brand/shiftclarity-wordmark.svg');await page.getByRole('button',{name:'Use dark mode'}).click();await expect(shell).toHaveAttribute('data-theme','dark');await page.reload();await expect(shell).toHaveAttribute('data-theme','dark');await expect(page.locator('.topbar-mobile img.wordmark')).toHaveAttribute('src','/brand/shiftclarity-wordmark-inverse.svg');await page.getByRole('button',{name:'Use light mode'}).click();await page.reload();await expect(shell).toHaveAttribute('data-theme','light');
+});
+
+for(const width of [320,390])test(`SC-22: support sections keep text and actions separated at ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:844});await page.goto('/demo/');
+ const support=page.locator('.overview-support');await support.scrollIntoViewIfNeeded();
+ await expect(support.getByRole('heading',{name:'Needs more context'})).toBeVisible();
+ await expect(support.getByRole('link',{name:'View coverage gaps'})).toBeVisible();
+ for(const selector of ['.context-row','.source-summary li'])for(const row of await support.locator(selector).all()){
+  const bounds=await row.evaluate(element=>{const r=element.getBoundingClientRect();return [...element.querySelectorAll('strong,small')].map(node=>{const b=node.getBoundingClientRect();return b.left>=r.left&&b.right<=r.right&&b.width>0;});});expect(bounds.every(Boolean)).toBe(true);
+ }
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await support.getByRole('link',{name:'View coverage gaps'}).click();await expect(page).toHaveURL(/view=coverage/);
+ await page.goto('/demo/');await page.getByRole('link',{name:'Inspect sources'}).click();await expect(page).toHaveURL(/view=inputs/);
 });
 
 test('item 7: unavailable evidence has a clear empty state',async({page})=>{await page.goto('/demo/?view=evidence&id=FND-UNKNOWN');await expect(page.getByRole('status')).toContainText('Finding is outside the current run');await expect(page.getByRole('link',{name:'Return to workspace'})).toBeVisible();});
 
-test('item 7: dark mode dialog maintains WCAG AA contrast',async({page})=>{await page.emulateMedia({colorScheme:'dark'});await page.goto('/demo/');await page.getByRole('button',{name:'Keyboard shortcuts'}).click();const dialog=page.getByRole('dialog');await expect(dialog).toContainText('Keyboard shortcuts');const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(results.violations).toEqual([]);});
+test('item 7: dark mode dialog maintains WCAG AA contrast',async({page})=>{await page.emulateMedia({colorScheme:'dark'});await page.goto('/demo/');await page.getByRole('button',{name:'Use dark mode'}).click();await page.getByRole('button',{name:'Keyboard shortcuts'}).click();const dialog=page.getByRole('dialog');await expect(dialog).toContainText('Keyboard shortcuts');const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(results.violations).toEqual([]);});
 
-for(const view of ['workspace','evidence','inputs','rules','coverage','custom'])test(`item 7: dark mode WCAG AA contrast ${view}`,async({page})=>{await page.emulateMedia({colorScheme:'dark'});await page.goto(`/demo/?view=${view}`);await expect(page.locator('.app-shell')).toHaveAttribute('data-theme','dark');const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(results.violations).toEqual([]);});
+for(const view of ['workspace','evidence','inputs','rules','coverage','custom'])test(`item 7: dark mode WCAG AA contrast ${view}`,async({page})=>{await page.emulateMedia({colorScheme:'dark'});await page.goto(`/demo/?view=${view}`);await page.getByRole('button',{name:'Use dark mode'}).click();await expect(page.locator('.app-shell')).toHaveAttribute('data-theme','dark');const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(results.violations).toEqual([]);});
