@@ -32,3 +32,39 @@ test('SC-17: exact supplied CSV validates and reloads the canonical snapshot',as
 test('item 4: visible labels use plain language and readable demo names',async({page})=>{await page.goto('/demo/');await expect(page.getByRole('row',{name:/Rate change not reflected FND-001 · Rate mismatch/})).toBeVisible();await expect(page.locator('body')).not.toContainText('APPROVED_RATE_MISMATCH');await page.getByRole('link',{name:'Rate change not reflected'}).click();await expect(page.getByText('Linked to source',{exact:true})).toBeVisible();await page.getByRole('link',{name:/Review workspace/}).click();await page.getByRole('link',{name:'Approved work not invoiced'}).click();await expect(page.getByText('Not invoiced',{exact:true}).first()).toBeVisible();await nav(page,'Inputs & rules');await expect(page.getByText('148 hours',{exact:true})).toBeVisible();await expect(page.getByText('$6,240 total',{exact:true})).toBeVisible();await expect(page.getByText('File checks are separate from billing review.')).toBeVisible();await nav(page,'Rule approval');await expect(page.getByLabel('Fictional role')).toBeVisible();await expect(page.getByText('Outside this review period')).toBeVisible();await expect(page.getByLabel('Fictional role')).toContainText('Morgan Lee');await page.getByLabel('Fictional role').selectOption('DEMO-APPROVER');await expect(page.locator('.definition')).toContainText('Dana Reyes, Approver');await expect(page.locator('.definition .mono').filter({hasText:'DEMO-APPROVER'})).toBeVisible();});
 
 test('item 5: dates are concise and distinguish source time from run time',async({page})=>{await page.goto('/demo/');await expect(page.getByText('Oct 1–10, 2026',{exact:true})).toBeVisible();await expect(page.locator('body')).not.toContainText(/2026-10-\d{2}/);await nav(page,'Inputs & rules');await expect(page.getByRole('cell',{name:/Oct 12, 2026, 4:00 PM EDT/}).first()).toBeVisible();await expect(page.locator('.footnote')).toContainText('Oct 12, 2026, 5:00 PM EDT');await page.getByText('Run manifest · source selection and completeness').click();await expect(page.locator('.definition')).toContainText('Oct 12, 2026, 5:00 PM EDT');await expect(page.locator('.definition')).toContainText('Oct 12, 2026, 4:00 PM EDT');});
+
+test('item 6: all visible demo text meets the minimum type scale',async({page})=>{
+ const violations:{route:string;element:string;fontSize:string;text:string;tracking?:number}[]=[];
+ for(const route of ['workspace','evidence','inputs','rules','coverage','custom']){
+  await page.goto(`/demo/?view=${route}`);
+  const found=await page.evaluate(()=>{
+   const problems:{element:string;fontSize:string;text:string;tracking?:number}[]=[];
+   const visible=(element:HTMLElement)=>{
+    const style=getComputedStyle(element);
+    return element.getClientRects().length>0&&style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>0&&!element.closest('.sr-only,[aria-hidden="true"]');
+   };
+   const add=(element:HTMLElement,text:string,size:string,tracking?:number,textTransform=getComputedStyle(element).textTransform)=>{
+    const fontSize=parseFloat(size);
+    const normalized=text.trim().replace(/\s+/g,' ');
+    if(!normalized)return;
+    const style=getComputedStyle(element);
+    if(fontSize>0&&(textTransform==='uppercase'?(fontSize<12||tracking===undefined||tracking<.04):fontSize<13))
+     problems.push({element:`${element.tagName.toLowerCase()}${element.className&&typeof element.className==='string'?'.'+element.className.trim().replace(/\s+/g,'.'):''}`,fontSize:size,text:normalized.slice(0,72),tracking});
+   };
+   for(const element of Array.from(document.querySelectorAll<HTMLElement>('.app *'))){
+    if(!visible(element))continue;
+    const style=getComputedStyle(element),size=style.fontSize,tracking=parseFloat(style.letterSpacing)/parseFloat(size);
+    const ownText=Array.from(element.childNodes).filter(node=>node.nodeType===Node.TEXT_NODE).map(node=>node.textContent||'').join(' ').trim();
+    const controlText=element.matches('input,select,textarea')?`${(element as HTMLInputElement).value||''} ${(element as HTMLInputElement).placeholder||''}`.trim():'';
+    if(ownText||controlText)add(element,ownText||controlText,size,Number.isFinite(tracking)?tracking:undefined);
+    for(const pseudo of ['::before','::after']){
+     const pseudoStyle=getComputedStyle(element,pseudo),content=pseudoStyle.content;
+     if(content&&content!=='none'&&content!=='normal'&&content!=='""')add(element,content.replace(/^['"]|['"]$/g,''),pseudoStyle.fontSize,parseFloat(pseudoStyle.letterSpacing)/parseFloat(pseudoStyle.fontSize),pseudoStyle.textTransform);
+    }
+   }
+   return problems;
+  });
+  violations.push(...found.map(problem=>({...problem,route})));
+ }
+ expect(violations).toEqual([]);
+});

@@ -32,4 +32,34 @@
 .compact-summary .metric-value{grid-column:1;grid-row:2;font-size:21px;line-height:1.25}
 .compact-summary .metric-note{grid-column:2;grid-row:2;margin:0;font-size:13px;line-height:1.3}
 @media(max-width:780px){.workspace-heading{align-items:flex-start}.workspace-heading h1{font-size:34px}.workspace-heading .heading-actions{flex-wrap:wrap}.compact-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-summary .metric:nth-child(2){border-right:0}.compact-summary .metric:nth-child(-n+2){border-bottom:1px solid var(--sc-line)}}
+
+/* Product type scale: body text 15px, support text 13px, tracked labels 12px. */
+body .app{font-size:15px}
+body .app p{font-size:15px}
+body .app small,body .app .mono{font-size:13px}
+body .app .eyebrow,body .app .navlabel{font-size:12px;letter-spacing:.04em}
+body .app .metric-label,body .app .comparison-label,body .app .document-label{font-size:13px;letter-spacing:.04em}
+body .app .navlink{font-size:14px}
+body .app .nav-count,body .app .avatar{font-size:13px}
+body .app .workspace-select strong{font-size:13px}
+body .app .breadcrumbs,body .app .segmented{font-size:14px}
+body .app .period,body .app .muted,body .app .pill,body .app .rule-state,body .app .table-footer,body .app .metric-note,body .app .doc-rule,body .app .source-foot,body .app .footnote,body .app .coverage-legend,body .app .control-row,body .app .definition dt,body .app .definition dd{font-size:13px}
+body .app .rule-row strong{font-size:14px}
+body .app .gap-row strong,body .app .event strong,body .app .draft-banner strong,body .app .warning-box strong{font-size:14px}
+body .app .finding-table th{font-size:13px;letter-spacing:.04em}
+body .app th{font-size:13px;letter-spacing:.04em}
+body .app .finding-table th:last-child{font-size:13px}
+body .app .finding-table td:nth-child(2)::before,body .app .finding-table td:nth-child(3)::before{font-size:12px;letter-spacing:.04em}
+body .app a,body .app button,body .app input,body .app select,body .app textarea,body .app label,body .app li,body .app td{font-size:14px}
+body .app .sort-button{font-size:14px}
+body .app .field label,body .app .custom-form label:not(.ack){font-size:14px}
+body .app .heading-actions .btn,body .app .task-actions .btn{font-size:14px}
+body .app .coverage-card h2{font-size:14px}
+body .app .rule-dates{font-size:13px}
+body .app span{font-size:13px}
+body .app .sort-button{letter-spacing:.04em}
+body .app p.review-note{font-size:15px!important}
+body .dialog{font-size:15px}
+body .dialog p{font-size:15px}
+body .dialog label,body .dialog button,body .dialog input,body .dialog select,body .dialog textarea{font-size:14px}
 @media(max-width:420px){.workspace-heading .heading-actions .btn-quiet{display:none}.workspace-heading .heading-actions{gap:8px}.compact-summary .metric{grid-template-columns:1fr;gap:3px;padding:10px 12px}.compact-summary .metric-value,.compact-summary .metric-note{grid-column:1;grid-row:auto}.compact-summary .metric-note{margin-bottom:2px}}

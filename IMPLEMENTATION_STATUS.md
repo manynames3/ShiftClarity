@@ -29,6 +29,12 @@ Public `manynames3/ShiftClarity` was explicitly approved by the user. Publicatio
 
 Fresh-checkout review found generated-state assumptions in the local launcher. It now builds the shared engine before database seeding and creates the template output directory. Syntax and isolated fresh-workspace engine/template checks passed, including the canonical $1,760.00 potential-underbilling result. Full local service startup was not rerun, and no pilot accounts/databases/cloud resources were changed by these fixes. The existing hosted standalone demo returned HTTP 200 and provides the GitHub website destination. App/data acceptance limits remain as recorded below.
 
+## October 15 demo polish checkpoint · item 6
+
+The standalone demo now uses a minimum 13px support/body type scale, 14px controls and 15px body copy; uppercase tracked labels are at least 12px with 0.04em tracking. The small decision disclaimer is 15px. A Playwright visible-text audit covers all six demo views, and the existing axe WCAG 2.2 AA checks cover all six routes, including the dark sidebar and tagline.
+
+Actual verification: `npm test` **75 passed**, `npm run build` passed, and `npm run test:e2e` **26 passed**, including the new typography audit and six axe checks. No calculation engine, fixture, or expected value changed.
+
 Source: ShiftClarity Build Kit v1.0, prepared October 12, 2026. All 84 supplied hashes matched. The kit is preserved unchanged under ./handoff; the original ZIP was also extracted to the requested parent handoff/ directory. Dedicated app workspace: ShiftClarity/.
 
 ## Outcome
