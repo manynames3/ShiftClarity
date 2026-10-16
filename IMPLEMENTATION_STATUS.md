@@ -12,6 +12,8 @@ Working branch: `codex/demo-product-polish`. This request applies to the standal
 - **Verification:** `npm test` (72 passed), `npm run build` (passed), `npm run test:e2e` (23 passed). At 1920×1080 the findings panel ends at y=733 and page width is 1920; at 390×844 page width remains 390. Both views were inspected.
 - **Item 4 — plain language:** replaced visible reason codes with readable labels, clarified missing allocations and source checks, converted source controls to hours and whole-dollar totals, and gave fictional author/approver roles readable names while retaining IDs as secondary metadata.
 - **Verification:** `npm test` (72 passed), `npm run build` (passed), `npm run test:e2e` (24 passed), including checks for 148 hours, `$6,240 total`, the readable independent approver, and absence of the raw rate-mismatch code in the workspace.
+- **Item 5 — dates:** added shared date/range/timestamp formatters and applied them to workspace, evidence, inputs, coverage, rules, pilot metadata, and the footer. Source data is shown current through 4:00 PM EDT; the fixed review run is 5:00 PM EDT. The fixture data itself is unchanged.
+- **Verification:** `npm test` (75 passed, including date boundaries and timezone cases), `npm run build` (passed), `npm run test:e2e` (25 passed, including the source/run timestamp distinction and no raw ISO date on the workspace).
 
 ## October 13 Cloudflare full-pilot checkpoint
 
