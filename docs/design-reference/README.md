@@ -7,3 +7,5 @@ Earlier exploration files named the same open overview direction “A · Horizon
 The design requires horizontal labeled navigation, a prominent financial summary, spacious finding rows, and a coverage column in the right margin. Evidence opens as a separate page. Supporting routes use the same navigation, white canvas, typography, spacing, teal accents and quiet separators.
 
 The application retains the actual brand SVGs, current synthetic fixture dates, accurate owner/approval roles, calculated values, filtering/sorting, accessibility, and server permissions. Generated details in the concept image are not source data.
+
+The approved bright theme is the default on every device, including devices that prefer dark appearance. Dark mode is an explicit, saved user choice. Overview support sections remain open against the page canvas: actions sit below their content and source counts stack beneath their labels on narrow screens.
