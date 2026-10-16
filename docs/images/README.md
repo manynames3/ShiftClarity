@@ -1,5 +1,18 @@
 # Product screenshots
 
+## October 15 standalone demo polish · before and after
+
+The before captures show the local standalone demo before the eight-item polish. The after captures show the finished local demo with the same fictional records; all outcome values and engine behavior remain unchanged. The 1440×1080 Workspace captures show the complete findings table in the first viewport. Evidence and Coverage are full-page captures; mobile Workspace is a 390×844 viewport capture. The additional 1920×1080 Workspace capture verifies the wide desktop layout.
+
+| View | Before | After |
+|---|---|---|
+| Workspace | [1440×1080](before-demo-workspace-1440.png) | [1440×1080](after-demo-workspace-1440.png) · [1920×1080](after-demo-workspace-1920.png) |
+| Evidence | [1440×1080](before-demo-evidence-1440.png) | [full page, 1440px wide](after-demo-evidence-1440.png) |
+| Coverage | [1440×1080](before-demo-coverage-1440.png) | [full page, 1440px wide](after-demo-coverage-1440.png) |
+| Workspace · mobile | [390×844](before-demo-workspace-390.png) | [390×844](after-demo-workspace-390.png) |
+
+The standalone demo’s owner, priority and age labels are illustrative workflow metadata for the two fictional findings only. They do not change the calculation. The existing captures below are separate AWS synthetic-pilot screenshots and show persisted pilot state.
+
 These are unmodified captures of the running AWS synthetic pilot, recorded during the eight live browser journeys on October 13, 2026. They show fictional data and actual persisted pilot state. They are product captures, not the supplied design renderings.
 
 | File | View and state |

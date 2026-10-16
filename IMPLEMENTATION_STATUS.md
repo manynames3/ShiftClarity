@@ -41,6 +41,12 @@ The workspace content is centered on a 1280px canvas and fills the available des
 
 Actual verification: `npm test` **79 passed**, `npm run build` passed, and `npm run test:e2e` **38 passed**. E2E includes 1920/1440/390 viewport geometry, queue-count updates and Undo for all three review actions, keyboard shortcuts, evidence/validator states, and axe WCAG 2.2 AA scans for all six views plus the dark-mode shortcuts dialog and all six dark-mode views. No calculation engine, fixture or expected value changed.
 
+## October 15 demo polish checkpoint · item 8
+
+Added fictional owner, priority and age metadata for the two synthetic findings in the presentation layer only. The metadata is keyed to the demo finding IDs and appears only when the run is marked synthetic; a non-synthetic preview shows “Not assigned,” “Not set,” and “Not available.” It does not alter engine inputs, priority ordering, fixture records, findings or expected values. Removed visible demo-role IDs from source/approval details and aligned reviewer initials with the readable name. Added matched before/after product captures for Workspace, Evidence, Coverage and mobile Workspace, plus a 1920×1080 Workspace capture. The findings table has no internal horizontal scroll in the 1440×1080 and 1920×1080 screenshots, and both rows fit above the fold.
+
+Actual verification: `npm test` **80 passed**, `npm run build` passed, and `npm run test:e2e` **39 passed**. The screenshot capture check reported no page overflow at 1440×1080, 1920×1080 or 390×844; the findings table ended at y=734 on the 1440 capture and y=743 on the 1920 capture. The mobile viewport has no horizontal page overflow. See [docs/images/README.md](docs/images/README.md) for the before/after set and [docs/DEMO_POLISH_PR_DESCRIPTION.md](docs/DEMO_POLISH_PR_DESCRIPTION.md) for the concise PR body.
+
 Source: ShiftClarity Build Kit v1.0, prepared October 12, 2026. All 84 supplied hashes matched. The kit is preserved unchanged under ./handoff; the original ZIP was also extracted to the requested parent handoff/ directory. Dedicated app workspace: ShiftClarity/.
 
 ## Outcome
