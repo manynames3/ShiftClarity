@@ -12,6 +12,8 @@ The user explicitly approved creating public `manynames3/ShiftClarity` and publi
 ## Synthetic AWS deployment authorization · October 13, 2026
 The user explicitly requested container verification and deployment to AWS account 636305658578 with Cognito, private S3 and Neon, using an AWS-generated hostname and private test accounts. They approved Mangum and Lambda/SQS to minimize idle cost and requested a separate deployment role. Existing credentials may establish that dedicated role; all pilot deployment operations must use it. This supersedes earlier AWS provisioning/spend/deployment prohibitions for the isolated synthetic pilot only. Keep costs minimal, use no paid Neon upgrade, send no invitations/messages, and do not touch DealFinder resources. No real customer data or production claims are authorized.
 
+October 16: the user explicitly approved the authenticated default AWS profile solely to refresh the ShiftClarity deployment role's trust/inline permissions (including the single ShiftClarity SNS topic) and obtain a one-hour role session. Subsequent deployment operations use the dedicated role. Budget/failed-job email alerts to the privately configured owner address are authorized, and the owner confirmed the SNS subscription.
+
 This file is intended to become `AGENTS.md` at the root of a NEW ShiftClarity application workspace. Do not overwrite unrelated existing instructions.
 
 The canonical build handoff lives in `./handoff/`. Before implementation, read and apply `handoff/AGENTS.md`, `handoff/contracts/scope-lock.json`, the numbered requirements/domain/design docs, and `handoff/docs/06_BUILD_PLAN.md`. Resolve paths inside handoff instructions relative to `handoff/` unless explicitly stated otherwise.

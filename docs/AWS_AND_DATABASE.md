@@ -1,6 +1,6 @@
 # AWS synthetic pilot and database
 
-Updated October 13, 2026. The synthetic pilot is deployed at https://shiftclarity.pages.dev/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
+Updated October 16, 2026. The synthetic pilot is deployed at https://shiftclarity.pages.dev/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
 
 ## Deployed arrangement
 
@@ -24,9 +24,9 @@ The verified Free organization hosts an isolated project in AWS us-east-1, with 
 
 [Lambda event functions](https://aws.amazon.com/lambda/pricing/) have no idle execution charge without provisioned capacity. [HTTP API](https://aws.amazon.com/api-gateway/pricing/) is usage-priced. [Secrets Manager](https://aws.amazon.com/secrets-manager/pricing/) has a per-secret baseline plus calls. Image/object/state storage, logs, the alarm and any exhausted account-wide free allowances add costs. Check current regional prices, account credit expiry and actual billed usage before expanding the pilot. This is a near-zero-idle design, not a zero-bill guarantee or all-in quote.
 
-[Cognito](https://aws.amazon.com/cognito/pricing/) and [SQS](https://aws.amazon.com/sqs/pricing/) have shared account/organization free allowances; another project may consume them. TOTP avoids SMS/email MFA charges. No NAT gateway, load balancer, DNS domain, always-on VM, provisioned Lambda capacity or paid database plan was created. Logs retain seven days. The deployed stack currently has no active email/SNS subscription; the $5 budget is account-wide visibility, not a cap. The dead-letter alarm is visible in CloudWatch. A hard response policy and real-data operating plan remain separate decisions.
+[Cognito](https://aws.amazon.com/cognito/pricing/) and [SQS](https://aws.amazon.com/sqs/pricing/) have shared account/organization free allowances; another project may consume them. TOTP avoids SMS/email MFA charges. No NAT gateway, load balancer, DNS domain, always-on VM, provisioned Lambda capacity or paid database plan was created. Logs retain seven days. The $5 budget is account-wide visibility, not a cap. A hard response policy and real-data operating plan remain separate decisions.
 
-Terraform now defines budget email alerts at 80% actual spend and 100% forecasted spend, plus email notification for the SQS dead-letter alarm. The deployed alert setup is pending SNS permissions on the dedicated deployment role; even after deployment, the email subscription remains inactive until the owner confirms AWS's subscription message. Until both steps are complete, alerts are console-only. The monthly budget is a warning, never a spending cap.
+Budget email alerts are deployed at 80% actual spend and 100% forecasted spend, alongside the SQS dead-letter alarm notification. The owner confirmed the approved email subscription, and AWS reports it active. Read-back checks verified both budget thresholds, their SNS subscribers, the alarm action, and topic permissions limited to budget/CloudWatch service notifications from this account. No artificial failure or spend event was sent to test delivery. The monthly budget is a warning, never a spending cap.
 
 ## Reproduce and operate
 

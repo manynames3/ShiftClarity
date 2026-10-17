@@ -149,7 +149,7 @@ test('secure routes remain accessible and fit desktop/mobile',async({page})=>{
    await page.locator('#main h1').waitFor();
    if(view==='inputs')await expect(page.locator('.pilot-details')).toHaveAttribute('aria-busy','false');
    await page.evaluate(()=>document.fonts.ready);
-   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}px ${view} exceeds the viewport`).toBe(true);
    if(width===1440)expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
    await page.screenshot({path:'artifacts/'+(process.env.SHIFTCLARITY_AWS_QA==='1'?'aws':'pilot')+'-screenshots/'+view+'-'+width+'.png',fullPage:true});
   }

@@ -229,6 +229,15 @@ body .app .overview-findings :is(.overview-priority,.overview-age){display:flex;
 
 @media(max-width:680px){.app-shell .impact-summary>p{font-size:15px}}
 .coverage-card strong small{display:block;margin-top:8px;letter-spacing:0;font-weight:400}
+@media(min-width:1001px){
+ .pilot-topbar{gap:clamp(20px,3vw,48px)}
+ .pilot-topbar .top-right{min-width:0}
+}
+@media(min-width:1001px) and (max-width:1200px){
+ .pilot-topbar{gap:20px}
+ .pilot-topbar .top-right{gap:10px}
+ .pilot-topbar .pill{display:none}
+}
 @media(max-width:520px){
  .comparison{grid-template-columns:1fr;padding:8px 20px}
  .comparison>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 16px;padding:16px 0;border-left:0;border-bottom:1px solid var(--sc-line)}
