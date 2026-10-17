@@ -5,8 +5,18 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.origin !== PUBLIC_ORIGIN) return new Response('Use the production ShiftClarity address.', {status: 403});
+    if (url.pathname === '/' || url.pathname.startsWith('/landing/')) {
+      if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed.', {status: 405, headers: {Allow: 'GET, HEAD'}});
+      const response = await env.ASSETS.fetch(request);
+      const headers = new Headers(response.headers);
+      headers.set('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
+      headers.set('X-Content-Type-Options', 'nosniff');
+      headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+      headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+      return new Response(response.body, {status: response.status, headers});
+    }
     if (!env.ORIGIN_TOKEN) return new Response('Service unavailable.', {status: 503});
-    if (url.pathname === '/') return Response.redirect(PUBLIC_ORIGIN + '/pilot/', 302);
     // Assign the path on a fixed origin so double slashes cannot create an open proxy.
     const target = new URL(AWS_ORIGIN);
     target.pathname = url.pathname;

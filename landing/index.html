@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <link rel="canonical" href="https://shiftclarity.pages.dev/">
+  <meta name="theme-color" content="#ffffff">
+  <title>ShiftClarity · Billing review for healthcare staffing</title>
+  <meta name="description" content="Compare approved shifts, contract rates and posted invoices. Review the differences with the source evidence in view. Explore the live demo with fictional data.">
+  <link rel="icon" href="/landing/assets/shiftclarity-mark.svg" type="image/svg+xml">
+  <link rel="preload" href="/landing/assets/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/landing/styles.css">
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#top"><img src="/landing/assets/shiftclarity-wordmark.svg" alt="ShiftClarity" width="204" height="48"></a>
+      <nav class="nav" aria-label="Primary">
+        <ul>
+          <li><a href="#product">Product</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#trust">Trust</a></li>
+          <li class="nav-signin"><a href="/pilot/">Sign in</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a class="signin" href="/pilot/">Sign in</a>
+        <a class="btn btn-small" href="/demo/">Explore demo</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- 1 · Hero -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Billing review for healthcare staffing</p>
+          <h1 id="hero-title"><span class="h1-line">When shifts and</span> <span class="h1-line">invoices disagree,</span> <span class="h1-line h1-accent">see why.</span></h1>
+          <p class="lead">Compare approved shifts, contract rates and posted invoices. Review the differences with the source evidence in view.</p>
+          <div class="cta">
+            <a class="btn" href="/demo/">Explore the live demo
+              <svg class="arrow" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 10h11M10.5 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <p class="cta-note">Fictional data · No sign-in required</p>
+            <a class="text-link" href="#sample-finding">Inspect a sample finding
+              <svg class="arrow arrow-down" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M10 4v11M5 10.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <figure class="ledger" data-trace>
+            <div class="ledger-head">
+              <p class="tag"><span class="dot" aria-hidden="true"></span>Fictional example</p>
+              <p class="hint" data-hint hidden>Select a source to follow it into the calculation.</p>
+            </div>
+
+            <div class="trace">
+              <ol class="sources">
+                <li>
+                  <span class="src" data-source="terms">
+                    <span class="node" aria-hidden="true"><span class="num">1</span><svg class="check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" pathLength="1"/></svg></span>
+                    <span class="src-text">
+                      <span class="src-label">Approved terms</span>
+                      <span class="src-note">Contract rate for the service dates</span>
+                    </span>
+                    <span class="src-value">$65<span class="unit">/hour</span></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="src" data-source="work">
+                    <span class="node" aria-hidden="true"><span class="num">2</span><svg class="check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" pathLength="1"/></svg></span>
+                    <span class="src-text">
+                      <span class="src-label">Approved work</span>
+                      <span class="src-note">4 shifts · Oct 5–8</span>
+                    </span>
+                    <span class="src-value">40<span class="unit"> hours</span></span>
+                  </span>
+                </li>
+                <li>
+                  <span class="src" data-source="invoice">
+                    <span class="node" aria-hidden="true"><span class="num">3</span><svg class="check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" pathLength="1"/></svg></span>
+                    <span class="src-text">
+                      <span class="src-label">Posted invoice</span>
+                      <span class="src-note">Invoice lines for the same shifts</span>
+                    </span>
+                    <span class="src-value">$2,400</span>
+                  </span>
+                </li>
+              </ol>
+
+              <div class="calc">
+                <span class="node node-eq" aria-hidden="true">=</span>
+                <div class="calc-body">
+                  <p class="calc-line">
+                    <span class="calc-what">
+                      <span class="calc-label">Expected under approved terms</span>
+                      <span class="calc-expr"><span data-for="terms">$65</span> × <span data-for="work">40 hours</span></span>
+                    </span>
+                    <span class="calc-amt">$2,600</span>
+                  </p>
+                  <p class="calc-line">
+                    <span class="calc-what">
+                      <span class="calc-label">Less: posted invoice</span>
+                      <span class="calc-expr">Invoice lines for the same shifts</span>
+                    </span>
+                    <span class="calc-amt"><span data-for="invoice">−$2,400</span></span>
+                  </p>
+                  <div class="result">
+                    <p class="tag"><span class="dot" aria-hidden="true"></span>Potential discrepancy · Requires review</p>
+                    <p class="result-amt">$200</p>
+                    <p class="result-note">Pending human confirmation. Collection is unknown.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ledger-foot">
+              <p class="caption" data-caption aria-live="polite">Follow a source through the calculation, then review the difference.</p>
+              <figcaption>Illustration with fictional figures. Not a product screenshot.</figcaption>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · Product -->
+    <section class="product" id="product" aria-labelledby="product-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="product-title">One finding. The records behind it.</h2>
+          <p class="lead">Open the approved terms, shift records and invoice lines behind a potential discrepancy. Record your decision with a reason.</p>
+        </div>
+
+        <figure class="shot" id="sample-finding">
+          <div class="shot-bar">
+            <p class="tag"><span class="dot" aria-hidden="true"></span>Actual product · fictional demo data</p>
+            <a class="text-link" href="/landing/assets/finding-evidence.png">Open full size</a>
+          </div>
+          <div class="shot-frame">
+            <img src="/landing/assets/finding-evidence.png" width="1505" height="1045" alt="Actual fictional evidence view: $2,600 expected, $2,400 invoiced, a $200 potential discrepancy, approved rate amendment and human review actions.">
+          </div>
+          <figcaption>Actual evidence screen from the working demo. <a href="/demo/?view=evidence&amp;id=FND-001">Try this sample finding →</a></figcaption>
+        </figure>
+
+        <ul class="notes">
+          <li>
+            <h3>The applicable terms</h3>
+            <p>Read the approved rate and its effective date beside the calculation.</p>
+          </li>
+          <li>
+            <h3>The work behind the amount</h3>
+            <p>Trace the hours and invoice lines for the same shifts.</p>
+          </li>
+          <li>
+            <h3>A decision with a reason</h3>
+            <p>Confirm, dismiss or request evidence. Keep a review record.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3 · How it works -->
+    <section class="how" id="how-it-works" aria-labelledby="how-title">
+      <div class="wrap how-grid">
+        <div class="how-intro">
+          <h2 id="how-title">Three records. One informed review.</h2>
+          <p class="aside">Start with the service date and the approved terms that apply.</p>
+        </div>
+
+        <ol class="steps">
+          <li>
+            <span class="step-node" aria-hidden="true">1</span>
+            <div>
+              <h3>Bring together the supplied records</h3>
+              <p>Bring the approved terms, shift records and posted invoice lines into one review.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-node" aria-hidden="true">2</span>
+            <div>
+              <h3>Compare using approved rules</h3>
+              <p>Apply the approved rule for the service date. Show the calculation behind each potential discrepancy.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-node" aria-hidden="true">3</span>
+            <div>
+              <h3>Make an informed review decision</h3>
+              <p>Check the evidence. Confirm, dismiss or request more evidence with a recorded reason.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 4 · Coverage -->
+    <section class="coverage" id="coverage" aria-labelledby="coverage-title">
+      <div class="wrap">
+        <div class="coverage-grid">
+          <div class="coverage-copy">
+            <h2 id="coverage-title">Missing data is not missing billing.</h2>
+            <p class="lead">Unsupported terms and pending approvals stay visible as coverage gaps. No financial estimate is attached.</p>
+            <ul class="gaps">
+              <li>
+                <h3>Unsupported terms</h3>
+                <p>Callback terms need a supported, approved rule before they can be priced.</p>
+              </li>
+              <li>
+                <h3>Pending approvals</h3>
+                <p>A shift awaiting time approval remains unevaluated.</p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="cov-card">
+            <p class="tag"><span class="dot" aria-hidden="true"></span>Fictional demo data</p>
+            <p class="cov-main"><strong>12 of 14</strong> shifts checked</p>
+            <p class="cov-sub">124 of 148 hours</p>
+            <div class="bar" aria-hidden="true">
+              <span class="seg seg-aligned"></span><span class="seg seg-flagged"></span><span class="seg seg-unsupported"></span><span class="seg seg-pending"></span>
+            </div>
+            <ul class="legend">
+              <li><span class="key key-aligned" aria-hidden="true"></span>6 aligned · 60 hours</li>
+              <li><span class="key key-flagged" aria-hidden="true"></span>6 flagged · 64 hours</li>
+              <li><span class="key key-unsupported" aria-hidden="true"></span>1 unsupported · 12 hours</li>
+              <li><span class="key key-pending" aria-hidden="true"></span>1 not evaluated · 12 hours</li>
+            </ul>
+            <p class="cov-note">The remaining 24 hours were not financially evaluated. Their value is not estimated.</p>
+          </div>
+        </div>
+
+        <details class="peek">
+          <summary>Open the coverage screen</summary>
+          <figure class="peek-body">
+            <p class="tag"><span class="dot" aria-hidden="true"></span>Actual product · fictional demo data</p>
+            <div class="shot-frame">
+              <img src="/landing/assets/review-coverage.png" width="1505" height="1045" loading="lazy" alt="ShiftClarity coverage screen with fictional demo data: counts of aligned, flagged, unsupported and not evaluated shifts, a partial checked coverage bar, and a callback-terms coverage task.">
+            </div>
+          </figure>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5 · Trust -->
+    <section class="trust" id="trust" aria-labelledby="trust-title">
+      <div class="wrap trust-grid">
+        <div class="trust-copy">
+          <h2 id="trust-title">A review you can explain.</h2>
+          <p class="boundary">Currently a synthetic pilot. Explore fictional records today; real-data validation and integrations are future gates.</p>
+        </div>
+
+        <div class="trust-body">
+          <ul class="controls">
+            <li>
+              <h3>Inspect source evidence</h3>
+              <p>Each finding opens to the contract excerpt, approved work and invoice lines behind it.</p>
+            </li>
+            <li>
+              <h3>Record decisions and reasons</h3>
+              <p>Reviewer decisions are saved with the finding, so the history can be read back later.</p>
+            </li>
+            <li>
+              <h3>Separate author and approver</h3>
+              <p>The person who writes a rule is not the person who approves it.</p>
+            </li>
+            <li>
+              <h3>Assigned pilot accounts</h3>
+              <p>Pilot sign-in is for assigned accounts with workspace permissions. There is no public signup.</p>
+            </li>
+          </ul>
+
+          <div class="ways">
+            <div>
+              <h3>Open demo</h3>
+              <p>Fictional records. No sign-in. Decisions reset on refresh.</p>
+              <a class="text-link" href="/demo/">Explore the live demo</a>
+            </div>
+            <div>
+              <h3>Private pilot</h3>
+              <p>Assigned accounts only, with persistent review history. Synthetic JSON imports only.</p>
+              <a class="text-link" href="/pilot/">Sign in</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · FAQ and demo CTA -->
+    <section class="close" aria-labelledby="faq-title">
+      <div class="wrap close-grid">
+        <div class="faq">
+          <h2 id="faq-title">Common questions</h2>
+          <details>
+            <summary>Is this real customer data?</summary>
+            <p>No. The demo uses fictional records only. The private pilot accepts only minimized synthetic JSON, and no real customer data.</p>
+          </details>
+          <details>
+            <summary>Does ShiftClarity change invoices?</summary>
+            <p>No. It does not edit source invoices or collect money. It shows differences, the evidence and your review decision. Any dollar figure is an estimate, not collected cash.</p>
+          </details>
+          <details>
+            <summary>Can I connect my systems?</summary>
+            <p>Not today. There are no live system connectors and no CSV, PDF or OCR import. Integrations are a future gate. The demo is the best way to see how a review works.</p>
+          </details>
+        </div>
+
+        <div class="final-cta">
+          <h2>See the review for yourself.</h2>
+          <p>Open a fictional finding, read its source evidence and check what was left unevaluated.</p>
+          <a class="btn" href="/demo/">Explore the live demo
+            <svg class="arrow" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 10h11M10.5 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <p class="cta-note">Fictional data · No sign-in required</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <p>A Supreme AI Ventures product</p>
+      <a href="https://github.com/manynames3/ShiftClarity">ShiftClarity on GitHub</a>
+    </div>
+  </footer>
+
+  <script src="/landing/script.js" defer></script>
+</body>
+</html>

@@ -58,3 +58,12 @@ SC-01–24 have demo implementation/test evidence. SC-25–29 have synthetic bac
 Real customer records, authorized source semantics, representative capacity/cost measurement, independent accessibility/security audits, production restore targets, incident response commitments, and approved retention/backup policies remain unverified. See [pilot gates](PILOT_GATES.md) and the [evaluation plan](EVALUATION_PLAN.md).
 
 No recovered/collected-money, competitor-superiority, legal compliance, certification, or production-readiness claim follows from the synthetic checks.
+
+
+## October 17, 2026 · Approved public landing page
+
+The user approved the Claude/Codex desktop/mobile concept, then explicitly requested push and deployment. The same bright editorial layout, actual fictional evidence screenshots, $200 worked example, native source-tracing controls, coverage explanation and demo-first navigation are integrated as standalone `landing/` files. `/` and `/landing/` are served directly from Cloudflare Pages; the existing demo, pilot, API and Cognito paths retain their fixed AWS proxy. No application calculations, permissions, backend, database, Lambda image, dependency or paid resource changed. The original handoff and historical untracked design work remain untouched.
+
+Acceptance mapping: SC-01 truthful synthetic scope and unknown collection; SC-21 functional demo/pilot/evidence links; SC-22 keyboard, responsive, bright default and reduced motion. This adds the separately approved public entry point and makes no measured conversion or production-readiness claim.
+
+Verification before deployment: TypeScript/Vite production build and all 82 unit/component/domain tests passed; four Worker routing/security tests passed. Three landing browser checks passed, covering 320/390/768/1024/1440px with zero automated axe violations, dark-system/light-page behavior, keyboard source tracing, fixed financial values, stable caption layout, native coverage disclosure, and no-JavaScript navigation/FAQ. Three focused app regressions passed: approved overview, complete local review/reopen journey, and signed-in header at seven widths. Desktop/mobile landing captures were inspected. The broader backend suite and authenticated Cognito journeys were not rerun for this static-page release.

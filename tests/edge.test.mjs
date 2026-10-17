@@ -26,8 +26,31 @@ test('proxy fixes origin, preserves CSRF and cookies, replaces client credential
   } finally {globalThis.fetch=original;}
 });
 
-test('preview domains and missing credentials fail closed; root opens full pilot',async()=>{
+test('preview domains and missing pilot credentials fail closed',async()=>{
   assert.equal((await worker.fetch(new Request('https://preview.shiftclarity.pages.dev/pilot/'),{ORIGIN_TOKEN:'private-test-value'})).status,403);
   assert.equal((await worker.fetch(new Request('https://shiftclarity.pages.dev/pilot/'),{})).status,503);
-  assert.equal((await worker.fetch(new Request('https://shiftclarity.pages.dev/'),{ORIGIN_TOKEN:'private-test-value'})).headers.get('location'),'https://shiftclarity.pages.dev/pilot/');
+});
+
+test('public landing assets use Pages without contacting AWS or attaching credentials',async()=>{
+  for (const path of ['/', '/landing/styles.css', '/landing/assets/finding-evidence.png']) {
+    const request=new Request('https://shiftclarity.pages.dev'+path);
+    const result=await worker.fetch(request,{ASSETS:{fetch:async(received)=>{
+      assert.equal(received,request);
+      assert.equal(received.headers.get('x-shiftclarity-edge'),null);
+      return new Response('public landing',{headers:{'Content-Type':'text/html'}});
+    }}});
+    assert.equal(result.status,200);
+    assert.equal(await result.text(),'public landing');
+    assert.match(result.headers.get('Content-Security-Policy'),/frame-ancestors 'none'/);
+    assert.equal(result.headers.get('Cache-Control'),'public, max-age=0, must-revalidate');
+    assert.equal(result.headers.get('X-Content-Type-Options'),'nosniff');
+  }
+});
+
+test('landing denies preview hosts and mutations; missing assets retain their 404',async()=>{
+  const request=url=>new Request(url);
+  assert.equal((await worker.fetch(request('https://preview.shiftclarity.pages.dev/'),{})).status,403);
+  assert.equal((await worker.fetch(new Request('https://shiftclarity.pages.dev/',{method:'POST'}),{})).status,405);
+  const response=await worker.fetch(request('https://shiftclarity.pages.dev/landing/missing.js'),{ASSETS:{fetch:async()=>new Response('Not found',{status:404})}});
+  assert.equal(response.status,404);
 });

@@ -11,7 +11,7 @@ ShiftClarity helps healthcare staffing teams review potential billing discrepanc
 
 *Every shift. Clearly aligned.* A Supreme AI Ventures product.
 
-[Live demo](https://shiftclarity.pages.dev/demo/) · [Try it locally](#try-it-locally) · [Persistent pilot](https://shiftclarity.pages.dev/pilot/) · [C4 architecture](docs/architecture/README.md) · [Architecture decisions](docs/adr/README.md)
+[Product](https://shiftclarity.pages.dev/) · [Live demo](https://shiftclarity.pages.dev/demo/) · [Try it locally](#try-it-locally) · [Persistent pilot](https://shiftclarity.pages.dev/pilot/) · [C4 architecture](docs/architecture/README.md) · [Architecture decisions](docs/adr/README.md)
 
 **Current release:** a working synthetic pilot with a React interface, FastAPI backend, Cognito sign-in, private S3 imports, Neon persistence, and Lambda/SQS processing. The hosted standalone demo is open to explore; the persistent cloud workspace requires an assigned account and authenticator. All examples below use fictional records.
 
@@ -92,7 +92,7 @@ Pilot imports accept the downloadable normalized **synthetic JSON** template, up
 | Neon PostgreSQL + Psycopg | Persistent reviews, immutable revisions/runs, source lineage, jobs, and audit history |
 | Private S3 | Quarantined and accepted source objects with gated downloads |
 | Lambda + SQS FIFO | On-demand web requests and durable processing without an always-on app server |
-| Cloudflare Pages | Simple HTTPS address for the full pilot through a fixed-origin proxy |
+| Cloudflare Pages | Static public landing page and same-origin pilot through a fixed-origin proxy |
 | Terraform | Reproducible AWS infrastructure |
 
 The browser and backend use the same calculation engine. PostgreSQL transactions govern job claims and completed-run publication. Cognito establishes identity; server-side memberships govern workspace permissions. A container packages the UI, Python service, and Node engine into one versioned image for both Lambda functions.

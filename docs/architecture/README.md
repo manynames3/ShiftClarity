@@ -2,6 +2,8 @@
 
 ShiftClarity compares approved work and posted invoices against independently approved, effective contract terms. It publishes an explainable result, preserves the evidence used, and records the human review. Missing support becomes a coverage task with an unknown monetary value.
 
+The public root serves a static landing page from Cloudflare Pages; its dedicated `/landing/` assets do not invoke AWS.
+
 These C4 views describe the **deployed synthetic pilot**, not a proposed production platform. All records are fictional. The standalone `/demo/` experience remains a separate, memory-only demonstration.
 
 ## C4 level 1: system context
@@ -45,7 +47,7 @@ flowchart TB
     subgraph sc["ShiftClarity — software system"]
         ui["Browser application<br/>Container: React and TypeScript<br/>Workspace, evidence, inputs, rules and coverage"]
 
-        edge["Cloudflare Pages proxy<br/>Container: JavaScript Worker<br/>Fixed AWS origin, secure cookies and no private caching"]
+        edge["Cloudflare Pages<br/>Container: static landing and JavaScript Worker<br/>Public assets; fixed AWS proxy with secure cookies and no private caching"]
 
         subgraph aws["AWS hosting boundary — us-east-1"]
             gateway["API Gateway HTTP API<br/>Infrastructure: HTTPS entry point"]

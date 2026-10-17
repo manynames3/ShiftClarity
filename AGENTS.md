@@ -1,5 +1,8 @@
 # ShiftClarity workspace instructions
 
+## Approved landing page · October 17, 2026
+The user approved the rendered Claude/Codex landing concept and explicitly requested push/deploy. Serve that bright editorial page at the public root through Cloudflare static assets; retain the existing demo and private-pilot routing and controls. This supersedes the original handoff restriction against a public landing page for this approved design. No new services, dependencies, real-data claims or pricing are authorized.
+
 ## Approved layout correction · October 16, 2026
 The user-supplied image at docs/design-reference/approved-overview.png is authoritative for the selected redesign. Earlier concept letters crossed: the user calls this selection B, while old exploration files call it A/Horizon. Follow the image, not those old letters. Use horizontal labeled navigation, a prominent financial summary, spacious findings and a right-hand coverage column; evidence is a separate page. Carry this visual system through all routes. This explicitly supersedes the earlier no-restyling language and the mistakenly shipped sidebar/embedded-evidence layout. The user has authorized pushing and deploying the redesign.
 

@@ -14,7 +14,9 @@
     "build:engine": "node scripts/build-engine.mjs",
     "pilot": "backend/.venv/bin/python scripts/run-pilot.py",
     "test:backend": "backend/.venv/bin/python -m pytest backend/tests -q",
-    "test:pilot": "playwright test -c playwright.pilot.config.ts"
+    "test:pilot": "playwright test -c playwright.pilot.config.ts",
+    "build:pages": "node scripts/build-pages.mjs",
+    "test:landing": "playwright test -c playwright.landing.config.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",
