@@ -1,10 +1,11 @@
 """Establish only the authorized deployment role, then save temporary role credentials privately."""
 import json
+import os
 from pathlib import Path
 import boto3
 
 ROOT=Path(__file__).resolve().parent.parent
-session=boto3.Session(profile_name="default",region_name="us-east-1")
+session=boto3.Session(profile_name=os.environ.get("AWS_PROFILE","default"),region_name="us-east-1")
 sts=session.client("sts")
 identity=sts.get_caller_identity()
 account="636305658578"

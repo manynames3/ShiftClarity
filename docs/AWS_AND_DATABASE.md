@@ -32,7 +32,7 @@ Terraform now defines budget email alerts at 80% actual spend and 100% forecaste
 
 The [verification record](VERIFICATION.md) summarizes the deployed checks. Detailed image/OS scan reports remain in local ignored artifacts. scripts/verify-container.py --lambda checks the actual AWS runtime emulator, nonroot/read-only execution, restricted Neon connection, UI, denied anonymous API and shared calculator. The default Docker target remains a locally runnable server; AWS uses --target lambda, linux/amd64 and provenance=false. Never publish an unverified image or include .local in its context.
 
-The protected deployment files live in .local. Refresh temporary deployment credentials using scripts/bootstrap-aws-access.py, which only manages the dedicated role. It scopes established Cognito/API resources after bootstrap. Export AWS_SHARED_CREDENTIALS_FILE to the absolute .local/aws-deploy-credentials path and AWS_PROFILE=shiftclarity-deploy for subsequent commands. All application operations must use the assumed role.
+The protected deployment files live in .local. Authenticate an owner-authorized AWS CLI profile with access to maintain the dedicated deployment role, then run scripts/bootstrap-aws-access.py; it honors AWS_PROFILE and otherwise uses default. It updates only the ShiftClarity deployment role and issues temporary credentials. It scopes established Cognito/API resources after bootstrap. Export AWS_SHARED_CREDENTIALS_FILE to the absolute .local/aws-deploy-credentials path and AWS_PROFILE=shiftclarity-deploy for subsequent commands. All application operations must use the assumed role.
 
 That role's SNS access is limited to the single synthetic-pilot alert topic. If granting it manually, use this statement in its inline policy:
 
