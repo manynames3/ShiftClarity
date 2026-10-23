@@ -1,0 +1,4 @@
+Rate ID,Contract ID,Facility,Role,Rate Type,Bill Rate,Effective From,Authorized On,Currency
+RATE-REG,CTR-A,FAC-A,RN,Regular,65,2026-10-01,2026-09-28,USD
+RATE-OT,CTR-A,FAC-A,RN,OT,97.50,2026-10-01,2026-09-28,USD
+RATE-WEEKEND,CTR-A,FAC-A,LPN,Weekend,85,2026-10-01,2026-09-28,USD

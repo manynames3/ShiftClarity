@@ -15,10 +15,10 @@ class PrivateStorage:
             raise ValueError("Invalid private object reference")
         return key
 
-    def put(self,key,data):
+    def put(self,key,data,content_type="application/json"):
         key=self._key(key)
         if self.s3:
-            self.s3.put_object(Bucket=self.settings.bucket,Key=key,Body=data,ContentType="application/json",ServerSideEncryption="AES256")
+            self.s3.put_object(Bucket=self.settings.bucket,Key=key,Body=data,ContentType=content_type,ServerSideEncryption="AES256")
         else:
             target=Path(self.settings.storage_dir)/key
             target.parent.mkdir(parents=True,exist_ok=True,mode=0o700)

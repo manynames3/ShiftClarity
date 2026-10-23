@@ -75,3 +75,35 @@ The cloud worker uses a 60-second database lease and at most three job attempts.
 Accepted originals expire after 30 days and quarantine objects after one day. Normalized completed runs, rules and audit history need a separately approved retention policy before real data. [ADR 0005](../adr/0005-private-versioned-evidence.md) explains the evidence boundary; the [threat model](../THREAT_MODEL.md) records the remaining operating limits.
 
 Source: [API](../../backend/app.py), [imports](../../backend/imports.py), [jobs](../../backend/jobs.py), [Lambda handlers](../../backend/lambda_handler.py), and [infrastructure](../../infra/main.tf).
+
+## Spreadsheet MVP entry path (local, not deployed)
+
+```mermaid
+sequenceDiagram
+ actor Reviewer
+ actor Approver
+ participant API as Existing FastAPI service
+ participant Parser as Bounded parser subprocess
+ participant DB as Workspace-scoped PostgreSQL
+ participant Originals as Private originals
+ Reviewer->>API: Choose facility/period and declared source scope
+ Reviewer->>API: Upload attested CSV/XLSX files
+ API->>Originals: Quarantine exact bytes
+ API->>Parser: Bounded parse; no service credentials
+ Parser-->>Reviewer: Suggested fields/values and limited preview
+ Reviewer->>API: Confirm mapping and formats; optionally save profile
+ API->>DB: Validate complete source selection and revision conflicts
+ Approver->>API: Inspect originals and independently approve new terms
+ API->>DB: Lock workspace; register immutable rule versions
+ Reviewer->>API: Explicitly accept validated selection
+ API->>API: Existing canonical import/revision checks
+ API->>Originals: Retain accepted originals for 30 days
+ API->>DB: Freeze selection; remove raw previews
+ Reviewer->>API: Run accepted import
+ Note over API,DB: Existing durable job/publication sequence above remains authoritative
+ Reviewer->>API: Record decisions and download Excel/PDF
+ API->>DB: Read current review snapshot and audit download
+ API-->>Reviewer: Evidence report, gaps and all review states
+```
+
+A repeated mapping exposes new source values for confirmation. Unchanged approved rates are reused; another period has a distinct dataset identity and fresh review state. A failed source selection publishes no partial run and does not invalidate a previous guided review. Download the current report before advancing; historical report navigation is not part of this MVP.

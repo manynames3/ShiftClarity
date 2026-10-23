@@ -12,7 +12,7 @@ it('provides a global sign-out action to persistent pilot users',async()=>{
  const state=initialDemo(freshInputs(),draftRule),noop=async()=>{},logout=vi.fn(noop);
  const pilot:PilotController={state,version:1,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
   session:{actor:'DEMO-REVIEWER',roles:['reviewer'],csrf:'test-only',synthetic:true},members:['DEMO-REVIEWER'],
-  decide:noop,approve:noop,task:noop,importFile:noop,export:noop,logout,source:noop,propose:noop};
+  decide:noop,approve:noop,task:noop,importFile:noop,export:noop,logout,source:noop,propose:noop,api:async<T,>()=>({} as T),uploadTable:noop,runImport:noop,refresh:noop};
  const view=render(<App pilot={pilot}/>);
  try{await userEvent.setup().click(screen.getByRole('button',{name:'Sign out'}));expect(logout).toHaveBeenCalledOnce();}
  finally{view.unmount();history.replaceState({},'',originalUrl);}
@@ -31,7 +31,7 @@ it('keeps a delayed server review visibly pending and prevents a duplicate submi
  const decide=vi.fn(()=>pending),noop=async()=>{};
  const pilot:PilotController={state,version:1,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
   session:{actor:'DEMO-REVIEWER',roles:['reviewer'],csrf:'test-only',synthetic:true},members:['DEMO-REVIEWER'],
-  decide,approve:noop,task:noop,importFile:noop,export:noop,logout:noop,source:noop,propose:noop};
+  decide,approve:noop,task:noop,importFile:noop,export:noop,logout:noop,source:noop,propose:noop,api:async<T,>()=>({} as T),uploadTable:noop,runImport:noop,refresh:noop};
  const view=render(<App pilot={pilot}/>);
  try{
   const user=userEvent.setup();
@@ -44,7 +44,8 @@ it('keeps a delayed server review visibly pending and prevents a duplicate submi
   await user.click(saving);
   expect(decide).toHaveBeenCalledTimes(1);
   await act(async()=>{finish();await pending;});
-  expect(screen.getByRole('status')).toHaveTextContent('saved on the server');
+  expect(screen.getByText('Review record saved on the server. Nothing was sent.').closest('[role=status]')).toBeInTheDocument();
+  expect(window.location.search).toBe('?view=workspace&scope=all');
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
  }finally{
   view.unmount();history.replaceState({},'',originalUrl);

@@ -23,7 +23,7 @@ def receipt(row):
         result["help"]=HELP.get(row["diagnostic"],"Check the normalized template, source controls and registered rule versions.")
     return result
 
-def failed_attempt(db,member,key,row,state,initial=False):
+def failed_attempt(db,member,key,row,state,initial=False,invalidate=True):
     # Content deduplication must not hide a new failed attempt after a recovered run.
     fingerprint=digest({"resource":"failed-import","content_hash":row["content_hash"]})
     saved=db.execute("SELECT request_hash,response FROM write_receipts WHERE actor=%s AND request_key=%s",
@@ -35,14 +35,27 @@ def failed_attempt(db,member,key,row,state,initial=False):
     response=receipt(row)
     # Older rejected imports already record the original key, even without an attempt receipt.
     if initial or row.get("request_key")!=key:
-        state.update(stale=bool(state["run"]),error=HELP.get(row["diagnostic"],"Import rejected. Check the template."),importState="failed")
-        save_head(db,member["org_id"],state)
+        if invalidate:
+            state.update(stale=bool(state["run"]),error=HELP.get(row["diagnostic"],"Import rejected. Check the template."),importState="failed")
+            save_head(db,member["org_id"],state)
         audit(db,member["org_id"],member["actor"],"import_rejected",row["id"],{"code":row["diagnostic"]})
     db.execute("INSERT INTO write_receipts VALUES(%s,%s,%s,%s,%s)",
                (member["org_id"],member["actor"],key,fingerprint,Jsonb(response)))
     return response
 
-def receive(settings,storage,member,data,key):
+def conflicting_revisions(db,normalized):
+    conflicts=[]
+    for kind in ('work','invoices'):
+        records=normalized[kind];ids=list({r['id'] for r in records})
+        rows=db.execute('SELECT external_id,revision,content_hash FROM source_revisions WHERE kind=%s AND external_id=ANY(%s)',(kind,ids)).fetchall() if ids else []
+        prior={(r['external_id'],r['revision']):r['content_hash'] for r in rows}
+        for record in records:
+            identity={k:v for k,v in record.items() if k!='batch_id'}
+            revision=record['source_revision'] if kind=='work' else digest(identity)
+            if (record['id'],revision) in prior and prior[(record['id'],revision)]!=digest(identity):conflicts.append((kind,record['id']))
+    return conflicts
+
+def receive(settings,storage,member,data,key,invalidate_on_failure=True):
     content_hash=digest(data)
     import_id="IMP-"+uuid.uuid4().hex
     object_key=settings.org_id+"/quarantine/"+uuid.uuid4().hex
@@ -57,7 +70,7 @@ def receive(settings,storage,member,data,key):
         if existing:
             row=existing[0]
             if row["status"]!="quarantined":
-                return failed_attempt(db,member,key,row,state) if row["status"]=="failed" else receipt(row)
+                return failed_attempt(db,member,key,row,state,invalidate=invalidate_on_failure) if row["status"]=="failed" else receipt(row)
             import_id,object_key=row["id"],row["object_key"]
         else:
             count=db.execute("SELECT count(*) AS n FROM imports WHERE created_at>now()-interval '1 hour'").fetchone()["n"]
@@ -81,7 +94,7 @@ def receive(settings,storage,member,data,key):
             state=head(db,True)["state"]
             current=db.execute("SELECT id,request_key,status,content_hash,diagnostic FROM imports WHERE id=%s",(import_id,)).fetchone()
             if current["status"]!="quarantined":
-                return failed_attempt(db,member,key,current,state) if current["status"]=="failed" else receipt(current)
+                return failed_attempt(db,member,key,current,state,invalidate=invalidate_on_failure) if current["status"]=="failed" else receipt(current)
             trusted=db.execute("SELECT content FROM rule_versions").fetchall()
             known={r["content"]["id"]:r["content"] for r in trusted}
             for rule in normalized["rules"]:
@@ -92,19 +105,15 @@ def receive(settings,storage,member,data,key):
                 old=registered["content"] if registered else None
                 if not old or digest(excerpt)!=digest(old):
                     raise EngineError("UNREVIEWED_SOURCE")
+            if conflicting_revisions(db,normalized):raise EngineError('CONFLICTING_SOURCE_REVISION')
             for kind in ("work","invoices"):
                 records=normalized[kind]
-                ids=list({record["id"] for record in records})
-                prior_rows=db.execute("SELECT external_id,revision,content_hash FROM source_revisions WHERE kind=%s AND external_id=ANY(%s)",(kind,ids)).fetchall() if ids else []
-                prior={(row["external_id"],row["revision"]):row["content_hash"] for row in prior_rows}
                 revisions=[]
                 lineage=[]
                 for record in records:
                     identity={k:v for k,v in record.items() if k!="batch_id"}
                     revision=record["source_revision"] if kind=="work" else digest(identity)
                     hashed=digest(identity)
-                    if (record["id"],revision) in prior and prior[(record["id"],revision)]!=hashed:
-                        raise EngineError("CONFLICTING_SOURCE_REVISION")
                     revisions.append((member["org_id"],kind,record["id"],revision,hashed,Jsonb(identity)))
                     lineage.append((member["org_id"],import_id,kind,record["id"],revision))
                 with db.cursor() as cursor:
@@ -123,7 +132,7 @@ def receive(settings,storage,member,data,key):
             state=head(db,True)["state"]
             current=db.execute("SELECT id,request_key,status,content_hash,diagnostic FROM imports WHERE id=%s",(import_id,)).fetchone()
             if current["status"]!="quarantined":
-                return failed_attempt(db,member,key,current,state) if current["status"]=="failed" else receipt(current)
+                return failed_attempt(db,member,key,current,state,invalidate=invalidate_on_failure) if current["status"]=="failed" else receipt(current)
             code=str(error) if isinstance(error,EngineError) and str(error) in HELP else "INVALID_SCHEMA"
             db.execute("UPDATE imports SET status='failed',diagnostic=%s WHERE id=%s",(code,import_id))
-            return failed_attempt(db,member,key,{**current,"status":"failed","diagnostic":code},state,initial=True)
+            return failed_attempt(db,member,key,{**current,"status":"failed","diagnostic":code},state,initial=True,invalidate=invalidate_on_failure)

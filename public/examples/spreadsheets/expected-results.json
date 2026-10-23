@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "facility": "FAC-A",
+  "period": [
+    "2026-10-01",
+    "2026-10-10"
+  ],
+  "work_records": 8,
+  "evaluated_records": 6,
+  "underbilling": "200.00",
+  "overbilling": "0.00",
+  "coverage_gaps": 2,
+  "posted_invoice_total": "3775.00",
+  "evaluated_invoice_total": "3105.00",
+  "notes": "One unsupported callback and one pending approval. No recovered funds or vendor compatibility claim."
+}

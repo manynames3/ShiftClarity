@@ -45,3 +45,11 @@ A live repeated-import test found that content deduplication of a previously rej
 
 The user approved creating public `manynames3/ShiftClarity`. The repository includes reviewed application source, original reproducible handoff, a product-led README with four actual synthetic AWS product captures, GitHub About metadata, five ADRs and C4 context/container/component views plus an import sequence. Credentials, authenticator setup keys, Terraform state, backups, generated runtime files and raw artifacts remain excluded. Existing AWS account/project guards are non-secret operator safety checks and remain intact. The GitHub website points to the already-deployed standalone browser demo; the persistent pilot retains assigned-account authentication. No license, customer-value, compliance or production-readiness claim is invented.
 
+
+## October 23 · spreadsheet adoption MVP
+
+The user authorized the customer-ready MVP brief, Claude consultation, implementation and GitHub README/About updates. The working scope is fictional evaluation with existing AWS/Cognito/S3/Neon architecture; no new live deployment or real records. OpenPyXL, DefusedXML and ReportLab were explicitly approved. [ADRs 0007/0008](docs/adr/README.md) record the decisions.
+
+Use one facility/period, deterministic confirmed mappings, reusable header-pinned profiles and the existing immutable canonical pipeline. No LLM, guessed allocations or certified vendor compatibility. Historical rate authorization remains separate from actual independent approval; workspace locking serializes concurrent rate approvals. Reports use current decisions and separate evaluated billing from all-posted totals; raw canonical fingerprints are hashed, notes/worker identities excluded by default. Accepted raw previews are removed. Local launch defaults to the local configuration instead of implicitly choosing an existing Neon configuration.
+
+The complete [fictional walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) includes a second period with an unfamiliar export value. Current-run-only reports, whole-minute time, stable pseudonymous codes and explicit signed-credit conventions are intentional limits. Customer semantics, actual accuracy/effort, privacy/operations and deployment remain separately gated. Claude supplied read-only reviews; Codex verified and fixed concrete findings and ran the tests.

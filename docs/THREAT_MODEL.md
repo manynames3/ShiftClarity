@@ -18,3 +18,18 @@ Scope: one synthetic workspace, distinct identity accounts, AWS web/worker funct
 | Credit exhaustion or runaway workload | No provisioned compute, bounded upload/parser limits, cached public build assets, endpoint throttling, budget and dead-letter alarm | Deployed settings and preflight account/credit reading; no hard spending cap, final bill or credit-expiry verification |
 
 The runtime role cannot edit/delete audit, source, rule or completed-run records. The database owner can perform approved retention operations; this is not cryptographic tamper evidence against a compromised administrator. The local development identity server is loopback-only and must never be exposed as the production provider.
+
+## Local spreadsheet MVP extension · October 23
+
+| Added boundary | Control and verification |
+|---|---|
+| Malicious CSV/XLSX | Size/row/column/sheet/archive/expanded-text limits; hardened XML; active-content rejection; short-lived parser with scrubbed environment, CPU/wall/Linux memory bounds and a serialized committed attempt budget |
+| Guessing sessions/files/profiles/reports | Source-read roles, creator-only mutations, same workspace membership, forced RLS on all three new tables and endpoint-negative tests |
+| Concurrent independent rate proposals | Workspace lock before reading registered versions; overlapping concurrent approvals cannot both register |
+| New formats on repeated periods | Exact profile header signature, current value-map refresh, explicit new-value confirmation and per-period dataset identity |
+| Rejected/failed acceptance | Preflight revision conflicts, actionable errors, no partial publication, unchanged earlier review; interrupted raw copies cleaned and retried |
+| Preview retention / deletion race | Role-gated staged previews removed at acceptance; maintenance locks session then files, commits tombstones before byte deletion and retains retry references |
+| XLSX/PDF content execution or leakage | Literal cells, escaped paragraph text, hashed canonical fingerprints, worker fields/notes excluded by default, explicit notes opt-in, authenticated audited no-store downloads |
+| Large reports | Two concurrent encoders; bounds inherited from accepted sources; full declared-capacity synthetic import/report check |
+
+The local browser journey provisions short sessions only in its disposable database; it is not a fresh Cognito or penetration test. Original provider/production evidence is historical. The new upgrade has not been deployed or exercised against actual customer records.

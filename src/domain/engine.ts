@@ -34,7 +34,7 @@ export function reconcile(raw:Inputs):Run {
     if(!validDate(w.service_date)||!w.facility_id||!w.worker_id||!w.assignment_id||!w.source_revision||!w.role||!w.component)throw new InputError('INVALID_WORK_RECORD',w.id);
   }
   for(const r of rules){
-    if(!ratePattern.test(r.rate)||!validDate(r.effective_from)||(r.effective_to&&(!validDate(r.effective_to)||r.effective_to<=r.effective_from)))throw new InputError('INVALID_RULE',r.id);
+    if(!ratePattern.test(r.rate)||!validDate(r.effective_from)||(r.effective_to&&(!validDate(r.effective_to)||r.effective_to<=r.effective_from))||(r.authorization_date&&!validDate(r.authorization_date)))throw new InputError('INVALID_RULE',r.id);
     if(r.state==='approved'&&(!r.approved_at||Number.isNaN(Date.parse(r.approved_at))||!r.author_id||!r.approver_id||r.approver_id===r.author_id||!raw.excerpts.some(e=>e.id===r.source_excerpt_id)))throw new InputError('INVALID_RULE_APPROVAL',r.id);
   }
   for(const l of invoices){
@@ -74,11 +74,11 @@ export function reconcile(raw:Inputs):Run {
     if(!time?.declared_complete||w.service_date<m.service_from||w.service_date>=m.service_to_exclusive||(time.service_from&&w.service_date<time.service_from)||(time.service_to_exclusive&&w.service_date>=time.service_to_exclusive))return {...base,category:'not_evaluated',reason_code:'WORK_SOURCE_INCOMPLETE'};
     if(blockers.has(w.id))return {...base,category:'abstained',reason_code:blockers.get(w.id)!};
     const rs=selected.get(w.id)!;
-    if(w.component!=='standard'||w.role!=='RN')return {...base,category:'abstained',reason_code:'UNSUPPORTED_COMPONENT'};
+    if(!['standard','overtime','holiday','weekend','on_call','callback'].includes(w.component))return {...base,category:'abstained',reason_code:'UNSUPPORTED_COMPONENT'};
     if(!rs.length)return {...base,category:'abstained',reason_code:'UNSUPPORTED_COMPONENT'};
     if(rs.length!==1)return {...base,category:'abstained',reason_code:'CONFLICTING_APPROVED_RULES'};
     const rule=rs[0];
-    if(rule.approved_at!.slice(0,10)>w.service_date)return {...base,category:'abstained',reason_code:'RETROACTIVE_RULE_APPROVAL_UNSUPPORTED'};
+    if((rule.authorization_date||rule.approved_at!.slice(0,10))>w.service_date)return {...base,category:'abstained',reason_code:'RETROACTIVE_RULE_APPROVAL_UNSUPPORTED'};
     if(rule.currency!=='USD')return {...base,category:'abstained',reason_code:'CURRENCY_MISMATCH'};
     const endDate=w.service_end_date;
     if(endDate&&rules.some(r=>r.state==='approved'&&r.facility_id===w.facility_id&&r.role===w.role&&r.component===w.component&&r.effective_from>w.service_date&&r.effective_from<=endDate))return {...base,category:'abstained',reason_code:'RATE_BOUNDARY_REQUIRES_SEGMENTATION'};

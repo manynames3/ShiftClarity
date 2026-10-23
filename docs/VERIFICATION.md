@@ -1,5 +1,33 @@
 # Synthetic release verification
 
+## October 23, 2026 · Spreadsheet adoption MVP (local only)
+
+The CSV/XLSX-to-review-to-report upgrade is implemented locally and documented for fictional evaluation. It has **not** been deployed to AWS/Neon/Pages. The earlier hosted release evidence below remains historical.
+
+| Check actually performed | Result and scope |
+|---|---|
+| Backend / local PostgreSQL | **97 passed**: original regressions plus bounded spreadsheets, profiles, cross-workspace endpoints, identity/role/CSRF denials, immutable acceptance, rate-approval races, failed copies/retries, revision conflicts, quotas, retention/purge and reports |
+| Domain / component | **90 passed**; original exact-money/oracle behavior retained, with explicit imported hourly components and historical authorization tests |
+| Original handoff | **20 integrity checks passed**; handoff unchanged |
+| Original browser regressions | **44 passed**, including light/dark accessibility, mobile layouts, review/reopen and signed-in header widths |
+| Full MVP browser journey | **Passed**: first-period XLSX, confirmed/saved mappings, second-account approval, acceptance/queue publication, $200 derived difference, 6/8 evaluated work, persisted decision, both downloads, and second-period CSV with new RG mapping and fresh review state |
+| Responsive/accessibility | No overflow and zero automated axe violations on the new import view at 1440/390/320px; open mappings and report workspace also passed in light/dark themes; actual desktop/mobile captures inspected |
+| Report correctness | Four integration tests passed; current decisions, both financial directions, evaluated versus all-posted totals, all finding states, original hashes/lineage, literal Excel cells, escaped PDF markup, default note/worker omission and stale warnings |
+| Report visuals | Actual browser-download PDF rendered and all three pages inspected; branding, embedded fonts, readable tables, row references and pagination checked. Curated XLSX/PDF examples and product captures are published. |
+| Declared capacity | Synthetic adapter/engine/XLSX/PDF check passed for **500 work rows / 1,000 invoice lines** within stated byte/response bounds; no latency SLA or representative Lambda capacity claim |
+| Container | Local AMD64 Lambda image built; **nonroot UID 10001, read-only filesystem, no network** parser/shared-engine/XLSX/PDF smoke passed. No image push. |
+| Public landing compatibility | Three existing landing browser checks and static Pages build passed locally; no deployment |
+| Independent opinion | Claude supplied read-only plan and code reviews; Codex verified/fixed concrete findings and ran tests. See [disposition](CLAUDE_MVP_REVIEW.md). |
+
+The MVP browser test uses real local API authorization and disposable PostgreSQL, but provisions short test sessions directly. It does **not** retest the Cognito provider. No new real-provider/cloud, restore, monthly-cost or customer-data evaluation was performed. Existing provider/backup evidence below is not relabeled as a new test.
+
+The final visual pass corrected a wrapped PDF Minutes header, long fractional-hour display, confirmation navigation and setup checkbox alignment. Earlier failing tests also exposed raw canonical fingerprints in reports, accepted-preview UI assumptions, and saved-profile new-value behavior; they were corrected and the affected checks rerun. Framework deprecation warnings remain (Authlib/Starlette httpx compatibility and a Mangum event-loop warning); they did not fail tests and no unapproved dependency migration was introduced.
+
+Ego confirmed the local page and 1920px bounds but its screenshot capture timed out; the published images are actual captures from the passing isolated Chrome tests. Its task was finished; an announced browser update was not applied. The Pages project was read back with **Git Provider: No** before source publication; GitHub publication does not deploy this direct-upload project.
+
+See the [walkthrough](SPREADSHEET_WALKTHROUGH.md), [MVP acceptance checklist](../ACCEPTANCE_CHECKLIST.md#spreadsheet-adoption-mvp--october-23-2026), [capability limits](BILLING_CAPABILITIES.md), [sample reports](examples/fictional-billing-review.pdf) and [remaining gates](PILOT_GATES.md). Current-run-only report navigation, whole-minute time, stable reference codes and explicit flat hourly terms are documented limits.
+
+
 ## October 16, 2026 readiness checkpoint
 
 The current synthetic pilot is deployed at https://shiftclarity.pages.dev/pilot/. The manual [staffing exercise](../examples/synthetic-healthcare-staffing/README.md) includes the exact bundle exercised by the live import journey and a separate expected-results file.

@@ -66,8 +66,7 @@ try:
         print("Pilot already running at http://127.0.0.1:5180/pilot/")
     else:
         application_environment=os.environ.copy()
-        if (local/"neon-app-config.json").exists() and not application_environment.get("SHIFTCLARITY_CONFIG"):
-            application_environment["SHIFTCLARITY_CONFIG"]=str(local/"neon-app-config.json")
+        application_environment.setdefault("SHIFTCLARITY_CONFIG",str(local/"config.json"))
         server=start([sys.executable,"-m","uvicorn","backend.app:create_app","--factory","--host","127.0.0.1",
                       "--port","5180","--no-access-log"],"backend.log",application_environment)
         wait_for("http://127.0.0.1:5180/health",server)

@@ -1,0 +1,9 @@
+Work ID,Client ID,Resource ID,Role,Bill Type,Service Date,Worked Hours,Approved,Time Approved Date
+W001,FAC-A,E101,RN,Regular,2026-10-02,10,Approved,2026-10-03
+W002,FAC-A,E101,RN,Regular,2026-10-03,10,Approved,2026-10-04
+W003,FAC-A,E101,RN,Regular,2026-10-04,10,Approved,2026-10-05
+W004,FAC-A,E101,RN,Regular,2026-10-05,10,Approved,2026-10-06
+W005,FAC-A,E102,RN,OT,2026-10-06,2,Approved,2026-10-07
+W006,FAC-A,E103,LPN,Weekend,2026-10-04,6,Approved,2026-10-05
+W007,FAC-A,E104,RN,Callback,2026-10-07,3,Approved,2026-10-08
+W008,FAC-A,E105,RN,Regular,2026-10-08,8,Pending,

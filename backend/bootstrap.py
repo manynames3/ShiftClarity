@@ -46,6 +46,10 @@ def migrate(db):
         db.execute((ROOT/"backend/migrations/002_documents.sql").read_text())
     if not db.execute("SELECT 1 FROM pg_trigger WHERE tgname='immutable_import'").fetchone():
         db.execute((ROOT/"backend/migrations/003_import_immutability.sql").read_text())
+    if not db.execute("SELECT to_regclass('public.table_sessions')").fetchone()[0]:
+        db.execute((ROOT/"backend/migrations/004_spreadsheet_onboarding.sql").read_text())
+    if not db.execute("SELECT 1 FROM pg_trigger WHERE tgname='immutable_table_file'").fetchone():
+        db.execute((ROOT/"backend/migrations/005_spreadsheet_immutability.sql").read_text())
     db.execute(sql.SQL("GRANT CONNECT ON DATABASE {} TO shiftclarity_app").format(sql.Identifier(db.info.dbname)))
     db.execute("GRANT USAGE ON SCHEMA public TO shiftclarity_app")
     db.execute("GRANT SELECT ON ALL TABLES IN SCHEMA public TO shiftclarity_app")

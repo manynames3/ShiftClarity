@@ -1,0 +1,9 @@
+Billing Line ID,Statement ID,Client ID,Resource ID,Service Date,Discipline,Bill Type,Net Amount,Bill Hours,Unit Rate,Posting Status,Document Type
+L001,INV-A,FAC-A,E101,2026-10-02,RN,Regular,600,10,60,Posted,Statement
+L002,INV-A,FAC-A,E101,2026-10-03,RN,Regular,600,10,60,Posted,Statement
+L003,INV-A,FAC-A,E101,2026-10-04,RN,Regular,600,10,60,Posted,Statement
+L004,INV-A,FAC-A,E101,2026-10-05,RN,Regular,600,10,60,Posted,Statement
+L005,INV-A,FAC-A,E102,2026-10-06,RN,OT,195,2,97.5,Posted,Statement
+L006,INV-A,FAC-A,E103,2026-10-04,LPN,Weekend,510,6,85,Posted,Statement
+L007,INV-A,FAC-A,E104,2026-10-07,RN,Callback,150,3,50,Posted,Statement
+L008,INV-A,FAC-A,E105,2026-10-08,RN,Regular,520,8,65,Posted,Statement

@@ -6,6 +6,8 @@ The public root serves a static landing page from Cloudflare Pages; its dedicate
 
 These C4 views describe the **deployed synthetic pilot**, not a proposed production platform. All records are fictional. The standalone `/demo/` experience remains a separate, memory-only demonstration.
 
+The CSV/XLSX onboarding and Excel/PDF reports extend these same containers in the **local MVP**; they are not live at the hosted pilot yet. See the [spreadsheet component view](#c4-level-3-spreadsheet-mvp) and [walkthrough](../SPREADSHEET_WALKTHROUGH.md). No new cloud service is introduced.
+
 ## C4 level 1: system context
 
 ```mermaid
@@ -152,3 +154,30 @@ flowchart LR
 | Imports and evidence | [Import boundary](../../backend/imports.py), [storage](../../backend/storage.py), [import immutability](../../backend/migrations/003_import_immutability.sql) | [ADR 0005](../adr/0005-private-versioned-evidence.md) |
 
 The [ADR index](../adr/README.md) records why these choices were made. [Phase 4 controls](../PHASE_4.md), the [threat model](../THREAT_MODEL.md), and [implementation evidence](../../IMPLEMENTATION_STATUS.md) provide the detailed verification and remaining gates. Real customer data, approved retention and incident operations, independent evaluation, and production approval remain separate requirements.
+
+## C4 level 3: spreadsheet MVP
+
+These components run inside the existing React browser and FastAPI container. PostgreSQL/S3 are the existing storage boundaries; local checks use isolated PostgreSQL and private local files.
+
+```mermaid
+flowchart LR
+  finance["Finance reviewer"] --> ui["Guided import and mapping<br/>React: ImportWorkbench"]
+  approver["Independent approver"] --> ui
+  ui --> scope["Session, scope and permissions<br/>workbench.py + auth.py"]
+  scope --> parser["Bounded parser subprocess<br/>tabular.py + table_cli.py"]
+  parser --> mapping["Confirmed mappings<br/>table_mapping.py"]
+  mapping --> bundle["Canonical source selection<br/>table_bundle.py"]
+  bundle --> approval["Serialized rate approval<br/>shared rate-approval.ts"]
+  approval --> imports["Existing immutable import pipeline<br/>imports.py"]
+  imports --> jobs["Existing durable job/publication<br/>jobs.py + shared engine"]
+  jobs --> review["Existing evidence and review API"]
+  review --> reports["Current reviewed-run reports<br/>reports.py"]
+  reports --> downloads["Literal Excel / branded PDF"]
+  scope --> db[("PostgreSQL<br/>Forced workspace RLS<br/>sessions/files/profiles + existing evidence")]
+  imports --> db
+  jobs --> db
+  reports --> db
+  scope --> private[("Private originals<br/>Quarantine / accepted storage")]
+```
+
+A spreadsheet mapping never grants approval or changes the engine's financial rules. Original files and unmapped previews are not report content. Accepted previews are removed; current reports draw on normalized evidence and hashed references. See [ADR 0007](../adr/0007-confirmed-spreadsheet-adapters.md), [ADR 0008](../adr/0008-current-review-evidence-reports.md) and the [billing matrix](../BILLING_CAPABILITIES.md).

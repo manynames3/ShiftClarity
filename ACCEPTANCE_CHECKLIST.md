@@ -37,7 +37,7 @@ Evidence is app-specific; the original handoff matrix remains untouched. Demo re
 
 SC-17 passes in the canonical Load sample files workflow. A later explicit user instruction adds a separate schema-restricted local preview for their own minimized records. This is a deliberate, recorded scope extension, not a fixture-only production importer.
 
-69 unit/component tests; 20 handoff integrity tests; 21 browser cases including six automated accessibility route checks. All G01–G20 are exercised across engine/demo tests. Visuals: 81 screen/state captures, with layout inspection sheets and selected full-resolution manual inspection. No independent Claude review, production audit, live integration or real-data evaluation was run.
+Historical October 12 baseline: 69 unit/component tests; 20 handoff integrity tests; 21 browser cases including six automated accessibility route checks. All G01–G20 are exercised across engine/demo tests. Visuals: 81 screen/state captures, with layout inspection sheets and selected full-resolution manual inspection. No independent Claude review, production audit, live integration or real-data evaluation was run.
 
 ## Phase 4 synthetic checkpoint
 
@@ -57,3 +57,20 @@ See IMPLEMENTATION_STATUS.md and the updated matrix for actual evidence and limi
 52 backend tests, 70 domain/component tests, 20 original integrity tests, 21 original browser regressions and 8 complete AWS browser journeys passed. 26 cloud captures and actual Cognito branding were inspected. Private S3 original access, FIFO jobs and a matched Neon/S3-to-local restore were exercised. Verified image IDs, OS scan, runtime settings and Terraform drift identify the deployed environment. The final wording-only update passed build/component/container and anonymous API/resource checks. The user ended the manual browser task before its additional authenticated recheck; the complete eight live journeys passed before that wording-only update.
 
 SC-25,26,27,29 pass within the authorized synthetic AWS scope. SC-28 has synthetic minimization/storage/restore evidence; actual customer policies and incident contacts remain gated. SC-30 independent measurement and SC-31 production/real-data acceptance remain separate. No live connector, public SaaS onboarding, payment attribution or production/security certification was added.
+
+## Spreadsheet adoption MVP · October 23, 2026
+
+These checks describe the locally implemented fictional upgrade. They do not mark real-customer SC-28/30/31 gates complete or imply a new cloud deployment.
+
+- [x] **MVP-01 — Existing files:** CSV/XLSX in all three source categories, multiple files, worksheet/header preview, deterministic normalization, explicit acceptance and original row/file lineage. Parser/adapter tests and full API/browser journey.
+- [x] **MVP-02 — Meaning confirmed:** columns, values, fixed source fields, date/decimal/time/end-date formats, normalized previews and all-row diagnostics. Unresolved errors block the source selection.
+- [x] **MVP-03 — Reuse:** workspace-RLS profiles with exact header signatures; preserve known custom values and explicitly map a new code in the second-period browser journey. No invented vendor verification.
+- [x] **MVP-04 — Independent terms:** real event timestamps separate from source authorization; self-approval denied, conflicting concurrent approvals serialized, unchanged approved rates reused.
+- [x] **MVP-05 — Billing compatibility:** same exact-decimal engine; dated amendments, explicit hourly components, missing/partial/duplicate billing, signed credits/voids/rebills, reverse statements, ambiguity and incomplete-coverage gaps. Original oracle unchanged.
+- [x] **MVP-06 — Review:** accepted source counts, evaluated work, both difference directions, missing allocations, coverage tasks, review progress and evidence requests; source detail and persisted decisions.
+- [x] **MVP-07 — Reports:** current reviewed state, every finding state, itemized allocations, approved terms, source rows/hashes and gaps; literal/filterable XLSX, branded paginated PDF, no default worker identities/notes/raw canonical fingerprints. Actual browser downloads and rendered PDF inspection.
+- [x] **MVP-08 — Security/recovery:** every new endpoint identity/role/CSRF cases, cross-workspace RLS, immutable accepted files/sessions/profiles, guarded downloads, expiry/purge, failed byte-copy retry, simultaneous acceptance, revision conflict and committed failed-parse budget.
+- [x] **MVP-09 — Repeatable fictional evaluation:** supplied first/second-period files, fresh second-period decisions, reuse without new code or another unchanged-rate approval; narrow-screen overflow and automated accessibility checks.
+- [x] **MVP-10 — Compatibility:** original standalone/browser/oracle checks, full backend tests, production build, local nonroot/read-only/network-isolated container parser/engine/report smoke. Current actual totals and remaining limits are in [verification](docs/VERIFICATION.md).
+
+Not implemented/established: certified vendor connectors, inferred rate policies or fractional-minute rounding, historical review/report navigation, customer data/legal/operations acceptance, independent real-sample accuracy/effort measurement, new AWS/Neon migration/deployment or new Cognito-provider verification. The locally provisioned test sessions do not bypass production identity code.

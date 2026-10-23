@@ -1,0 +1,9 @@
+Line ID,Invoice #,Facility,Shift ID,Amount,Billed Hours,Bill Rate,Status,Document Type
+L001,INV-B,FAC-A,W001,600,10,60,Posted,Statement
+L002,INV-B,FAC-A,W002,600,10,60,Posted,Statement
+L003,INV-B,FAC-A,W003,600,10,60,Posted,Statement
+L004,INV-B,FAC-A,W004,600,10,60,Posted,Statement
+L005,INV-B,FAC-A,W005,195,2,97.5,Posted,Statement
+L006,INV-B,FAC-A,W006,510,6,85,Posted,Statement
+L007,INV-B,FAC-A,W007,150,3,50,Posted,Statement
+L008,INV-B,FAC-A,W008,520,8,65,Posted,Statement

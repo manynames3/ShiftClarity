@@ -16,14 +16,19 @@ export interface PilotController {
  export:()=>Promise<void>;logout:()=>Promise<void>;
  source:(title:string,text:string)=>Promise<void>;
  propose:(supersedes:string,source_excerpt_id:string,rate:string,effective_from:string)=>Promise<void>;
+ api:<T>(path:string,body?:unknown,method?:'POST'|'DELETE')=>Promise<T>;
+ uploadTable:(session:string,category:string,file:File)=>Promise<void>;
+ runImport:(importId:string,onProgress?:(message:string)=>void)=>Promise<void>;
+ refresh:()=>Promise<void>;
 }
 
 export default function ServerApp(){
  const [session,setSession]=useState<Session|null>(null),[snapshot,setSnapshot]=useState<Snapshot|null>(null);
  const [members,setMembers]=useState<string[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState('');
- async function request<T>(path:string,body?:unknown,raw=false):Promise<T>{
-  const response=await fetch(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',
-   headers:body===undefined?{}:{'Content-Type':'application/json','X-CSRF-Token':session?.csrf||'','Idempotency-Key':crypto.randomUUID(),'X-Data-Classification':'synthetic'},
+ async function request<T>(path:string,body?:unknown,raw=false,method?:'POST'|'DELETE'):Promise<T>{
+  const verb=method||(body===undefined?'GET':'POST');
+  const response=await fetch(path,{method:verb,credentials:'same-origin',
+   headers:verb==='GET'?{}:{'Content-Type':'application/json','X-CSRF-Token':session?.csrf||'','Idempotency-Key':crypto.randomUUID(),'X-Data-Classification':'synthetic'},
    ...(body===undefined?{}:{body:raw?String(body):JSON.stringify(body)})});
   if(!response.ok){
    if(response.status===401){setSession(null);setSnapshot(null);}
@@ -57,7 +62,11 @@ export default function ServerApp(){
   await refresh();
   if(imported.status!=='validated')throw new Error((imported.help||'Import rejected. Check the template, source controls and registered versions.')+' The prior completed run is retained.');
   onProgress?.('Source checks passed. Calculating findings…');
-  const job=await request<{id:string}>('/api/v1/runs',{import_id:imported.id});
+  await runImport(imported.id,onProgress);
+ }
+ async function runImport(importId:string,onProgress?:(message:string)=>void){
+  onProgress?.('The review is running. Your previous result remains available.');
+  const job=await request<{id:string}>('/api/v1/runs',{import_id:importId});
   for(let i=0;i<60;i++){
    await new Promise(resolve=>setTimeout(resolve,500));
    const status=await request<{status:string}>('/api/v1/jobs/'+job.id);
@@ -70,6 +79,12 @@ export default function ServerApp(){
  if(!session||!snapshot)return <main className="sign-in"><Logo/><div className="eyebrow">Synthetic pilot · Sample workspace</div><h1>Every shift.<br/>Clearly aligned.</h1><p>Sign in with your own demonstration account to review fictional staffing records. Decisions and approved rule versions are saved in your workspace.</p><a className="btn btn-primary" href="/auth/login">Sign in to your workspace</a>{error&&<p role="alert" className="error">{error}</p>}<p className="muted">Individual accounts · Authenticator verification · Synthetic records only</p><a className="text-link" href="/demo/">Open the standalone demo</a></main>;
  const controller:PilotController={
   ...snapshot,session,members,
+  api:(path,body,method)=>request(path,body,false,method),refresh,runImport,
+  uploadTable:async(identifier,category,file)=>{
+   if(file.size>1024*1024)throw new Error('Each file must be at most 1 MiB.');
+   const response=await fetch('/api/v1/import-workbench/sessions/'+identifier+'/files?category='+encodeURIComponent(category)+'&filename='+encodeURIComponent(file.name),{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/octet-stream','X-CSRF-Token':session.csrf,'X-Data-Classification':'synthetic','Idempotency-Key':crypto.randomUUID()},body:file});
+   if(!response.ok){const problem=await response.json().catch(()=>({detail:'File upload failed.'}));throw new Error(file.name+': '+problem.detail);}
+  },
   decide:(f,action,reason,owner,version)=>write('/api/v1/findings/'+f.id+'/decisions',{action,reason,owner:owner||null,expected_fingerprint:f.fingerprint,expected_version:version,run_id:snapshot.state.run!.id}),
   approve:(action,reason)=>write('/api/v1/rules/'+snapshot.state.draft.id+'/approval',{action,reason,expected_version:snapshot.version}),
   task:(t,reason,owner)=>write('/api/v1/tasks',{task_id:t.id,reason,owner,run_id:snapshot.state.run!.id}),

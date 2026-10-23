@@ -1,5 +1,20 @@
 # Product screenshots
 
+## Spreadsheet MVP · October 23, 2026
+
+Actual local browser captures with fictional files. Test sessions are provisioned only in a disposable database; these are not new Cognito/cloud captures. The approved bright visual system remains shared with the original demo.
+
+| File | View/state |
+|---|---|
+| [mvp-onboarding.png](mvp-onboarding.png) | Loaded facility/period and explicit coverage setup, 1440×1000 |
+| [mvp-mapping.png](mvp-mapping.png) | Real XLSX worksheet/header, column suggestions and value mappings, 1440×1000 viewport |
+| [mvp-workspace.png](mvp-workspace.png) | Nineteen accepted source records; 6/8 work evaluated; $200 derived potential difference; persisted confirmation and report controls, full page |
+| [mvp-import-mobile.png](mvp-import-mobile.png) | New import flow at 390px, with confirmed mappings collapsed |
+| [mvp-report.png](mvp-report.png) | Render of page one of the actual downloaded, three-page fictional PDF |
+
+All five images were inspected. The report was generated from current server review state, not a mocked design. See the [full PDF](../examples/fictional-billing-review.pdf) and [filterable Excel](../examples/fictional-billing-review.xlsx); notes and worker identity fields are omitted by default. Earlier screenshots below are historical and remain labeled.
+
+
 ## Current approved overview · October 16, 2026
 
 These are unmodified 1505×1045 browser captures of the production frontend build running locally with the standalone synthetic fixture. They show the approved open overview and shared horizontal navigation. They do not depict an authenticated or persisted pilot session. The signed-in pilot shares these components and styles.

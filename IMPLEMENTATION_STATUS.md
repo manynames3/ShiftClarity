@@ -1,5 +1,11 @@
 # ShiftClarity implementation status
 
+## Latest checkpoint · October 23, 2026
+
+All five spreadsheet adoption MVP phases are implemented and locally validated with fictional data. CSV/XLSX → confirmed mappings/profiles → independent rate approval → canonical reconciliation/review → Excel/PDF downloads, including repeat-period use. Evidence: 97 backend, 90 unit/component, 44 original browser and 20 fixture checks, the complete new browser journey, three landing checks and a nonroot/read-only/network-isolated Lambda-image smoke. See [verification](docs/VERIFICATION.md), [walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) and [Claude disposition](docs/CLAUDE_MVP_REVIEW.md). No new live deployment, real customer data or production acceptance.
+
+Historical checkpoints follow.
+
 ## October 15 standalone demo product polish
 
 Working branch: `codex/demo-product-polish`. This request applies to the standalone `/demo/` experience; the calculation engine and canonical fixture results remain unchanged.
@@ -188,3 +194,25 @@ Verification before deployment: TypeScript/Vite production build and all 82 unit
 Deployment evidence: application/source commit `8e3be20` was pushed to `codex/demo-product-polish`, and the Pages production deployment `c18b01eb` completed successfully. Eleven live HTTP checks passed using an explicit release-check user agent. Root HTML, stylesheet, script, font and both evidence images matched committed bytes exactly. Missing landing assets returned 404 with the landing content policy. Demo/pilot shells still serve the unchanged `index-CWGC2Gbc.js` app bundle; health returned 200, anonymous workspace API returned 401, and the deployment preview host returned 403. No AWS, Cognito, S3 or Neon deployment was performed.
 
 The actual browser verified the live root title/heading, Inter font, white background, working source activation/caption, no overflow at 1440px or 390px, the FND-001 evidence deep link with $2,600 expected, and the private pilot sign-in entry. Ego's screenshot capture timed out; the local integrated desktop/mobile captures were inspected and deployed public bytes were checked independently. The full authenticated Cognito journey was not rerun. Browser task 16 was finished. Detailed HTTP checks are in ignored `artifacts/landing-live-http.json`; the approved original concept remains in its separate workspace, and the old untracked design files remain untouched.
+
+
+## Spreadsheet MVP phase 1 · October 22, 2026
+
+The user approved OpenPyXL, DefusedXML and ReportLab. The bounded parser/confirmed column and value mapping foundation, native CSV/XLSX previews, safe row-error CSV, staged private sources and workspace profiles are implemented. Migration 004 applies forced organization RLS; source mutations remain creator-scoped and existing single-workspace session checks remain intact. Twelve targeted parser/adapter/API tests pass, including malicious ZIP/XML/formulas, hidden sheets, sensitive headers, duplicate/conflicting IDs, confirmed values, and profile/file isolation. Original baseline: 82 unit/component and 54 backend tests passed before changes. The original handoff is untouched. This is a local fictional-data checkpoint; no live deployment or real-data acceptance is claimed.
+
+
+## Spreadsheet MVP phase 2 · October 22, 2026
+
+Explicit approved hourly components and arbitrary mapped roles now extend the existing exact-decimal engine. Historical source authorization is additive; actual approval time remains unchanged. The independent approval guard is shared by legacy and imported rates. Canonicalization, period-scoped dataset IDs, explicit coverage/cutoff, ambiguity abstention, immutable import acceptance and existing durable job publication are connected. All 90 domain/component tests pass, including the original oracle and eight new component/approval checks. Three new backend journeys pass for file upload through rate approval and real reconciliation, repeat-content reuse, blocked self-approval, rejected rows with retained prior results, and ambiguous references remaining unestimated. An initial legacy error-message regression was fixed while preserving its stable conflict code; the engine was rebuilt before backend verification.
+
+### Spreadsheet MVP phase 3 · October 23, 2026
+Guided local pilot flow now covers scope, multiple CSV/XLSX files, sheet/header selection, confirmed column/value mappings, saved profiles, row diagnostics, independent approval, explicit acceptance, queued reconciliation and review. The real local API/browser journey passed once, including separate importer/approver sessions, $200 derived underbilling, 6/8 evaluated records, persisted review, and zero automated accessibility violations at 1440/390/320px. Browser setup provisions sessions only in a disposable local database; this does not verify Cognito. A second pass is checking collapsed confirmed mappings and mobile presentation. Original standalone demo is retained.
+
+### Spreadsheet MVP phase 4 · October 23, 2026
+Excel and branded PDF reports are generated on demand from the current reviewed run. All finding states, both financial directions, evaluated-work billing, coverage gaps, exact rate terms, authorization/system approval dates, row/file hashes and decision history are included. Worker identity fields and raw evidence fingerprints are excluded; reviewer free text requires explicit opt-in. Four report integration tests passed, including literal spreadsheet cells, escaped PDF markup and imported-source totals/lineage. The complete browser journey also passed through both actual downloads. The four-page initial PDF was shortened to three pages; rendered pages were inspected with embedded fonts, readable wrapping and repeated table headers. Report generation is local only; no live deployment occurred.
+
+
+### Spreadsheet MVP phase 5 · October 23, 2026
+Read-only Claude code review found cross-session approval, acceptance-error, preview-retention and profile/new-value issues. Codex verified and fixed them; [disposition](docs/CLAUDE_MVP_REVIEW.md) links the regression evidence. Workspace locking now serializes rate registration. Guided source failures return actionable errors without invalidating prior review. Staged previews are role-gated and removed at acceptance. Saved profiles merge current source values. Retention commits retryable download-denial tombstones before byte deletion. Failed parses consume a serialized committed quota. No live data, migration or deployment was performed.
+
+The full new browser journey has passed with first-period XLSX, confirmed/saved mappings, separate-account rate approval, exact $200/6-of-8 result, review decision, both report downloads, and a second-period CSV using a new RG value. It verifies fresh review state and reused rates. Original regressions passed: 90 unit/component tests, 44 browser tests and 20 handoff integrity checks. Final complete backend/browser and packaging results are recorded in docs/VERIFICATION.md after the final checks. The local Lambda image's nonroot/read-only/network-none parser, shared engine and XLSX/PDF smoke passed; no image was pushed. Ego confirmed the local page/1920px bounds but screenshot capture timed out; curated captures come from the passing Chrome tests. Browser task 3 was finished and its announced available update was left unapplied.

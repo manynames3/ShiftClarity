@@ -18,6 +18,8 @@ TEST_ADMIN=ADMIN.replace("/postgres","/shiftclarity_test")
 @pytest.fixture(scope="session")
 def settings(tmp_path_factory):
     local=load_settings()
+    from urllib.parse import urlsplit
+    if local.cloud or urlsplit(local.database_url).hostname not in ['127.0.0.1','localhost']:raise RuntimeError('Tests require the dedicated local configuration; cloud targets are refused.')
     with psycopg.connect(ADMIN,autocommit=True) as db:
         if not db.execute("SELECT 1 FROM pg_database WHERE datname='shiftclarity_test'").fetchone():
             db.execute("CREATE DATABASE shiftclarity_test")

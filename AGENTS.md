@@ -1,5 +1,9 @@
 # ShiftClarity workspace instructions
 
+## Spreadsheet MVP authorization · October 22, 2026
+The user explicitly requested the attached customer-ready MVP brief: CSV/XLSX import, confirmed mappings and saved profiles, canonical reconciliation, guided UX, XLSX/PDF reporting and security verification, plus GitHub README/About updates. Implement these phases locally with fictional records. The user approved OpenPyXL, DefusedXML and ReportLab. This supersedes older JSON-only scope restrictions for this task. Publish reviewed source/documentation under the existing GitHub authorization; do not deploy this MVP, modify live infrastructure or ingest actual customer records without a new explicit authorization. Keep the approved bright visual system and original standalone demo.
+
+
 ## Approved landing page · October 17, 2026
 The user approved the rendered Claude/Codex landing concept and explicitly requested push/deploy. Serve that bright editorial page at the public root through Cloudflare static assets; retain the existing demo and private-pilot routing and controls. This supersedes the original handoff restriction against a public landing page for this approved design. No new services, dependencies, real-data claims or pricing are authorized.
 

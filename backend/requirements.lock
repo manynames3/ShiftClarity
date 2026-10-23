@@ -22,12 +22,18 @@ certifi==2026.7.22
     #   httpx
 cffi==2.1.1
     # via cryptography
+charset-normalizer==3.5.2
+    # via reportlab
 click==8.5.0
     # via uvicorn
 cryptography==50.0.2
     # via
     #   authlib
     #   joserfc
+defusedxml==0.7.1
+    # via -r backend/requirements.in
+et-xmlfile==2.0.0
+    # via openpyxl
 fastapi==0.143.0
     # via -r backend/requirements.in
 h11==0.16.0
@@ -50,8 +56,12 @@ joserfc==1.7.5
     # via authlib
 mangum==0.22.0
     # via -r backend/requirements.in
+openpyxl==3.1.5
+    # via -r backend/requirements.in
 opentelemetry-api==1.45.1
     # via fastapi
+pillow==13.0.0
+    # via reportlab
 psycopg==3.3.6
     # via -r backend/requirements.in
 psycopg-binary==3.3.6
@@ -64,6 +74,8 @@ pydantic-core==2.50.1
     # via pydantic
 python-dateutil==2.9.0.post0
     # via botocore
+reportlab==5.1.0
+    # via -r backend/requirements.in
 s3transfer==0.19.2
     # via boto3
 six==1.17.0

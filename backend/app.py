@@ -400,8 +400,11 @@ def create_app(settings=None):
                     jobs.notify(settings,previous["id"])
                     background_tasks.add_task(wake.set)
                 return previous
-            if not db.execute("SELECT 1 FROM imports WHERE id=%s AND status='validated' AND expires_at>now()",(body.import_id,)).fetchone():
+            source=db.execute("SELECT request_key FROM imports WHERE id=%s AND status='validated' AND expires_at>now()",(body.import_id,)).fetchone()
+            if not source:
                 raise HTTPException(404,"Validated unexpired import not found.")
+            if source['request_key'].startswith('table-') and not db.execute("SELECT 1 FROM table_sessions WHERE import_id=%s AND status='accepted'",(body.import_id,)).fetchone():
+                raise HTTPException(409,"Finish accepting the spreadsheet source selection before running it.")
             identifier="RUN-"+uuid.uuid4().hex
             db.execute("INSERT INTO jobs(id,org_id,request_key,import_id,actor,status) VALUES(%s,%s,%s,%s,%s,'queued')",
                        (identifier,member["org_id"],key,body.import_id,member["actor"]))
@@ -457,6 +460,12 @@ def create_app(settings=None):
         member=auth.principal(settings,request)
         with transaction(settings,member["org_id"]) as db:
             return db.execute("SELECT sequence,actor,action,resource,created_at FROM audit_events ORDER BY sequence DESC LIMIT 100").fetchall()
+
+    from .reports import mount_reports
+    mount_reports(app,settings)
+
+    from .workbench import mount_workbench
+    mount_workbench(app,settings,storage,wake)
 
     if (ROOT/"dist/assets").exists():
         app.mount("/assets",StaticFiles(directory=ROOT/"dist/assets"),name="assets")

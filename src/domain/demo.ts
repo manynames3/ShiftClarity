@@ -1,4 +1,5 @@
 import {reconcile,canonical,difference,sum} from './engine';
+import {validateRateApproval} from './rate-approval';
 import type {Inputs,Rule,Run,Reviews,Review,Finding,Event} from './types';
 export const findingKey=(f:Finding)=>`${f.dataset_id}/${f.facility_id}/${f.rule_version_id}/${f.reason_code}/${f.discrepancy_amount.startsWith('-')?'over':'under'}`;
 export interface Demo { inputs:Inputs; run:Run|null; reviews:Reviews; stale:boolean; error:string|null; importState:'validated'|'quarantined'|'failed'; draft:Rule; ruleHistory:Event[]; approvedFutureRules:Rule[]; localTasks:Event[] }
@@ -31,11 +32,7 @@ export function approveRule(state:Demo,actor:string,authorized=false,timestamp?:
  if(d.state!=='pending_approval')throw new Error('Only a pending rule may be approved.');
  if(!state.inputs.excerpts.some(e=>e.id===d.source_excerpt_id)||!d.effective_from||!d.supersedes)throw new Error('Source, interval and predecessor required.');
  const allRules=[...state.inputs.rules,...state.approvedFutureRules];
- const predecessor=allRules.find(r=>r.id===d.supersedes);
- if(!predecessor||predecessor.facility_id!==d.facility_id||predecessor.role!==d.role||predecessor.component!==d.component||d.effective_from<=predecessor.effective_from)throw new Error('Invalid explicit supersession.');
- const ancestors=new Set<string>();let parent:Rule|undefined=predecessor;while(parent&&!ancestors.has(parent.id)){ancestors.add(parent.id);parent=allRules.find(r=>r.id===parent!.supersedes);}
- const overlaps=allRules.filter(r=>r.state==='approved'&&!ancestors.has(r.id)&&r.facility_id===d.facility_id&&r.role===d.role&&r.component===d.component&&(!r.effective_to||r.effective_to>d.effective_from)&&(!d.effective_to||r.effective_from<d.effective_to));
- if(overlaps.length)throw new Error('CONFLICTING_APPROVED_RULES — resolve overlap before approval.');
+ validateRateApproval(d,actor,allRules,state.inputs.excerpts.map(e=>e.id));
  const approved:Rule={...d,id:d.id.replace('-DRAFT',''),state:'approved',approver_id:actor,recorded_at:state.inputs.manifest.as_of,approved_at:timestamp||state.inputs.manifest.as_of};
  return {...state,draft:approved,approvedFutureRules:[...state.approvedFutureRules,approved],ruleHistory:[...state.ruleHistory,nextEvent(state.ruleHistory,'rule_approved',reason||'Source reviewed; independent approval. Outside RUN-001.',canonical(approved),timestamp||state.inputs.manifest.as_of,actor)]};
 }

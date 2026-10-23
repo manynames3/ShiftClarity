@@ -5,119 +5,123 @@
 
 # ShiftClarity
 
-**Know where approved work, contract terms, and invoices stop agreeing.**
+**Find billing differences. Show the evidence. Make the next decision clear.**
 
-ShiftClarity helps healthcare staffing teams review potential billing discrepancies with the applicable terms, the underlying records, and a clear history of each decision. It also shows what could not be evaluated, so missing information stays visible.
+ShiftClarity helps healthcare staffing teams compare approved contract rates, completed work and posted invoices. Start with the exports you already have. Review potential underbilling and overbilling beside the supporting records, record a decision, and share an Excel or PDF evidence report.
 
 *Every shift. Clearly aligned.* A Supreme AI Ventures product.
 
-[Product](https://shiftclarity.pages.dev/) · [Live demo](https://shiftclarity.pages.dev/demo/) · [Try it locally](#try-it-locally) · [Persistent pilot](https://shiftclarity.pages.dev/pilot/) · [C4 architecture](docs/architecture/README.md) · [Architecture decisions](docs/adr/README.md)
+[Explore the hosted demo](https://shiftclarity.pages.dev/demo/) · [Product](https://shiftclarity.pages.dev/) · [Complete spreadsheet walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) · [C4 architecture](docs/architecture/README.md) · [ADRs](docs/adr/README.md)
 
-**Current release:** a working synthetic pilot with a React interface, FastAPI backend, Cognito sign-in, private S3 imports, Neon persistence, and Lambda/SQS processing. The hosted standalone demo is open to explore; the persistent cloud workspace requires an assigned account and authenticator. All examples below use fictional records.
+**Release boundary:** this repository includes the locally tested CSV/XLSX-to-report MVP. **That upgrade is not deployed yet.** The public site offers the standalone fictional demo and the earlier assigned-account AWS pilot. All included records are fictional; customer data and production approval remain gated.
 
-## Start with the decision
+## Answer four billing questions
 
-A rate amendment can be approved while an invoice still uses the old rate. Approved work can be absent from billing. An unsupported term can prevent a reliable calculation. Each situation calls for a different response.
+- **What differs?** Potential underbilling and overbilling, with expected and invoiced amounts.
+- **Why?** Applicable dated terms, affected work, signed invoice allocations and source-row references.
+- **What needs more evidence?** Coverage gaps stay visible and receive no invented financial estimate.
+- **What did we decide?** Confirm, dismiss or request evidence with a recorded reason and preserved history.
 
-ShiftClarity gives the reviewer one place to:
+![Actual local MVP workspace showing imported fictional work, review progress and coverage](docs/images/mvp-workspace.png)
 
-- Compare approved terms, approved work, and posted invoice lines.
-- Trace a potential difference to its source records and calculation.
-- Confirm, dismiss, or request evidence with a recorded reason.
-- See how much work was checked and which gaps remain unresolved.
-- Require a separate authorized person to approve a new rule version.
+The supplied spreadsheet example evaluates **6 of 8 work records** and identifies **$200 potential underbilling**. Four 10-hour shifts use an approved $65 rate against $60 invoiced. Explicit overtime and weekend rows align. One unsupported callback and one pending time approval remain coverage gaps. Collectibility and payment outcomes are unknown.
 
-![Review workspace showing fictional billing findings and checked coverage](docs/images/review-workspace.png)
+## From existing files to a review
 
-*The redesigned standalone overview shows fourteen fictional shifts, twelve checked, two findings awaiting review, and two coverage gaps. The signed-in pilot uses the same interface with server persistence.*
+1. **Choose a facility and billing period.** Declare source coverage and optionally supply independent control totals.
+2. **Upload CSV or Excel.** Add rates, work and invoices/statements; select the worksheet and header.
+3. **Confirm the meaning.** Review suggested columns, values, dates, USD formats and time units. Save a verified mapping for the next export.
+4. **Validate and approve.** Resolve every blocking row error. A separate permitted account approves new rate versions; unchanged approved rates are reused.
+5. **Review the result.** Inspect calculations and source evidence, then record the next decision.
+6. **Share the evidence.** Download filterable Excel or a branded PDF covering all finding states and coverage gaps.
 
-## Follow the evidence
+![Actual column/value mapping screen from the local fictional import journey](docs/images/mvp-mapping.png)
 
-The first sample case covers 40 approved hours. The applicable amendment sets the rate at $65/hour, producing **$2,600 expected** against **$2,400 invoiced**. The reviewer can inspect the source excerpt, affected shifts, invoice lines, and **$200 potential discrepancy** before recording a decision.
+The next-period example reuses the saved layout and exposes a new export code for confirmation. It starts a fresh review instead of carrying an earlier decision into another billing period. No verified vendor integration is implied.
 
-![Evidence detail showing expected and invoiced amounts, source records, and decision controls](docs/images/finding-evidence.png)
+## A report a billing manager can use
 
-*The source excerpt and calculation stay beside the decision controls. In the persistent pilot, a material evidence change reopens the finding while preserving earlier decisions.*
+Excel includes summary, findings, work calculations, itemized invoice allocations, approved terms, source lineage, review history and coverage gaps. PDF combines a management summary with calculations and evidence references. Both use the **current reviewed state**, including undecided findings.
 
-The canonical sample also includes 24 approved hours with no qualifying invoice allocation. With its fictional completeness and billing-cutoff declarations, that case produces **$1,560 potential underbilling**. Together, the two cases total **$1,760 potential underbilling**; collection and payment outcomes are unknown.
+Worker identity fields and reviewer free-text notes are omitted by default. Notes require explicit opt-in. Spreadsheet cells are literal text rather than executable formulas; raw source fingerprints are replaced by hashes. Invoiced totals for unchecked work remain separate from the evaluated-work comparison.
 
-## Keep uncertainty visible
+![First page of the actual fictional PDF report](docs/images/mvp-report.png)
 
-A record that cannot be checked retains its reason and unknown financial value. Coverage separates aligned work, flagged work, unsupported terms, and work awaiting approval.
+[Open the sample PDF](docs/examples/fictional-billing-review.pdf) · [Open the sample Excel report](docs/examples/fictional-billing-review.xlsx)
 
-![Coverage detail separating checked work from unsupported callback terms and pending approval](docs/images/review-coverage.png)
-
-*The sample checks 124 of 148 hours. The remaining 24 hours comprise an unsupported callback and a pending time approval; neither receives a financial estimate.*
-
-## Make rule changes accountable
-
-An author registers fictional source text and proposes a dated rule version with an explicit predecessor. A different permitted account reviews the source and approves or rejects the proposal. Earlier completed runs retain the versions they used.
-
-![Rule proposal showing its source, predecessor, effective date, and separate approval requirement](docs/images/rule-approval.png)
-
-*This canonical fictional proposal takes effect October 13 and is pending approval. The simulated author cannot approve their own rule; the signed-in pilot enforces that separation on the server.*
+Reports cover the current run. Download before advancing to another period; historical review/report navigation is not implemented in this MVP.
 
 ## Try it locally
 
-For the standalone walkthrough, use Node 22.23.1 and npm:
+The complete spreadsheet workflow uses the persistent local pilot. Prerequisites: Node 22, Python 3.13, uv, PostgreSQL 17 tools and a Java runtime supported by the pinned Keycloak 26.8.0 development provider.
 
 ```sh
 git clone https://github.com/manynames3/ShiftClarity.git
 cd ShiftClarity
 npm ci
-npm run dev -- --port 5178
-```
-
-Open **http://127.0.0.1:5178/**. Start in Workspace, open the rate-change finding, inspect its sources, record a decision, and visit Coverage. The demo's labeled roles simulate the approval workflow. **Reset demo** restores the canonical sample; refresh also discards this mode's in-memory changes.
-
-The separate persistent pilot uses real individual accounts and server permissions. To run it locally, install uv, Python 3.13, PostgreSQL 17 tools, and a Java runtime supported by Keycloak 26.8.0, then:
-
-```sh
 uv venv --python 3.13 backend/.venv
 uv pip sync --python backend/.venv/bin/python backend/requirements-dev.lock
 npm run pilot
 ```
 
-Open **http://127.0.0.1:5180/pilot/**. The launcher prepares a dedicated loopback database, verifies the pinned local identity-provider download, and starts the app. Generated local credentials stay in ignored, owner-only `.local/` files. See the [development guide](docs/DEVELOPMENT.md) for roles, OTP enrollment, and isolated test setup.
+Open **http://127.0.0.1:5180/pilot/**. The launcher defaults to the dedicated local database, prepares distinct accounts and preserves existing local records. Generated credentials stay in ignored, owner-only `.local/accounts.json`. Use **reviewer** to import/review and **approver** in a separate browser profile to approve first-time rates. Each account enrolls its own authenticator. See [Development](docs/DEVELOPMENT.md) for setup and test isolation.
 
-Pilot imports accept the downloadable normalized **synthetic JSON** template, up to 1 MiB. The [manual staffing exercise](examples/synthetic-healthcare-staffing/README.md) includes a ready-to-import bundle and independent expected results. Imported approval claims cannot grant rule approval. The standalone demo also offers a constrained manual/JSON preview. Use fictional, minimized records throughout this release.
+Start with the built-in downloads or [fictional files](public/examples/spreadsheets/). Follow the [first- and second-period walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) and compare against the independent expected-results file. No code changes or JSON preparation are required for this workflow.
 
-## How it is built
+For the standalone memory-only demonstration, `npm run dev -- --port 5178` opens the original fictional fixture. Refresh/reset restores it. Its role controls are simulations; the persistent pilot enforces permissions on the server.
+
+## Supported billing, with clear limits
+
+| Supported | Boundary |
+|---|---|
+| Standard USD hourly rates; different facilities/roles; effective amendments | Explicit approved terms and nonconflicting versions |
+| Overtime, holiday, weekend, on-call and callback | Separately segmented work and explicit flat hourly rates; no inferred thresholds, calendars or multipliers |
+| Missing/partial/duplicate billing, credits, voids and rebills | Signed posted allocations, explicit chain/reference support and declared source completeness |
+| Hospital-style/reverse-billing statements | Confirmed fields and exact references or a unique composite match; ambiguity becomes a gap |
+| Saved workspace mappings | Exact header signature, current source values and explicit reconfirmation |
+| Multiple CSV/XLSX files | Nine files, 1 MiB/file, 500 work records, 1,000 invoice lines and 100 rate versions per review |
+
+Use stable pseudonymous reference codes and time that resolves to whole minutes. Credit amounts must be negative; explicit negative credit quantities normalize to absolute minutes. Export values rather than formulas/macros. Larger, ambiguous or unsupported data is rejected or left unevaluated. See the [capability matrix](docs/BILLING_CAPABILITIES.md) and [format/recovery guide](docs/SPREADSHEET_WALKTHROUGH.md#bounds-and-recovery).
+
+Bullhorn, Avionté, QuickBooks and VMS names are potential source formats to verify with representative files, **not certified integrations**. This release does not infer guarantees, rounding policies, non-hourly fees or recovered revenue. It does not edit invoices, process payroll, collect payments or send evidence requests.
+
+## Built on the existing architecture
 
 | Part | Responsibility |
 |---|---|
-| React + TypeScript | Branded workspace, evidence, inputs, rule approval, and coverage views |
-| Shared TypeScript engine + decimal.js | Effective-date selection, exact money arithmetic, invoice allocation, and coverage |
-| FastAPI + Authlib | API, Cognito integration, short server sessions, and permission checks |
-| Neon PostgreSQL + Psycopg | Persistent reviews, immutable revisions/runs, source lineage, jobs, and audit history |
-| Private S3 | Quarantined and accepted source objects with gated downloads |
-| Lambda + SQS FIFO | On-demand web requests and durable processing without an always-on app server |
-| Cloudflare Pages | Static public landing page and same-origin pilot through a fixed-origin proxy |
-| Terraform | Reproducible AWS infrastructure |
+| React + TypeScript | Guided imports, evidence, review, rule approval and coverage |
+| Shared TypeScript engine + decimal.js | Exact money, effective dates, allocations and coverage decisions |
+| FastAPI + Authlib | Cognito/OIDC sessions, CSRF and server-side workspace permissions |
+| PostgreSQL / Neon + Psycopg | Durable reviews, forced-RLS mappings/imports, immutable sources/rules/runs and audit history |
+| Private S3 | Quarantined and accepted originals with gated downloads |
+| Lambda + SQS | Existing on-demand web and durable processing path |
+| Cloudflare Pages | Public landing and fixed-origin proxy for the signed-in pilot |
+| OpenPyXL + DefusedXML + ReportLab | Bounded spreadsheets, hardened XML parsing and evidence reports |
 
-The browser and backend use the same calculation engine. PostgreSQL transactions govern job claims and completed-run publication. Cognito establishes identity; server-side memberships govern workspace permissions. A container packages the UI, Python service, and Node engine into one versioned image for both Lambda functions.
+The three reporting/import libraries were explicitly approved. The upgrade adds no paid AI API, new cloud service or always-on infrastructure. Migration **004** adds onboarding sessions, files and profiles; **005** protects their accepted identities/content. Owner migrations remain outside request handling. [ADRs](docs/adr/README.md), [C4 views](docs/architecture/README.md) and the [import sequence](docs/architecture/import-publication.md) explain the boundaries.
 
-Read the [C4 context and container diagrams](docs/architecture/README.md), [import/publication sequence](docs/architecture/import-publication.md), and [ADRs](docs/adr/README.md) for the decisions and their tradeoffs. [AWS and database operations](docs/AWS_AND_DATABASE.md) covers deployment and costs. Small storage, secret, log, and usage charges can remain while idle.
+Quarantine originals expire after one day and accepted original bytes after 30 days. Raw previews are removed at acceptance. Derived immutable evidence persists until an owner-authorized purge; this is not an approved customer retention policy. See [security controls](docs/PHASE_4.md) and the [threat model](docs/THREAT_MODEL.md). The earlier hosted pilot's costs and operations are documented [separately](docs/AWS_AND_DATABASE.md); this task makes no new live deployment.
 
-The full pilot opens at [shiftclarity.pages.dev](https://shiftclarity.pages.dev/). [Cloudflare operations](docs/CLOUDFLARE.md) explains the proxy, sign-in boundary and roughly $0.60–$1/month idle estimate before credits and shared free allowances.
-
-## Verification
-
-The October 16 visual-reference correction passed **80 unit/component/domain tests, 41 standalone browser checks**, the production build, Lambda runtime checks, and live Pages health/UI/access-denial checks. The product routes and mobile evidence were visually inspected against the approved image.
-
-Recorded verification for the October 13, 2026 synthetic release includes **52 backend tests, 70 domain/component tests, 20 handoff integrity tests, 21 standalone browser cases, and 8 live AWS browser journeys**. It also includes responsive product captures, container execution, a matched Neon/S3 restore rehearsal, and a Terraform drift check.
+## Verify the result
 
 ```sh
 npm run test:fixtures
 npm test
 npm run build
+npm run build:engine
+npm run test:backend
 npm run test:e2e
+npm run test:mvp
 ```
 
-Handoff integrity checks require Python 3; browser checks use installed Google Chrome. Backend and persistent-pilot tests require dedicated test databases; use the [development guide](docs/DEVELOPMENT.md). The [verification record](docs/VERIFICATION.md) distinguishes checks actually performed from remaining acceptance gates.
+Backend/MVP checks use disposable **local** databases and refuse cloud targets. The MVP browser journey imports XLSX files, confirms/saves mappings, obtains separate-account approval, reviews the derived result, downloads both reports, and repeats another period with a new source value. Its test sessions are locally provisioned; that test does not claim to reverify Cognito sign-in. Original fixture and demo regressions remain separate.
 
-## Scope of this release
+See [actual verification results](docs/VERIFICATION.md), [Claude review disposition](docs/CLAUDE_MVP_REVIEW.md), [acceptance evidence](ACCEPTANCE_CHECKLIST.md) and [implementation plan](docs/MVP_IMPLEMENTATION_PLAN.md). Screenshots show running software and generated reports with fictional records.
 
-This pilot demonstrates a contract-to-invoice review workflow with fictional data. It does not edit source invoices or send evidence requests. Vendor connectors, arbitrary CSV/PDF/OCR ingestion, customer-data use, independent value measurement, and production approval remain separate [pilot gates](docs/PILOT_GATES.md).
+## Before a real customer pilot
 
-The original [build handoff](handoff/START_HERE_CODEX.md) and visual references are preserved unchanged. [Security boundaries](docs/PHASE_4.md), the [threat model](docs/THREAT_MODEL.md), and the [evaluation plan](docs/EVALUATION_PLAN.md) explain the operating limits. Synthetic test results establish no compliance certification, recovered revenue, or production service commitment.
+1. Verify representative approved, scrubbed exports and contract semantics, including unsupported billing/rounding cases.
+2. Approve data use, privacy/contracts, access, retention, incident response and recovery responsibilities.
+3. Independently measure accuracy, coverage and review effort against the customer's current process; validate representative operating capacity and approve deployment.
+
+The [original handoff](handoff/START_HERE_CODEX.md) remains unchanged. Synthetic tests establish no HIPAA compliance, production certification, SLA, competitor superiority or actual revenue recovery.

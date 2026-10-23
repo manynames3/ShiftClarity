@@ -2,6 +2,7 @@ import {readFileSync} from 'node:fs';
 import {parseCustom} from './custom';
 import {initialDemo,publish,decide,approveRule,rejectRule,exportReviews} from '../domain/demo';
 import type {Demo} from '../domain/demo';
+import {approveRateBatch} from '../domain/rate-approval';
 const request=JSON.parse(readFileSync(0,'utf8'));
 try {
  let result:unknown;
@@ -22,6 +23,7 @@ try {
   case 'approve': result=approveRule(request.state,request.actor,true,request.timestamp,request.reason);break;
   case 'reject': result=rejectRule(request.state,request.actor,request.reason,true,request.timestamp);break;
   case 'export': result=exportReviews(request.state);break;
+  case 'approve_imported_rates': result=approveRateBatch(request.rules,request.existing,request.excerpt_ids,request.actor,request.timestamp);break;
   default:throw new Error('Unknown operation');
  }
  process.stdout.write(JSON.stringify({ok:true,result}));
