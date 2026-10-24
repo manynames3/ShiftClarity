@@ -143,6 +143,8 @@ def create_app(settings=None):
 
     @app.exception_handler(EngineError)
     async def bad_engine(request,error):
+        if str(error)=="PARSER_LIMIT_OR_UNAVAILABLE":
+            return JSONResponse({"detail":"The calculation was interrupted or temporarily unavailable. No partial result was published. Retry this action."},503)
         return JSONResponse({"detail":"Validation or evidence conflict. Refresh and check the input."},409)
 
     @app.exception_handler(Exception)

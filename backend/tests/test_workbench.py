@@ -39,6 +39,24 @@ def approve(client,session):
     response=client.post(path+'/approve-rates',json={'expected_version':client.get(path).json()['version'],'reason':'Inspected the fictional source rates and historical authorization dates.'})
     assert response.status_code==200,response.text
 
+def test_interrupted_approval_is_retryable_without_revalidation(environment,clients,monkeypatch):
+    from backend.engine import EngineError
+    client=clients();approver=clients('DEMO-APPROVER');session=prepare(client)
+    path='/api/v1/import-workbench/sessions/'+session
+    before=client.get('/api/v1/workspace').json()
+    version=client.get(path).json()['version']
+    def interrupted(*args,**kwargs):raise EngineError('PARSER_LIMIT_OR_UNAVAILABLE')
+    with monkeypatch.context() as patch:
+        patch.setattr('backend.workbench.compute',interrupted)
+        response=approver.post(path+'/approve-rates',json={'expected_version':version,'reason':'Inspected the fictional rates and source.'})
+    assert response.status_code==503,response.text
+    assert 'retry' in response.json()['detail'].lower()
+    unchanged=client.get(path).json()
+    assert unchanged['status']=='validated' and unchanged['version']==version and not unchanged.get('approval')
+    assert client.get('/api/v1/workspace').json()==before
+    approve(approver,session)
+    assert client.get(path).json()['status']=='approved'
+
 def accept(client,session):
     path='/api/v1/import-workbench/sessions/'+session
     return client.post(path+'/accept',json={'expected_version':client.get(path).json()['version'],'confirmed':True,'acknowledge_warnings':True})

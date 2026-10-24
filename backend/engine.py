@@ -19,7 +19,8 @@ def compute(operation, **payload):
             result = subprocess.run(
                 ["node","--max-old-space-size=96",str(ROOT/"backend/engine.mjs")],
                 input=json.dumps({"operation":operation,**payload}),text=True,
-                capture_output=True,timeout=12,check=False,
+                # Leave room for Node's first start in Lambda and for the 29-second HTTP limit.
+                capture_output=True,timeout=20,check=False,
             )
         response = json.loads(result.stdout)
         if result.returncode or not response.get("ok"):

@@ -89,12 +89,17 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
    await page.reload();
    await expect(page.getByRole('row',{name:/Rate change not reflected/})).toContainText('Confirmed discrepancy');
    const source=await (await page.request.get('/api/v1/import-workbench/sessions/'+new URL(sessionURL).searchParams.get('session'))).json();
-   const denied=await page.request.post('/api/v1/import-workbench/sessions',{data:source.period});
+   const denied=await page.request.post('/api/v1/import-workbench/sessions',{data:source.period,headers:{Origin:new URL(sessionURL).origin}});
    expect(denied.status()).toBe(403);
    const original=await page.request.get('/api/v1/import-workbench/sessions/'+source.id+'/files/'+source.files[0].id+'/source');
    expect(original.ok()).toBe(true);
-   expect((await original.body()).subarray(0,2).toString()).toBe('PK');
+   expect(await original.body()).toEqual(readFileSync('public/examples/spreadsheets/rates.xlsx'));
    expect(original.headers()['cache-control']).toContain('no-store');
+   const workFile=source.files.find((file:{category:string})=>file.category==='work');
+   expect((await other.request.get('/api/v1/import-workbench/sessions/'+source.id+'/files/'+workFile.id+'/source')).status()).toBe(403);
+   const identity=(await (await other.request.get('/api/v1/session')).json());
+   const roleDenied=await other.request.post('/api/v1/import-workbench/sessions',{data:source.period,headers:{Origin:new URL(sessionURL).origin,'X-CSRF-Token':identity.csrf,'Idempotency-Key':'denied-live-import-'+Date.now()}});
+   expect(roleDenied.status()).toBe(403);
   }
   for(const [label,extension] of [['Download Excel','xlsx'],['Download PDF','pdf']]){
    const pending=page.waitForEvent('download');await page.getByRole('button',{name:label,exact:true}).click();

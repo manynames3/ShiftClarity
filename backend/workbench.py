@@ -328,8 +328,9 @@ def mount_workbench(app,settings,storage,wake):
                 update_session(db,row,data,'approved')
                 audit(db,member['org_id'],member['actor'],'table_rates_approved',session_id,{'count':len(approved),'reason':body.reason})
                 return {'approved':len(approved)}
-        except EngineError:
+        except EngineError as error:
             for key in created:storage.delete(key)
+            if str(error)=='PARSER_LIMIT_OR_UNAVAILABLE':raise
             raise HTTPException(409,'Rate versions changed or conflict. The creator must validate the source selection again; unchanged approved rates will be reused.') from None
         except Exception:
             for key in created:storage.delete(key)
