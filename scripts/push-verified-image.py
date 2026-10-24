@@ -21,11 +21,14 @@ subprocess.run(["docker","login","--username",username,"--password-stdin",author
 subprocess.run(["docker","tag","shiftclarity:lambda-verified",target],check=True)
 subprocess.run(["docker","push",target],check=True,capture_output=True)
 digest=ecr.describe_images(repositoryName="shiftclarity-synthetic",imageIds=[{"imageTag":tag}])["imageDetails"][0]["imageDigest"]
+registry_image=ecr.batch_get_image(repositoryName="shiftclarity-synthetic",imageIds=[{"imageDigest":digest}])["images"][0]
+manifest=json.loads(registry_image["imageManifest"])
+assert manifest.get("mediaType") in ("application/vnd.docker.distribution.manifest.v2+json","application/vnd.oci.image.manifest.v1+json") and manifest.get("layers") and not manifest.get("manifests"),"Lambda requires one image manifest; rebuild with --provenance=false --sbom=false before verifying and pushing."
 database=json.loads((ROOT/".local/neon-cloud-metadata.json").read_text())
 path=ROOT/".local/aws.tfvars.json"
 variables=json.loads(path.read_text()) if path.exists() else {}
 variables.update(image_identifier=repository+"@"+digest,database_secret_arn=database["database_secret_arn"])
 path.write_text(json.dumps(variables,indent=2))
 path.chmod(0o600)
-(ROOT/"artifacts/aws-image.json").write_text(json.dumps({"image_uri":variables["image_identifier"],"verified_image_id":image["Id"],"architecture":"amd64"},indent=2))
+(ROOT/"artifacts/aws-image.json").write_text(json.dumps({"image_uri":variables["image_identifier"],"verified_image_id":image["Id"],"architecture":"amd64","manifest_media_type":manifest["mediaType"]},indent=2))
 print(json.dumps({"image_uri":variables["image_identifier"],"verified_image_id":image["Id"]}))

@@ -1,5 +1,8 @@
 # ShiftClarity workspace instructions
 
+## Spreadsheet MVP deployment authorization · October 23, 2026
+The user explicitly requested “push and deploy” after the completed MVP verification and publication. Deploy the reviewed MVP to the existing synthetic AWS/Cognito/S3/Neon pilot and Cloudflare origin, applying the additive database migrations and verifying the live workflow. Preserve existing records, identities and private configuration; use the dedicated deployment role. This supersedes the October 22 local-only deployment restriction for this synthetic release. No customer records, paid upgrades or unrelated resources are authorized.
+
 ## Spreadsheet MVP authorization · October 22, 2026
 The user explicitly requested the attached customer-ready MVP brief: CSV/XLSX import, confirmed mappings and saved profiles, canonical reconciliation, guided UX, XLSX/PDF reporting and security verification, plus GitHub README/About updates. Implement these phases locally with fictional records. The user approved OpenPyXL, DefusedXML and ReportLab. This supersedes older JSON-only scope restrictions for this task. Publish reviewed source/documentation under the existing GitHub authorization; do not deploy this MVP, modify live infrastructure or ingest actual customer records without a new explicit authorization. Keep the approved bright visual system and original standalone demo.
 

@@ -1,13 +1,18 @@
 import {test,expect} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {readFileSync} from 'node:fs';
+import {cognitoLogin} from '../pilot/cognito-auth';
+
+const cloud=process.env.SHIFTCLARITY_MVP_AWS_QA==='1';
 
 test('nontechnical evaluator imports XLSX, confirms mappings, obtains independent approval and reviews the real result',async({browser})=>{
- const sessions=JSON.parse(readFileSync('.local/mvp-browser-sessions.json','utf8'));
+ const sessions=cloud?null:JSON.parse(readFileSync('.local/mvp-browser-sessions.json','utf8'));
+ const profileName=cloud?'Live work export '+Date.now():'Monthly work export';
  const evaluator=await browser.newContext(),approver=await browser.newContext();
  try{
-  for(const [context,actor] of [[evaluator,'MVP-IMPORTER'],[approver,'MVP-APPROVER']] as const)await context.addCookies([{name:'sc_session',value:sessions[actor].token,url:'http://127.0.0.1:5196'}]);
+  if(!cloud)for(const [context,actor] of [[evaluator,'MVP-IMPORTER'],[approver,'MVP-APPROVER']] as const)await context.addCookies([{name:'sc_session',value:sessions[actor].token,url:'http://127.0.0.1:5196'}]);
   const page=await evaluator.newPage(),other=await approver.newPage();
+  if(cloud){await cognitoLogin(page,'reviewer');await cognitoLogin(other,'approver');}
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto('/pilot/?view=import');
   await expect(page.getByRole('heading',{name:'Start a billing review'})).toBeVisible();
@@ -37,9 +42,9 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
    await expect(card.getByText('Review or change the confirmed mapping',{exact:true})).toBeVisible();
   }
   const workCard=page.locator('.mapping-card').filter({has:page.getByRole('heading',{name:'work.xlsx',exact:true})});
-  await workCard.getByLabel('Save verified mapping as').fill('Monthly work export');
+  await workCard.getByLabel('Save verified mapping as').fill(profileName);
   await workCard.getByRole('button',{name:'Save mapping profile'}).click();
-  await expect(workCard.getByLabel('Profile for work.xlsx')).toContainText('Monthly work export');
+  await expect(workCard.getByLabel('Profile for work.xlsx')).toContainText(profileName);
   await workCard.getByText('Review or change the confirmed mapping',{exact:true}).click();
   await workCard.getByRole('combobox',{name:'Date convention',exact:true}).selectOption('MDY');
   await expect(page.getByRole('button',{name:'Validate all sources',exact:true})).toBeDisabled();
@@ -47,15 +52,22 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await workCard.getByRole('combobox',{name:'Date convention',exact:true}).selectOption('ISO');
   await workCard.getByLabel('I checked the columns').check();
   await workCard.getByRole('button',{name:'Confirm mapping for work.xlsx',exact:true}).click();
+  const validated=page.waitForResponse(response=>response.url().endsWith('/validate')&&response.request().method()==='POST');
   await page.getByRole('button',{name:'Validate all sources',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Review the new contract rate versions'})).toBeVisible();
-  await expect(page.getByRole('button',{name:'Approve these rate versions'})).toHaveCount(0);
-  await other.goto(sessionURL);
-  await other.getByLabel('Independent rate review reason').fill('Inspected the fictional source file, hourly rates and historical authorization dates.');
-  await other.getByLabel('I inspected the rates').check();
-  await other.getByRole('button',{name:'Approve these rate versions'}).click();
-  await expect(other.getByText(/Approved by MVP-APPROVER at/)).toBeVisible();
-  await page.getByRole('button',{name:'Refresh status'}).click();
+  expect((await validated).ok()).toBe(true);
+  await expect(page.getByText('Checking all sources and rate versions…',{exact:true})).toHaveCount(0);
+  const newRates=page.getByRole('heading',{name:'Review the new contract rate versions'});
+  if(!cloud||await newRates.isVisible()){
+   await expect(newRates).toBeVisible();
+   await expect(page.getByRole('button',{name:'Approve these rate versions'})).toHaveCount(0);
+   await other.goto(sessionURL);
+   const approverActor=(await (await other.request.get('/api/v1/session')).json()).actor;
+   await other.getByLabel('Independent rate review reason').fill('Inspected the fictional source file, hourly rates and historical authorization dates.');
+   await other.getByLabel('I inspected the rates').check();
+   await other.getByRole('button',{name:'Approve these rate versions'}).click();
+   await expect(other.getByText('Approved by '+approverActor+' at',{exact:false})).toBeVisible();
+   await page.getByRole('button',{name:'Refresh status'}).click();
+  }
   await page.getByLabel('I confirm the mappings, source totals').check();
   await page.getByRole('button',{name:'Accept sources',exact:true}).click();
   await page.getByRole('button',{name:'Run billing review',exact:true}).click();
@@ -63,14 +75,31 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await expect(page.getByRole('heading',{name:'+$200.00',exact:true})).toBeVisible();
   await expect(page.locator('.mvp-summary')).toContainText('6 / 8');
   await page.getByRole('link',{name:'Rate change not reflected',exact:true}).click();
+  if(cloud&&await page.getByRole('button',{name:'Reopen for review'}).isVisible()){
+   await page.getByRole('button',{name:'Reopen for review'}).click();
+   await page.getByLabel('Review reason',{exact:true}).fill('Repeat verification of the same fictional billing period.');
+   await page.getByRole('button',{name:'Save review',exact:true}).click();
+   await page.getByRole('link',{name:'Rate change not reflected',exact:true}).click();
+  }
   await page.getByRole('button',{name:'Confirm discrepancy',exact:true}).click();
   await page.getByLabel('Review reason',{exact:true}).fill('Fictional rate and posted invoice evidence checked.');
   await page.getByRole('button',{name:'Save review',exact:true}).click();
   await expect(page.getByRole('row',{name:/Rate change not reflected/})).toContainText('Confirmed discrepancy');
+  if(cloud){
+   await page.reload();
+   await expect(page.getByRole('row',{name:/Rate change not reflected/})).toContainText('Confirmed discrepancy');
+   const source=await (await page.request.get('/api/v1/import-workbench/sessions/'+new URL(sessionURL).searchParams.get('session'))).json();
+   const denied=await page.request.post('/api/v1/import-workbench/sessions',{data:source.period});
+   expect(denied.status()).toBe(403);
+   const original=await page.request.get('/api/v1/import-workbench/sessions/'+source.id+'/files/'+source.files[0].id+'/source');
+   expect(original.ok()).toBe(true);
+   expect((await original.body()).subarray(0,2).toString()).toBe('PK');
+   expect(original.headers()['cache-control']).toContain('no-store');
+  }
   for(const [label,extension] of [['Download Excel','xlsx'],['Download PDF','pdf']]){
    const pending=page.waitForEvent('download');await page.getByRole('button',{name:label,exact:true}).click();
    const download=await pending;expect(await download.failure()).toBeNull();
-   await download.saveAs('artifacts/reports/browser-billing-review.'+extension);
+   await download.saveAs('artifacts/reports/'+(cloud?'live-':'')+'browser-billing-review.'+extension);
   }
   await page.getByRole('button',{name:'Use dark mode',exact:true}).click();
   expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
@@ -105,7 +134,7 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
    const card=page.locator('.mapping-card').filter({has:page.getByRole('heading',{name:kind+'.csv',exact:true})});
    if(kind==='work'){
     const profile=card.getByLabel('Profile for work.csv');
-    await profile.selectOption({label:'Monthly work export · v1'});
+    await profile.selectOption({label:profileName+' · v1'});
     await expect(card.getByRole('combobox',{name:'Worksheet',exact:true})).toHaveValue('CSV');
     await expect(card.getByLabel('Map RG for component',{exact:true})).toHaveValue('');
     await card.getByLabel('Map RG for component',{exact:true}).selectOption('standard');
