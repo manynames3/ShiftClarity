@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "facility": "ALL",
+  "period": ["2026-10-01", "2026-10-15"],
+  "work_records": 18,
+  "invoice_lines": 20,
+  "rate_versions": 7,
+  "work_hours": "136.00",
+  "evaluated_records": 16,
+  "evaluated_hours": "124.50",
+  "aligned_records": 8,
+  "flagged_records": 8,
+  "findings": 7,
+  "coverage_gaps": 2,
+  "expected_evaluated": "8626.00",
+  "evaluated_invoice_total": "7754.25",
+  "posted_invoice_total": "8328.25",
+  "underbilling": "905.00",
+  "overbilling": "33.25",
+  "confirmed_underbilling": "627.50",
+  "confirmed_overbilling": "33.25",
+  "exceptions": {
+    "BAY-001": ["543.75", "525.00", "18.75"],
+    "BAY-002": ["833.75", "805.00", "28.75"],
+    "BAY-003": ["217.50", "145.00", "72.50"],
+    "BAY-006": ["580.00", "0.00", "580.00"],
+    "RIV-001": ["774.25", "807.50", "-33.25"],
+    "RIV-002": ["706.00", "652.00", "54.00"],
+    "RIV-003": ["278.00", "139.00", "139.00"],
+    "RIV-004": ["978.00", "966.00", "12.00"]
+  },
+  "notes": "Deliberately exception-rich fictional demonstration; not representative error prevalence, customer data or recovered funds. Expected values are test oracles only."
+}

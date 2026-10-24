@@ -1,5 +1,13 @@
 # Synthetic release verification
 
+## October 24, 2026 · Varied fictional billing output
+
+The [richer PDF/Excel example and source kit](../public/examples/realistic-billing/README.md) were generated through the real local FastAPI import, mapping, separate-account rate approval, durable reconciliation, review-decision and report-download endpoints. Only the disposable local test database was used; no live workspace was overwritten. The original compact quickstart remains intact. No report formatting or calculation shortcut was introduced.
+
+The new scenario plus four existing report regressions passed (**five tests**). Assertions compare independently authored amounts for all eight discrepant shifts: $18.75, $28.75, $72.50, $580, -$33.25, $54, $139 and $12. Verified totals: 18 shifts/136 hours received, 16 shifts/124.5 hours evaluated, eight aligned records, seven findings, two gaps, $8,626 expected, $7,754.25 evaluated allocations, $8,328.25 all posted, $905 underbilling and $33.25 overbilling. The $1,020 original/-$1,020 credit/$966 rebill chain contributes $966 net; the voided $800 line is excluded. Callback/pending-time gaps have no estimate.
+
+The exported workbook contains all 18 work calculations and 45 source-row references, literal cells, three confirmed findings, one evidence request and three pending findings. Default worker IDs and reviewer notes were verified absent. All five PDF pages were rendered and inspected; headers/footers and pagination remain present. Curated outputs are `docs/examples/realistic-billing-review.pdf` and `.xlsx`, with a reproducible CSV kit alongside them. Detailed test evidence is ignored `artifacts/realistic-billing-test.txt` and `artifacts/reports/realistic-billing-results.json`. No new cloud deployment or real-data accuracy claim is made for this fixture addition.
+
 ## October 23, 2026 · Hosted spreadsheet MVP
 
 The user explicitly authorized push/deploy after local MVP acceptance. The spreadsheet workflow is live at [the assigned-account pilot](https://shiftclarity.pages.dev/pilot/). Application source is `5d3e324`; both Lambda functions are Active/Successful at `sha256:8114bdfc526c79875beead7f116811a432477a9910156b9d7da5205d818e1eba`. Pages release `d39a4aa3` serves the updated landing copy from `b517803`. The app's JS/CSS assets matched the local build bytes. No new cloud service or paid upgrade was introduced.
