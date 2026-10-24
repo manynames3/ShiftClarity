@@ -9,7 +9,7 @@ export function CoverageBar({run}:{run:Run}){
  return <><div className="coverage-bar" role="img" aria-label={categories.map((c,i)=>run.coverage.categories[c].records+' '+names[i]).join(', ')}>{categories.map((c,i)=><span key={c} className={'seg-'+['a','f','u','n'][i]} style={{flex:run.coverage.categories[c].records}}/>)}</div><div className="coverage-legend">{categories.map((c,i)=><span key={c}><i className={'dot '+['','f','u','n'][i]}/>{run.coverage.categories[c].records} {names[i]}</span>)}</div></>;
 }
 type SortKey='difference'|'facility'|'state';
-export function Workspace({run,reviews,initialScope='review',onShortcuts,onOpenFinding,loading=false,error}:{run:Run;reviews:Reviews;initialScope?:'review'|'all';onShortcuts?:()=>void;onOpenFinding?:(finding:Finding)=>void;loading?:boolean;error?:string}){
+export function Workspace({run,reviews,initialScope='review',onShortcuts,onReport,onOpenFinding,loading=false,error}:{run:Run;reviews:Reviews;initialScope?:'review'|'all';onShortcuts?:()=>void;onReport?:()=>void;onOpenFinding?:(finding:Finding)=>void;loading?:boolean;error?:string}){
  const [facility,setFacility]=useState('all'),[search,setSearch]=useState(''),[scope,setScope]=useState(initialScope),[activeFindingId,setActiveFindingId]=useState<string|null>(null),[sort,setSort]=useState<{key:SortKey;direction:'asc'|'desc'}>({key:'difference',direction:'desc'});
  const stateRank=(value:string)=>({needs_review:0,evidence_requested:1,confirmed:2,dismissed:3}[value]??4);
  const compareImpact=(a:Finding,b:Finding)=>new Decimal(b.discrepancy_amount).abs().comparedTo(new Decimal(a.discrepancy_amount).abs());
@@ -42,7 +42,7 @@ export function Workspace({run,reviews,initialScope='review',onShortcuts,onOpenF
   <div className="overview-main">
    <section className="workspace-heading" aria-label="Review summary">
     <div className="impact-summary"><h1 tabIndex={-1}>{c.evaluated_records?formatMoney(new Decimal(totalUnderbilling).eq(0)&&new Decimal(run.totals.overbilling).gt(0)?run.totals.overbilling:totalUnderbilling,true):'Not estimated'}</h1><h2>{new Decimal(totalUnderbilling).eq(0)&&new Decimal(run.totals.overbilling).gt(0)?'Potential overbilling':'Potential underbilling'}</h2><p>{run.findings.length} finding{run.findings.length===1?'':'s'}, {affectedShifts} shift{affectedShifts===1?'':'s'}, collection unknown</p></div>
-    <div className="review-next">{open[0]&&<><Link to={'?view=evidence&id='+open[0].id} kind="btn-primary">Review next finding <Icon name="arrow"/></Link><p>Review findings against the approved terms, work records and invoice evidence.</p></>}<div className="overview-utilities"><Link to="?view=inputs" kind="btn-quiet">Run details</Link><button className="shortcut-help" type="button" aria-label="Keyboard shortcuts" onClick={onShortcuts}>?</button></div></div>
+    <div className="review-next">{open[0]&&<><Link to={'?view=evidence&id='+open[0].id} kind="btn-primary">Review next finding <Icon name="arrow"/></Link><p>Review findings against the approved terms, work records and invoice evidence.</p></>}<div className="overview-utilities">{onReport&&<button className="btn btn-quiet report-trigger" onClick={onReport}><Icon name="download"/>Download report</button>}<Link to="?view=inputs" kind="btn-quiet">Run details</Link><button className="shortcut-help" type="button" aria-label="Keyboard shortcuts" onClick={onShortcuts}>?</button></div></div>
    </section>
    <section className="finding-overview" aria-label="Findings" aria-busy={loading}>
     <div className="overview-tools">

@@ -108,11 +108,13 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
    const roleDenied=await other.request.post('/api/v1/import-workbench/sessions',{data:source.period,headers:{Origin:new URL(sessionURL).origin,'X-CSRF-Token':identity.csrf,'Idempotency-Key':'denied-live-import-'+Date.now()}});
    expect(roleDenied.status()).toBe(403);
   }
+  await page.getByRole('button',{name:'Download report',exact:true}).click();
   for(const [label,extension] of [['Download Excel','xlsx'],['Download PDF','pdf']]){
    const pending=page.waitForEvent('download');await page.getByRole('button',{name:label,exact:true}).click();
    const download=await pending;expect(await download.failure()).toBeNull();
    await download.saveAs('artifacts/reports/'+(cloud?'live-':'')+'browser-billing-review.'+extension);
   }
+  await page.getByRole('dialog',{name:'Download billing review'}).getByRole('button',{name:'Cancel',exact:true}).click();
   await page.getByRole('button',{name:'Use dark mode',exact:true}).click();
   expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
   await page.getByRole('button',{name:'Use light mode',exact:true}).click();

@@ -19,7 +19,7 @@ First-time rate approval intentionally requires a second account. Reusing identi
 5. In the separate approver account, open the listed review. Read the rate originals and inspect the three hourly versions, effective dates and source authorization dates. Enter a specific reason and approve. The actual approval time is recorded separately from the historical source declaration.
 6. Back in the reviewer account, refresh status, check the displayed counts/totals and any warnings, explicitly **Accept sources**, then **Run billing review**.
 7. Open the finding. Inspect the contract, work and invoice evidence, then confirm, dismiss or request specific evidence with a reason. A decision is a review record; it does not edit an invoice or send a message.
-8. Download **Excel** and **PDF** before moving to the next period. Reports include every finding state, current decisions, calculations, source references and coverage gaps. Worker identity fields and reviewer notes are omitted by default; include notes only when authorized to share them.
+8. Select **Download report** beside the workspace summary, then download **Excel** and **PDF** before moving to the next period. Reports include every finding state, current decisions, calculations, source references and coverage gaps. Worker identity fields and reviewer notes are omitted by default; include notes only when authorized to share them.
 
 Expected results are independently written in [expected-results.json](../public/examples/spreadsheets/expected-results.json); application calculations do not read that file.
 

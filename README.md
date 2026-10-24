@@ -41,6 +41,10 @@ The next-period example reuses the saved layout and exposes a new export code fo
 
 ## A report a billing manager can use
 
+**In the open demo:** choose **Download report** beside the workspace summary. Preview the current review, use **Print / save PDF**, or **Download CSV** for Excel. Everything stays in your browser. The same action is available from evidence and inputs.
+
+**In the signed-in pilot:** choose **Download report**, then **Download PDF** or **Download Excel** for server-generated `.pdf` / `.xlsx` files.
+
 Excel includes summary, findings, work calculations, itemized invoice allocations, approved terms, source lineage, review history and coverage gaps. PDF combines a management summary with calculations and evidence references. Both use the **current reviewed state**, including undecided findings.
 
 Worker identity fields and reviewer free-text notes are omitted by default. Notes require explicit opt-in. Spreadsheet cells are literal text rather than executable formulas; raw source fingerprints are replaced by hashes. Invoiced totals for unchecked work remain separate from the evaluated-work comparison.
