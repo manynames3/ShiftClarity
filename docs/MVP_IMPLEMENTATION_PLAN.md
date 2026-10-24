@@ -1,6 +1,6 @@
 # Spreadsheet adoption MVP
 
-October 22, 2026. Approved user scope: implement an evaluable, fictional-data MVP in the existing application, then update GitHub README/About. Actual customer records and live deployment remain gated. The original handoff is preserved. No new cloud service or paid AI is required.
+October 22, 2026. Approved user scope: implement an evaluable, fictional-data MVP in the existing application, then update GitHub README/About. On October 23 the user additionally authorized push/deploy to the existing synthetic pilot. Actual customer records remain gated. The original handoff is preserved. No new cloud service or paid AI is required.
 
 ## Adoption decisions
 
@@ -28,4 +28,4 @@ Representative scrubbed exports and verified source semantics; documented legal/
 
 ## Verified completion
 
-All five milestones have local fictional evidence in [VERIFICATION.md](VERIFICATION.md) and MVP-01 through MVP-10 in [the acceptance checklist](../ACCEPTANCE_CHECKLIST.md). The manual path and supplied second-period files are in [the walkthrough](SPREADSHEET_WALKTHROUGH.md). The GitHub update publishes source/docs only; live migration/deployment and customer-data authorization remain separate.
+All five milestones have fictional evidence in [VERIFICATION.md](VERIFICATION.md) and MVP-01 through MVP-10 in [the acceptance checklist](../ACCEPTANCE_CHECKLIST.md). The manual path and supplied second-period files are in [the walkthrough](SPREADSHEET_WALKTHROUGH.md). The authorized hosted release uses the existing AWS/Cognito/S3/Neon pilot; customer-data authorization remains separate.

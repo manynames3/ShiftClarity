@@ -1,8 +1,10 @@
 # From existing exports to a billing review
 
-This MVP is for fictional evaluation. The new spreadsheet workflow runs in the signed-in **local pilot**. It is not deployed to the hosted pilot yet. No JSON conversion, vendor connector or paid AI is required.
+This MVP is for fictional evaluation. The spreadsheet workflow runs in the [signed-in hosted pilot](https://shiftclarity.pages.dev/pilot/) and the local application. No JSON conversion, vendor connector or paid AI is required.
 
-## Start the local application
+## Choose hosted or local
+
+For the hosted pilot, use your assigned Cognito account and authenticator. Open the link above; use a separate permitted approver account in another browser profile/private window when new rates require approval. Existing approved rates are reused. No public signup or real customer records are enabled.
 
 Follow [Development](DEVELOPMENT.md#persistent-local-pilot), then open `http://127.0.0.1:5180/pilot/`. Sign in with the generated **reviewer** account and enroll its personal authenticator. Use the distinct **approver** account in another browser profile/private window. Credentials remain in ignored `.local/accounts.json`; never put them in GitHub or a shared report.
 
@@ -20,6 +22,8 @@ First-time rate approval intentionally requires a second account. Reusing identi
 8. Download **Excel** and **PDF** before moving to the next period. Reports include every finding state, current decisions, calculations, source references and coverage gaps. Worker identity fields and reviewer notes are omitted by default; include notes only when authorized to share them.
 
 Expected results are independently written in [expected-results.json](../public/examples/spreadsheets/expected-results.json); application calculations do not read that file.
+
+Repeating the same period and unchanged evidence retains its existing decisions. Choose **All findings** to inspect a previously completed review, then **Reopen for review** if you need to review it again. A different billing period starts a fresh review.
 
 | Measure | Expected fictional result |
 |---|---:|

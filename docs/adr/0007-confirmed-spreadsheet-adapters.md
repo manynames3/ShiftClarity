@@ -1,6 +1,6 @@
 # ADR 0007: Confirm spreadsheet meaning before reconciliation
 
-Status: accepted for the local fictional MVP, October 23, 2026. Live deployment and customer data remain separately gated.
+Status: accepted and deployed for the synthetic MVP, October 23, 2026. Customer data remains separately gated.
 
 ## Context
 

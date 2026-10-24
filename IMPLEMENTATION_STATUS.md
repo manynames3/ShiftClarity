@@ -2,7 +2,7 @@
 
 ## Latest checkpoint · October 23, 2026
 
-All five spreadsheet adoption MVP phases are implemented and locally validated with fictional data. CSV/XLSX → confirmed mappings/profiles → independent rate approval → canonical reconciliation/review → Excel/PDF downloads, including repeat-period use. Evidence: 97 backend, 90 unit/component, 44 original browser and 20 fixture checks, the complete new browser journey, three landing checks and a nonroot/read-only/network-isolated Lambda-image smoke. See [verification](docs/VERIFICATION.md), [walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) and [Claude disposition](docs/CLAUDE_MVP_REVIEW.md). No new live deployment, real customer data or production acceptance.
+All five spreadsheet adoption MVP phases are implemented and deployed to the [assigned-account synthetic pilot](https://shiftclarity.pages.dev/pilot/). CSV/XLSX → confirmed mappings/profiles → independent rate approval → canonical reconciliation/review → Excel/PDF downloads, including repeat-period use. Migrations 004/005 preserved existing record hashes after a restore rehearsal. The final image passed 98 backend regressions, the local MVP browser journey, container checks and a real Cognito/S3/SQS/Neon two-period browser journey with persisted review and both reports. Both functions are Active/Successful at digest `8114bdfc526c79875beead7f116811a432477a9910156b9d7da5205d818e1eba`; Terraform has no drift. Earlier 90 unit/component, 44 original browser and 20 fixture checks remain recorded. See [verification](docs/VERIFICATION.md), [walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) and [Claude disposition](docs/CLAUDE_MVP_REVIEW.md). No real customer data or production acceptance is claimed.
 
 Historical checkpoints follow.
 

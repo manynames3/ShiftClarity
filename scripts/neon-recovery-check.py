@@ -43,6 +43,9 @@ os.environ["PGSERVICEFILE"]=str(service)
 backup=ROOT/(".local/"+label+"-synthetic-recovery.dump")
 tables=["imports","source_revisions","source_lineage","documents","rule_versions","jobs","completed_runs","workspace_heads","audit_events","write_receipts"]
 if args.cloud:tables.extend(["organizations","memberships"])
+with psycopg.connect("service=sc_neon_recovery") as db:
+    tables.extend(table for table in ["table_sessions","table_files","mapping_profiles"]
+                  if db.execute("SELECT to_regclass(%s)",(table,)).fetchone()[0])
 def snapshot(connection):
     connection.execute("SET TIME ZONE 'UTC'")
     result={}
@@ -63,7 +66,10 @@ with psycopg.connect(target) as db:
 subprocess.run([str(bindir/"pg_restore"),"--no-owner","--no-acl","--dbname",target,str(backup)],check=True,capture_output=True)
 with psycopg.connect("service=sc_neon_recovery") as db:
     source_hash,counts=snapshot(db)
-    objects=[row[0] for row in db.execute("SELECT object_key FROM imports WHERE status='validated' UNION SELECT object_key FROM documents").fetchall()]
+    object_query="SELECT object_key FROM imports WHERE status='validated' UNION SELECT object_key FROM documents"
+    if "table_files" in tables:
+        object_query+=" UNION SELECT object_key FROM table_files WHERE status IN ('quarantined','accepted') AND expires_at>now()"
+    objects=[row[0] for row in db.execute(object_query).fetchall()]
 with psycopg.connect(target) as db:
     restored_hash,_=snapshot(db)
 assert source_hash==restored_hash,"Neon snapshot restore differs"

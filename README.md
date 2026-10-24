@@ -13,7 +13,7 @@ ShiftClarity helps healthcare staffing teams compare approved contract rates, co
 
 [Explore the hosted demo](https://shiftclarity.pages.dev/demo/) · [Product](https://shiftclarity.pages.dev/) · [Complete spreadsheet walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) · [C4 architecture](docs/architecture/README.md) · [ADRs](docs/adr/README.md)
 
-**Release boundary:** this repository includes the locally tested CSV/XLSX-to-report MVP. **That upgrade is not deployed yet.** The public site offers the standalone fictional demo and the earlier assigned-account AWS pilot. All included records are fictional; customer data and production approval remain gated.
+**Live synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals and reviews. All included records are fictional; customer data and production approval remain gated.
 
 ## Answer four billing questions
 
@@ -22,7 +22,7 @@ ShiftClarity helps healthcare staffing teams compare approved contract rates, co
 - **What needs more evidence?** Coverage gaps stay visible and receive no invented financial estimate.
 - **What did we decide?** Confirm, dismiss or request evidence with a recorded reason and preserved history.
 
-![Actual local MVP workspace showing imported fictional work, review progress and coverage](docs/images/mvp-workspace.png)
+![Actual hosted MVP workspace showing imported fictional work, review progress and coverage](docs/images/mvp-workspace.png)
 
 The supplied spreadsheet example evaluates **6 of 8 work records** and identifies **$200 potential underbilling**. Four 10-hour shifts use an approved $65 rate against $60 invoiced. Explicit overtime and weekend rows align. One unsupported callback and one pending time approval remain coverage gaps. Collectibility and payment outcomes are unknown.
 
@@ -53,7 +53,9 @@ Reports cover the current run. Download before advancing to another period; hist
 
 ## Try it locally
 
-The complete spreadsheet workflow uses the persistent local pilot. Prerequisites: Node 22, Python 3.13, uv, PostgreSQL 17 tools and a Java runtime supported by the pinned Keycloak 26.8.0 development provider.
+Assigned reviewers can use the [hosted spreadsheet workflow](https://shiftclarity.pages.dev/pilot/) with their own authenticator and a separate permitted approver for new rates. There is no public signup. Start with the [fictional walkthrough](docs/SPREADSHEET_WALKTHROUGH.md).
+
+The same workflow runs locally. Prerequisites: Node 22, Python 3.13, uv, PostgreSQL 17 tools and a Java runtime supported by the pinned Keycloak 26.8.0 development provider.
 
 ```sh
 git clone https://github.com/manynames3/ShiftClarity.git
@@ -100,7 +102,7 @@ Bullhorn, Avionté, QuickBooks and VMS names are potential source formats to ver
 
 The three reporting/import libraries were explicitly approved. The upgrade adds no paid AI API, new cloud service or always-on infrastructure. Migration **004** adds onboarding sessions, files and profiles; **005** protects their accepted identities/content. Owner migrations remain outside request handling. [ADRs](docs/adr/README.md), [C4 views](docs/architecture/README.md) and the [import sequence](docs/architecture/import-publication.md) explain the boundaries.
 
-Quarantine originals expire after one day and accepted original bytes after 30 days. Raw previews are removed at acceptance. Derived immutable evidence persists until an owner-authorized purge; this is not an approved customer retention policy. See [security controls](docs/PHASE_4.md) and the [threat model](docs/THREAT_MODEL.md). The earlier hosted pilot's costs and operations are documented [separately](docs/AWS_AND_DATABASE.md); this task makes no new live deployment.
+Quarantine originals expire after one day and accepted original bytes after 30 days. Raw previews are removed at acceptance. Derived immutable evidence persists until an owner-authorized purge; this is not an approved customer retention policy. See [security controls](docs/PHASE_4.md), the [threat model](docs/THREAT_MODEL.md) and [hosted operations](docs/AWS_AND_DATABASE.md).
 
 ## Verify the result
 
@@ -114,7 +116,7 @@ npm run test:e2e
 npm run test:mvp
 ```
 
-Backend/MVP checks use disposable **local** databases and refuse cloud targets. The MVP browser journey imports XLSX files, confirms/saves mappings, obtains separate-account approval, reviews the derived result, downloads both reports, and repeats another period with a new source value. Its test sessions are locally provisioned; that test does not claim to reverify Cognito sign-in. Original fixture and demo regressions remain separate.
+The commands above use disposable **local** databases and refuse cloud targets. The MVP browser journey imports XLSX files, confirms/saves mappings, obtains separate-account approval, reviews the derived result, downloads both reports, and repeats another period with a new source value. Its local sessions are provisioned for testing. A separate authorized [hosted verification](docs/VERIFICATION.md#october-23-2026--hosted-spreadsheet-mvp) uses real Cognito MFA; it writes fictional records to the assigned pilot. Original fixture and demo regressions remain separate.
 
 See [actual verification results](docs/VERIFICATION.md), [Claude review disposition](docs/CLAUDE_MVP_REVIEW.md), [acceptance evidence](ACCEPTANCE_CHECKLIST.md) and [implementation plan](docs/MVP_IMPLEMENTATION_PLAN.md). Screenshots show running software and generated reports with fictional records.
 

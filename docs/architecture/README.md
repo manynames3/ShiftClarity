@@ -6,7 +6,7 @@ The public root serves a static landing page from Cloudflare Pages; its dedicate
 
 These C4 views describe the **deployed synthetic pilot**, not a proposed production platform. All records are fictional. The standalone `/demo/` experience remains a separate, memory-only demonstration.
 
-The CSV/XLSX onboarding and Excel/PDF reports extend these same containers in the **local MVP**; they are not live at the hosted pilot yet. See the [spreadsheet component view](#c4-level-3-spreadsheet-mvp) and [walkthrough](../SPREADSHEET_WALKTHROUGH.md). No new cloud service is introduced.
+The CSV/XLSX onboarding and Excel/PDF reports extend these same containers in the **deployed synthetic MVP**, released October 23, 2026. See the [spreadsheet component view](#c4-level-3-spreadsheet-mvp) and [walkthrough](../SPREADSHEET_WALKTHROUGH.md). No new cloud service is introduced.
 
 ## C4 level 1: system context
 

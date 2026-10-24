@@ -38,6 +38,10 @@ Ten stored ECR images total at most 2.86 GB by summed image sizes; shared layers
 
 The original full backend suite did not complete in this session because the local test cluster rejected peer authentication. Gateway tests were isolated from that unrelated cluster and passed; the actual cloud persistence/import/job path and container-to-Neon runtime were exercised. The previous release's broader results remain historical evidence, not a full rerun for this address change.
 
+## Spreadsheet MVP release · October 23, 2026
+
+Pages release `d39a4aa3` (landing source `b517803`) now describes fictional CSV/Excel imports and evidence reports accurately. The existing fixed-origin Worker and its secret are unchanged. The live landing and application assets matched the build bytes; anonymous API/report, direct gateway and preview-host denials passed. The backend's final two-function image is `sha256:8114bdfc526c79875beead7f116811a432477a9910156b9d7da5205d818e1eba` from application source `5d3e324`. A real Cognito-MFA two-period import/review/report journey passed at the Pages origin. See the [release evidence](VERIFICATION.md). No additional cloud service, paid plan or real customer data was introduced.
+
 ## Landing page release · October 17, 2026
 
 The user approved the rendered bright editorial concept before implementation. Source lives in `landing/`; `scripts/build-pages.mjs` assembles only that public content and the Worker into ignored `dist/cloudflare/`. The app build and its `/assets/` remain separate, so no Lambda image rebuild or backend change is required. Deploy the assembled directory, not the Worker-only source folder.

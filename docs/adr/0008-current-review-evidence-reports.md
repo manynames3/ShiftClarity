@@ -1,6 +1,6 @@
 # ADR 0008: Export the current reviewed evidence
 
-Status: accepted for the local fictional MVP, October 23, 2026.
+Status: accepted and deployed for the synthetic MVP, October 23, 2026.
 
 ## Context
 

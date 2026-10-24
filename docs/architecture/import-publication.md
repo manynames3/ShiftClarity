@@ -76,7 +76,7 @@ Accepted originals expire after 30 days and quarantine objects after one day. No
 
 Source: [API](../../backend/app.py), [imports](../../backend/imports.py), [jobs](../../backend/jobs.py), [Lambda handlers](../../backend/lambda_handler.py), and [infrastructure](../../infra/main.tf).
 
-## Spreadsheet MVP entry path (local, not deployed)
+## Spreadsheet MVP entry path (deployed synthetic pilot)
 
 ```mermaid
 sequenceDiagram

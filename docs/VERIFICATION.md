@@ -1,8 +1,32 @@
 # Synthetic release verification
 
+## October 23, 2026 · Hosted spreadsheet MVP
+
+The user explicitly authorized push/deploy after local MVP acceptance. The spreadsheet workflow is live at [the assigned-account pilot](https://shiftclarity.pages.dev/pilot/). Application source is `5d3e324`; both Lambda functions are Active/Successful at `sha256:8114bdfc526c79875beead7f116811a432477a9910156b9d7da5205d818e1eba`. Pages release `d39a4aa3` serves the updated landing copy from `b517803`. The app's JS/CSS assets matched the local build bytes. No new cloud service or paid upgrade was introduced.
+
+| Check actually performed for this release | Result |
+|---|---|
+| Database migration and recovery | Restored the existing Neon branch and **13 S3 originals** into an isolated local rehearsal; state/object hashes matched. Rehearsed migrations **004/005**, then applied them owner-side to the authorized synthetic branch. Running migrations twice was idempotent; existing record hashes were unchanged. |
+| Packaging | AMD64 Lambda runtime-emulator and restricted-Neon checks passed. UID 10001/read-only/network-isolated smoke covered spreadsheets, independent rate approval, shared calculations and both report encoders. Registry manifest type is checked before selecting an image for deployment. |
+| Backend regressions | **98 passed** after the final calculator timeout/error-handling correction, including the new interrupted-approval regression. The focused recovery/approval suite also passed all eight cases. |
+| Local browser | The full two-period MVP journey passed again after the backend correction; TypeScript passed. Three landing browser checks and all four edge-routing tests passed for the copy release. |
+| Real Cognito workflow | Signed in with distinct MFA-protected reviewer and approver accounts. The live fictional XLSX journey obtained independent approval, accepted private sources, published a durable run, derived **$200 potential underbilling / 6 of 8 work records**, saved a review and retained it after reload. |
+| Secure sources and roles | The authorized S3 original matched the supplied XLSX bytes exactly and carried no-store. Missing CSRF, an approver attempting an import, and an approver downloading work originals were denied. |
+| Unassigned identity | A separate real Cognito MFA account without workspace membership was denied after sign-in. |
+| Repeat period | Live CSV reuse of the saved work profile required explicit mapping of the new RG value. Unchanged approved rates were reused; the second period began with a fresh Needs review decision. |
+| Loaded-screen visual checks | A repeat live journey passed in **48.8 seconds**. Source cards, fonts and logos loaded before captures/checks. Actual light desktop/mobile captures were inspected; accepted import had no overflow or automated axe violations at 1440/390/320px. Open mappings and the report workspace also passed light/dark scans. The same-period retest used All findings to inspect retained decisions. |
+| Actual report downloads | Both formats downloaded through the hosted workspace. Excel had eight literal-cell sheets with no formulas; default worker references and reviewer notes were omitted. The three-page PDF was rendered and inspected, including confirmed review, $3,305 expected / $3,105 evaluated invoiced and $3,775 all-posted amounts. |
+| Boundary controls | Anonymous workspace/import/report APIs returned 401. Direct gateway and preview-host access returned 403. Cognito mandatory TOTP/callback, private encrypted S3, restricted Neon role, verified client TLS, forced RLS and unscoped-row denial were read back. The existing alert subscription remained confirmed. |
+| Infrastructure | Reviewed plans changed only the web/worker image digests. Final Terraform plan exited **0 with no drift**; job and dead-letter queues were empty after the completed journey. |
+| Post-release restore | Extended the existing rehearsal to include spreadsheet tables and unexpired originals. All **15 tables**, including six source selections, 18 file records and four mapping profiles, matched after isolated restore; **34 private S3 objects** matched byte hashes. The rehearsal took **7.92 seconds**, establishing no production recovery objective. |
+
+The first registry upload contained an OCI index with an attestation, which Lambda rejected; both functions stayed on the prior image. Rebuilding with `--provenance=false --sbom=false` produced a compatible single manifest, now guarded by the upload script. The first hosted rate calculation then exceeded the former 12-second subprocess limit; retrying the same selection approved its three rates. The final image allows a bounded 20-second calculator start inside the 29-second HTTP limit and returns retryable 503 for interruptions, preserving sources, versions and prior results. A failing local regression was recorded before the fix and passed afterward. No approval or integrity guard was bypassed.
+
+Evidence remains in ignored `artifacts/mvp-migration-*.json`, `mvp-release-backend-final.txt`, `mvp-live-browser-final.txt`, `mvp-live-browser-visual-final.txt`, `mvp-live-outsider.txt`, `mvp-postdeploy-recovery.json`, `mvp-live-resources.json`, `mvp-live-public-origin.json`, actual report downloads and private Terraform logs. Earlier 90 domain/component, 44 original browser and 20 fixture results below are retained as earlier MVP evidence, not relabeled as fresh cloud runs. Representative customer accuracy, capacity, recovery objectives, incident/data-use ownership and historical report navigation remain outside this synthetic release.
+
 ## October 23, 2026 · Spreadsheet adoption MVP (local only)
 
-The CSV/XLSX-to-review-to-report upgrade is implemented locally and documented for fictional evaluation. It has **not** been deployed to AWS/Neon/Pages. The earlier hosted release evidence below remains historical.
+This checkpoint records the completed local implementation before the separately authorized hosted release above. At this checkpoint it had **not** been deployed to AWS/Neon/Pages. The earlier hosted release evidence below remains historical.
 
 | Check actually performed | Result and scope |
 |---|---|

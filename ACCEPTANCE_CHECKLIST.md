@@ -60,7 +60,7 @@ SC-25,26,27,29 pass within the authorized synthetic AWS scope. SC-28 has synthet
 
 ## Spreadsheet adoption MVP · October 23, 2026
 
-These checks describe the locally implemented fictional upgrade. They do not mark real-customer SC-28/30/31 gates complete or imply a new cloud deployment.
+These checks describe the implemented and deployed synthetic upgrade, including the October 23 owner-authorized release. They do not mark real-customer SC-28/30/31 gates complete.
 
 - [x] **MVP-01 — Existing files:** CSV/XLSX in all three source categories, multiple files, worksheet/header preview, deterministic normalization, explicit acceptance and original row/file lineage. Parser/adapter tests and full API/browser journey.
 - [x] **MVP-02 — Meaning confirmed:** columns, values, fixed source fields, date/decimal/time/end-date formats, normalized previews and all-row diagnostics. Unresolved errors block the source selection.
@@ -73,4 +73,6 @@ These checks describe the locally implemented fictional upgrade. They do not mar
 - [x] **MVP-09 — Repeatable fictional evaluation:** supplied first/second-period files, fresh second-period decisions, reuse without new code or another unchanged-rate approval; narrow-screen overflow and automated accessibility checks.
 - [x] **MVP-10 — Compatibility:** original standalone/browser/oracle checks, full backend tests, production build, local nonroot/read-only/network-isolated container parser/engine/report smoke. Current actual totals and remaining limits are in [verification](docs/VERIFICATION.md).
 
-Not implemented/established: certified vendor connectors, inferred rate policies or fractional-minute rounding, historical review/report navigation, customer data/legal/operations acceptance, independent real-sample accuracy/effort measurement, new AWS/Neon migration/deployment or new Cognito-provider verification. The locally provisioned test sessions do not bypass production identity code.
+Hosted release evidence additionally covers real Cognito MFA and unassigned-account denial, S3 byte-matched originals and role/CSRF denials, persistent reviews/reports, repeat-period use, additive migrations with unchanged prior record hashes, and an isolated restore of 15 tables and 34 private objects. Both functions are Active/Successful; Terraform has no drift. See [verification](docs/VERIFICATION.md).
+
+Not implemented/established: certified vendor connectors, inferred rate policies or fractional-minute rounding, historical review/report navigation, customer data/legal/operations acceptance, or independent real-sample accuracy/effort measurement. The locally provisioned test sessions do not bypass production identity code.

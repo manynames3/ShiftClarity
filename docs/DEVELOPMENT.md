@@ -102,7 +102,9 @@ See [verification evidence](VERIFICATION.md), [phase 4 boundaries](PHASE_4.md), 
 
 With the dedicated local cluster prepared, run `npm run build`, `npm run build:engine`, `npm run test:backend` and `npm run test:mvp`. The latter starts its own API on 5196 and creates `shiftclarity_mvp_browser`, never the saved pilot database. It provisions short test sessions locally to exercise real server authorization without embedding a bypass in application code. It does not replace real-provider OIDC/MFA verification. Backend/MVP setup refuses cloud configurations.
 
-Migration 004 adds `table_sessions`, `table_files` and `mapping_profiles` under forced RLS. Migration 005 adds accepted-file/session/profile immutability. `backend.bootstrap.migrate` applies them as the database owner during explicit local setup. Do not migrate a live environment as a side effect of starting the API. No live migration/deployment was performed for this MVP.
+Migration 004 adds `table_sessions`, `table_files` and `mapping_profiles` under forced RLS. Migration 005 adds accepted-file/session/profile immutability. `backend.bootstrap.migrate` applies them as the database owner during explicit local setup. Do not migrate a live environment as a side effect of starting the API. The October 23 authorized synthetic release rehearsed these migrations against a restored copy, then applied them to the isolated cloud branch without changing existing record hashes.
+
+For owner-authorized hosted verification, `npx playwright test -c playwright.mvp.aws.config.ts` uses the private assigned Cognito reviewer/approver accounts, real MFA and the fixed Pages origin. It creates fictional source selections, approvals and reviews in the saved synthetic workspace. It never provisions accounts, accepts customer records or bypasses sign-in. Keep `.local/aws-accounts.json` private. Local tests remain the default.
 
 `backend/.venv/bin/python scripts/generate-spreadsheet-examples.py` rebuilds fictional files under `public/examples/spreadsheets`. Expected results are a test oracle only. Report and screenshot artifacts remain ignored; curated synthetic product images live under `docs/images`.
 
@@ -116,4 +118,4 @@ docker run --rm --platform linux/amd64 --read-only --tmpfs /tmp:rw,noexec,nosuid
   shiftclarity:mvp-local /checks/smoke.py
 ```
 
-This verifies packaged libraries/assets, the isolated workbook process, the shared calculator and both report encoders as UID 10001. It does not contact AWS/Neon, exercise Cognito or establish Lambda request latency.
+This verifies packaged libraries/assets, the isolated workbook process, independent rate approval, the shared calculator and both report encoders as UID 10001. It does not contact AWS/Neon, exercise Cognito or establish Lambda request latency. Use the explicit single-manifest build and registry guard in the [AWS guide](AWS_AND_DATABASE.md) for deployment.

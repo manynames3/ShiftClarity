@@ -1,6 +1,6 @@
 # AWS synthetic pilot and database
 
-Updated October 16, 2026. The synthetic pilot is deployed at https://shiftclarity.pages.dev/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
+Updated October 23, 2026. The synthetic spreadsheet MVP is deployed at https://shiftclarity.pages.dev/pilot/ in us-east-1. Deployment uses a dedicated role; application functions use a separate restricted runtime role. The account owner can view its resources. No unrelated project resource was changed, no long-lived key was created, no invitations were sent, and no real customer data was loaded.
 
 ## Deployed arrangement
 

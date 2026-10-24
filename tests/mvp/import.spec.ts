@@ -1,9 +1,13 @@
-import {test,expect} from '@playwright/test';
+import {test,expect,type Page} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {readFileSync} from 'node:fs';
 import {cognitoLogin} from '../pilot/cognito-auth';
 
 const cloud=process.env.SHIFTCLARITY_MVP_AWS_QA==='1';
+async function rendered(page:Page){
+ await page.evaluate(()=>document.fonts.ready);
+ await expect.poll(()=>page.locator('img:visible').evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete&&(image as HTMLImageElement).naturalWidth>0))).toBe(true);
+}
 
 test('nontechnical evaluator imports XLSX, confirms mappings, obtains independent approval and reviews the real result',async({browser})=>{
  const sessions=cloud?null:JSON.parse(readFileSync('.local/mvp-browser-sessions.json','utf8'));
@@ -17,6 +21,7 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await page.goto('/pilot/?view=import');
   await expect(page.getByRole('heading',{name:'Start a billing review'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Create review',exact:true})).toBeVisible();
+  await rendered(page);
   await page.screenshot({path:'artifacts/mvp-onboarding.png'});
   await page.getByLabel('These work records cover the whole').check();
   await page.getByLabel('These invoice/statement records include').check();
@@ -28,6 +33,7 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
    await page.getByLabel('Upload '+label,{exact:true}).setInputFiles('public/examples/spreadsheets/'+kind+'.xlsx');
    await expect(page.getByRole('heading',{name:kind+'.xlsx',exact:true})).toBeVisible();
   }
+  await rendered(page);
   await page.screenshot({path:'artifacts/mvp-upload.png',fullPage:true});
   await page.locator('.mapping-card').first().evaluate(node=>node.scrollIntoView({block:'start'}));
   await page.screenshot({path:'artifacts/mvp-mapping.png'});
@@ -74,6 +80,7 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await expect(page).toHaveURL(/view=workspace$/);
   await expect(page.getByRole('heading',{name:'+$200.00',exact:true})).toBeVisible();
   await expect(page.locator('.mvp-summary')).toContainText('6 / 8');
+  if(cloud)await page.getByRole('button',{name:/^All findings/}).click();
   await page.getByRole('link',{name:'Rate change not reflected',exact:true}).click();
   if(cloud&&await page.getByRole('button',{name:'Reopen for review'}).isVisible()){
    await page.getByRole('button',{name:'Reopen for review'}).click();
@@ -112,10 +119,13 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await expect(page.locator('.toast')).toBeHidden({timeout:7000});
   await page.getByRole('heading',{name:'+$200.00',exact:true}).focus();
   await page.evaluate(()=>window.scrollTo(0,0));
+  await rendered(page);
   await page.screenshot({path:'artifacts/mvp-workspace.png',fullPage:true});
   await page.goto(sessionURL);
+  await expect(page.getByRole('heading',{name:'rates.xlsx',exact:true})).toBeVisible();
   for(const width of [1440,390,320]){
    await page.setViewportSize({width,height:1000});
+   await rendered(page);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
    expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
    if(width===390)await page.screenshot({path:'artifacts/mvp-import-mobile.png'});

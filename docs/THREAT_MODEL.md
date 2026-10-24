@@ -19,7 +19,7 @@ Scope: one synthetic workspace, distinct identity accounts, AWS web/worker funct
 
 The runtime role cannot edit/delete audit, source, rule or completed-run records. The database owner can perform approved retention operations; this is not cryptographic tamper evidence against a compromised administrator. The local development identity server is loopback-only and must never be exposed as the production provider.
 
-## Local spreadsheet MVP extension · October 23
+## Synthetic spreadsheet MVP extension · October 23
 
 | Added boundary | Control and verification |
 |---|---|
@@ -32,4 +32,4 @@ The runtime role cannot edit/delete audit, source, rule or completed-run records
 | XLSX/PDF content execution or leakage | Literal cells, escaped paragraph text, hashed canonical fingerprints, worker fields/notes excluded by default, explicit notes opt-in, authenticated audited no-store downloads |
 | Large reports | Two concurrent encoders; bounds inherited from accepted sources; full declared-capacity synthetic import/report check |
 
-The local browser journey provisions short sessions only in its disposable database; it is not a fresh Cognito or penetration test. Original provider/production evidence is historical. The new upgrade has not been deployed or exercised against actual customer records.
+The local browser journey provisions short sessions only in its disposable database. The separately authorized hosted release exercised real Cognito MFA, source permissions, S3 originals, jobs and reports; see [verification](VERIFICATION.md). These checks are not a penetration test or customer-data approval. Actual customer records remain gated.
