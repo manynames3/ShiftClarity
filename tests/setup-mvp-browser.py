@@ -27,8 +27,8 @@ with psycopg.connect(admin.replace('/postgres','/shiftclarity_mvp_browser')) as 
  draft=json.loads((ROOT/'handoff/data/synthetic/draft_rule.json').read_text())
  seed(db,settings,inputs,draft)
  accounts={}
- for actor,roles in [('MVP-IMPORTER',['importer','reviewer']),('MVP-APPROVER',['approver'])]:
-  db.execute('INSERT INTO memberships VALUES(%s,%s,%s,%s,%s,true)',(settings.issuer,actor,settings.org_id,actor,roles))
+ for actor,roles in [('MVP-IMPORTER',['owner','importer','reviewer']),('MVP-APPROVER',['approver'])]:
+  db.execute('INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,%s,%s,%s,true)',(settings.issuer,actor,settings.org_id,actor,roles))
   token=secrets.token_urlsafe(32);csrf=secrets.token_urlsafe(32)
   db.execute("INSERT INTO sessions VALUES(%s,%s,%s,%s,now()+interval '1 hour')",(digest(token.encode()),settings.issuer,actor,csrf))
   accounts[actor]={'token':token}

@@ -1,0 +1,26 @@
+# Complete recurring billing review · October 24, 2026
+
+User scope: close the end-to-end adoption gaps, preserve the bright approved design, and keep implementation lean. Invite-only onboarding is approved; the existing private reviewer is the synthetic owner. Existing synthetic deployment/publication authorization applies. No real staffing records, unsolicited messages, paid upgrades or new production dependencies are authorized.
+
+## Implementation and verification sequence
+
+1. **WF-01 · Period workspaces and history.** Keep immutable calculation snapshots. Store mutable reviews separately per run, preserve existing decisions, and provide period/history selection with historical PDF/XLSX. Concurrent review of different periods must not change the other period. Test migration, permissions, stale/version conflicts, historical decisions and reports before continuing.
+2. **WF-02 · Team follow-up and correction verification.** Persist actionable case ownership, a personal/team queue, independent approval handoff, correction references and an append-only event trail. A later reconciliation may mark a case aligned only when every affected work record is evaluated and aligned in the same scope. Missing or unsupported records must leave the case unresolved. Keep review decisions distinct from paid/collected money. Test reassignment, corrected/partial/omitted evidence, role boundaries and reports.
+3. **WF-03 · Invite-only setup and first review.** Provide owner-managed access, agency/facility defaults, a first-use checklist and an unambiguous entry to the actual spreadsheet workflow. Keep Cognito MFA, separate approval and exact membership checks. Do not automatically send invitations during verification. Test owner/approver/reviewer journeys and unauthorized access.
+4. **WF-04 · Import readiness and practical capacity.** Guide the three exports, stable references, whole-minute time, explicit components, dates and completeness. Reuse registered rates and confirmed layouts. Raise limits only after bounded-parser, shared-engine, response-size and report measurements. Preserve rejection diagnostics and do not drop or invent rows.
+5. **WF-05 · Release verification.** Run first and repeat periods, separate-account approval, evidence handoff, correction/reimport, history/report access and simultaneous period review. Inspect desktop/mobile and light/dark views, run focused/full regressions as appropriate, verify the container, deploy only inspected synthetic changes, and update README, About, ADR/C4 and acceptance evidence.
+
+Actual customer export compatibility, representative independent accuracy labels, physical iPhone printing and unassisted usability with a billing user require external evidence; code completion must not be described as proof of those gates.
+
+## Evidence through packaging
+
+- **WF-01:** per-run history/report and concurrent-period tests pass. The administrator backfill test caught and fixed missing explicit organization filters before live migration. Original snapshots remain immutable; existing decisions and publication timestamps are recovered.
+- **WF-02:** assignment, assigned-owner evidence response, correction references and appended events pass. Omitted, pending, incomplete and partly corrected work cannot auto-close a case. The complete browser loop verifies $200 → $0 with two coverage gaps retained and the correction reference still available.
+- **WF-03:** owner permissions, explicit roles, revocation, final-owner guard, suppressed provider invitations and temporary resets pass locally. The hosted creation/first-password/TOTP/reset/revocation journey passed; no invitation was sent.
+- **WF-04:** registered rates can be reused without uploading rate files; profile reconfirmation and new-value checks remain required. A 1,000-work/2,000-invoice measured run uses about 2.52 MB of state and produces both reports in about 2.8 seconds locally. The larger experiment exceeded the retained 4 MiB result guard.
+- **WF-05:** 118 backend checks, 97 unit tests, 47 original demo browser tests and 20 handoff checks pass. The extended browser journey covers 320/390/1440px, expanded case history, both themes and zero automated axe violations in those checked states. The final single-manifest Lambda image passed runtime-emulator, nonroot/read-only and network-isolated parser/engine/report checks.
+
+The live synthetic migration preserved original source/run/rate hashes and current reviews and exposed 24 historical workspaces. Terraform changed exactly the two existing function images and two additional Cognito actions in their existing pool-scoped runtime policy; no resource was added or destroyed. Final hosted results are recorded in [VERIFICATION](VERIFICATION.md).
+
+
+**WF-01–WF-05 synthetic release complete.** The final rebuilt local journey and hosted Cognito/Cloudflare journey pass, including correction, retained gaps/history and reauthentication to the selected period. Exact deployed assets match the production build; both existing functions are healthy; Terraform has no drift. Post-release restore matched 19 tables and 54 private source objects. Actual customer-data approval and independent customer validation remain outside the synthetic release.

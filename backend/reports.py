@@ -34,7 +34,7 @@ def key(finding):
     direction='over' if finding['discrepancy_amount'].startswith('-') else 'under'
     return '/'.join([finding['dataset_id'],finding['facility_id'],finding['rule_version_id'],finding['reason_code'],direction])
 
-def model(state, lineage=None, include_notes=False):
+def model(state, lineage=None, include_notes=False, cases=None, case_events=None):
     run={**state['run'],'fingerprint':digest(state['run']['fingerprint'])}; findings=[]; history=[]
     for source in run['findings']:
         review=state.get('reviews',{}).get(key(source),{})
@@ -43,12 +43,14 @@ def model(state, lineage=None, include_notes=False):
         findings.append({**source,'review_state':status,'review_label':STATES[status]})
         for event in review.get('history',[]):
             history.append({'finding_id':source['id'],**{k:event.get(k,'') for k in ['sequence','action','actor','timestamp','owner','fingerprint']},'fingerprint':digest(event.get('fingerprint','')),'reason':event.get('reason','') if include_notes else '(notes omitted)'})
+    for event in case_events or []:
+        history.append({'finding_id':event['case_id'],'sequence':event['sequence'],'action':event['action'],'actor':event['actor'],'timestamp':event['created_at'].isoformat(),'owner':event['data'].get('owner',''),'reason':event['data'].get('reason','') if include_notes else '(notes omitted)','fingerprint':''})
     records=run['records']
     evaluated=[r for r in records if r['category'] in ['evaluated_aligned','evaluated_flagged']]
     evaluated_billed=sum((Decimal(r['invoiced_amount']) for r in evaluated),Decimal(0))
     confirmed={direction:sum((abs(Decimal(f['discrepancy_amount'])) for f in findings if f['review_state']=='confirmed' and (Decimal(f['discrepancy_amount'])<0)==(direction=='over')),Decimal(0)) for direction in ['under','over']}
     return {'run':run,'findings':findings,'records':records,'rates':state['inputs']['rules'],
-            'source_counts':{kind:len(state['inputs'][kind]) for kind in ['work','invoices','rules']},'lineage':[{**row,'content_hash':row.get('sha256',row.get('content_hash',''))} for row in (lineage or [])],'history':history,'tasks':run['tasks'],'notes_included':include_notes,
+            'source_counts':{kind:len(state['inputs'][kind]) for kind in ['work','invoices','rules']},'lineage':[{**row,'content_hash':row.get('sha256',row.get('content_hash',''))} for row in (lineage or [])],'history':history,'tasks':run['tasks'],'notes_included':include_notes,'cases':cases or [],
             'generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),
             'stale':state.get('stale',False),'evaluated_billed':str(evaluated_billed),
             'confirmed':confirmed,'reviews_completed':sum(f['review_state'] in ['confirmed','dismissed'] for f in findings)}
@@ -60,7 +62,7 @@ def overview(data):
         ('Run reference',run['id']),('Report generated (UTC)',data['generated_at']),
         ('Service from (inclusive)',m['service_from']),('Service to (exclusive)',m['service_to_exclusive']),
         ('Source current through',m['as_of']),('Billing cutoff',m['billing_cutoff']),
-        ('Result freshness','STALE - previous completed run retained; rerun validated evidence' if data['stale'] else 'Current completed run'),
+        ('Result freshness','STALE - previous completed run retained; rerun validated evidence' if data['stale'] else 'Completed run - original source evidence'),
         ('Source records accepted',sum(data['source_counts'].values())),('Records received',coverage['received_records']),('Records evaluated',coverage['evaluated_records']),
         ('Hours received',Decimal(coverage['received_minutes'])/60),('Hours evaluated',Decimal(coverage['evaluated_minutes'])/60),
         ('Expected on evaluated work (USD)',Decimal(run['totals']['expected'])),
@@ -114,6 +116,7 @@ def xlsx(data):
           [[h.get(k,'') for k in ['finding_id','sequence','action','actor','timestamp','owner','reason','fingerprint']] for h in data['history']],[22,12,26,28,34,28,85,80])
     sheet('Coverage gaps',['Task','Work references','Coverage','Reason','Financial estimate'],
           [[t['id'],reference,label(t['category']),label(t['reason_code']),'No estimate applied'] for t in data['tasks'] for reference in t['shift_ids']],[22,42,28,55,28])
+    sheet('Follow-up',['Case reference','Facility','Review basis','Latest status','Owner','Correction / evidence reference','Verified run','Last evidence run','Updated at'],[[c['id'],c['facility_id'],label(c['reason_code']),label(c['status']),c['owner'] or '',c['correction_reference'] or '',c['verified_run_id'] or '',c['last_run_id'],c['updated_at'].isoformat()] for c in data['cases']],[45,24,42,32,32,42,45,45,34])
     for ws,column in [(wb['Rate terms'],6),(wb['Work calculations'],11)]:
         for row in range(2,ws.max_row+1):ws.cell(row,column).number_format='#,##0.0000'
     output=io.BytesIO();wb.save(output);return output.getvalue()
@@ -125,9 +128,9 @@ def pdf(data):
     output=io.BytesIO();width=7*inch
     styles=getSampleStyleSheet()
     for name in ['Normal','BodyText']:
-        styles[name].fontName='SC-Sans';styles[name].fontSize=9;styles[name].leading=13;styles[name].textColor=colors.HexColor('#'+NAVY)
+        styles[name].fontName='SC-Sans';styles[name].fontSize=9;styles[name].leading=12;styles[name].textColor=colors.HexColor('#'+NAVY)
     styles.add(ParagraphStyle(name='SCtitle',fontName='SC-Bold',fontSize=29,leading=34,textColor=colors.HexColor('#'+NAVY),spaceAfter=12))
-    styles.add(ParagraphStyle(name='SCsection',fontName='SC-Bold',fontSize=15,leading=20,textColor=colors.HexColor('#'+NAVY),spaceBefore=20,spaceAfter=8,keepWithNext=True))
+    styles.add(ParagraphStyle(name='SCsection',fontName='SC-Bold',fontSize=15,leading=20,textColor=colors.HexColor('#'+NAVY),spaceBefore=16,spaceAfter=6,keepWithNext=True))
     styles.add(ParagraphStyle(name='SCsmall',parent=styles['Normal'],fontSize=8,leading=11,textColor=colors.HexColor('#'+MUTED)))
     def p(value,style='Normal'):
         # Treat every external string as text, including ReportLab paragraph markup.
@@ -137,7 +140,7 @@ def pdf(data):
     def table(headers,rows,widths):
         cells=[[p(value,'SCsmall') for value in headers]]+[[p(value) for value in row] for row in rows]
         result=PDFTable(cells,colWidths=widths,repeatRows=1,hAlign='LEFT')
-        result.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#'+PALE)),('LINEBELOW',(0,0),(-1,0),.6,colors.HexColor('#'+TEAL)),('LINEBELOW',(0,1),(-1,-1),.3,colors.HexColor('#DCE6EC')),('VALIGN',(0,0),(-1,-1),'TOP'),('TOPPADDING',(0,0),(-1,-1),7),('BOTTOMPADDING',(0,0),(-1,-1),7),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7)]))
+        result.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#'+PALE)),('LINEBELOW',(0,0),(-1,0),.6,colors.HexColor('#'+TEAL)),('LINEBELOW',(0,1),(-1,-1),.3,colors.HexColor('#DCE6EC')),('VALIGN',(0,0),(-1,-1),'TOP'),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7)]))
         return result
     run=data['run'];c=run['coverage'];m=run['manifest']
     story=[p('Billing review','SCtitle'),p(f"Service period: {m['service_from']} to {m['service_to_exclusive']} (end exclusive)",'BodyText'),p('Fictional evaluation | USD | Prepared '+data['generated_at'],'SCsmall'),Spacer(1,18)]
@@ -146,18 +149,19 @@ def pdf(data):
                   section('What this review establishes'),p(f"{sum(data['source_counts'].values())} accepted source records: {data['source_counts']['work']} work, {data['source_counts']['invoices']} invoice lines, {data['source_counts']['rules']} rate versions."),p(f"{len(data['findings'])} finding{'s' if len(data['findings'])!=1 else ''}. Reviews completed: {data['reviews_completed']}. Coverage tasks: {len(run['tasks'])}. All finding states are included; potential totals above include dismissed findings before review exclusions."),
                   p(f"Reviewer-confirmed differences: {money(data['confirmed']['under'])} underbilling; {money(data['confirmed']['over'])} overbilling. Confirmation records a review, not an invoice adjustment or collected funds."),
                   table(['Evaluated-work comparison','Amount USD'],[['Expected under approved hourly terms',money(run['totals']['expected'])],['Signed invoice allocations on evaluated work',money(data['evaluated_billed'])],['All posted invoice lines, including unchecked work',money(run['totals']['invoiced'])]],[width*.76,width*.24]),
-                  p('Do not subtract the all-posted total from evaluated expected billing. Coverage scopes differ.','SCsmall'),
-                  section('Findings and supporting calculations')])
-    if not data['findings']:story.append(p('No calculated findings. Review the coverage gaps before interpreting this as agreement.'))
+                  p('Do not subtract the all-posted total from evaluated expected billing. Coverage scopes differ.','SCsmall')])
+    if not data['findings']:story.extend([section('Findings and supporting calculations'),p('No calculated findings. Review the coverage gaps before interpreting this as agreement.')])
     records={r['work']['id']:r for r in data['records']}
-    for finding in data['findings']:
+    for index,finding in enumerate(data['findings']):
         summary=[p(f"{finding['id']} | {finding['facility_id']} | {finding['review_label']}",'BodyText'),p(label(finding['reason_code'])+' | Rate version '+finding['rule_version_id'],'SCsmall'),table(['Expected','Net invoiced','Signed difference'],[[money(finding['expected_amount']),money(finding['invoiced_amount']),money(finding['discrepancy_amount'])]],[width/3]*3)]
-        story.append(KeepTogether(summary));story.append(Spacer(1,6))
+        if index==0:summary.insert(0,section('Findings and supporting calculations'))
+        block=[*summary,Spacer(1,6)]
         rows=[]
         for identifier in finding['shift_ids']:
             r=records[identifier];w=r['work']
             rows.append([identifier,w['service_date'],w['worked_minutes'],f"{Decimal(w['worked_minutes'])/60:.2f}",money(r['expected_amount']),money(r['invoiced_amount']),money(r['discrepancy_amount'])])
-        story.append(table(['Work reference','Service date','Minutes','Hours*','Expected','Invoiced','Difference'],rows,[width*.18,width*.17,width*.11,width*.09,width*.15,width*.15,width*.15]))
+        block.append(table(['Work reference','Service date','Minutes','Hours*','Expected','Invoiced','Difference'],rows,[width*.18,width*.17,width*.11,width*.09,width*.15,width*.15,width*.15]))
+        story.extend([KeepTogether(block)] if len(rows)<=8 else [KeepTogether(summary),*block[len(summary):]])
         refs=['; '.join(a['invoice_id']+' / '+a['line_id']+': '+a['amount'] for a in records[identifier]['allocations']) for identifier in finding['shift_ids']]
         story.append(p('Invoice allocations: '+'; '.join(filter(None,refs)) if any(refs) else 'Invoice allocations: none. Missing-billing findings depend on the explicit complete-source declaration and cutoff.','SCsmall'))
         story.append(p('Calculation: exact approved hourly rate x minutes / 60, less signed posted invoice allocations. *Hours display two decimals; calculations use whole minutes. Collectibility is not established.','SCsmall'))
@@ -179,6 +183,8 @@ def pdf(data):
                 rows.append([filename+' / '+worksheet+('\nSHA256: '+sha if offset==0 else ' (continued)'),'; '.join(line.get('record_id','')+' (row '+str(line.get('row',''))+')' for line in lines[offset:offset+12])])
         story.append(table(['Original file / worksheet / SHA256','Record references and source rows'],rows,[width*.46,width*.54]))
     else:story.append(p('Canonical source selection. Inspect the rate and invoice references above; spreadsheet row lineage is not available for this run.'))
+    if data['cases']:
+        story.extend([section('Latest follow-up for this period'),p('Status as of report generation. The financial calculations above retain the selected run’s original evidence. Alignment does not establish payment.','SCsmall'),table(['Facility / case','Latest status / owner','Correction or evidence reference'],[[c['facility_id']+' / '+c['id'],label(c['status'])+' / '+(c['owner'] or 'Not assigned'),(c['correction_reference'] or 'None')+(' / Verified: '+c['verified_run_id'] if c['verified_run_id'] else '')] for c in data['cases']],[width*.30,width*.31,width*.39])])
     story.append(section('Review history'))
     story.append(p('Reviewer free-text notes are '+('included by explicit request.' if data['notes_included'] else 'omitted. Request them explicitly only when authorized. Worker identities are omitted.'),'SCsmall'))
     if data['history']:
@@ -187,7 +193,7 @@ def pdf(data):
             if data['notes_included']:story.append(p(event['reason']))
             story.append(Spacer(1,5))
     else:story.append(p('No reviewer decisions have been recorded.'))
-    story.extend([section('Report reference'),p('Run: '+run['id'],'SCsmall'),p('Evidence fingerprint: '+run['fingerprint'],'SCsmall'),p('Engine: '+run['engine_version']+' | Generated: '+data['generated_at'],'SCsmall')])
+    story.append(KeepTogether([section('Report reference'),p('Run: '+run['id'],'SCsmall'),p('Evidence fingerprint: '+run['fingerprint'],'SCsmall'),p('Engine: '+run['engine_version']+' | Generated: '+data['generated_at'],'SCsmall')]))
     logo=ROOT/'dist/brand/shiftclarity-report-logo.png'
     if not logo.exists():logo=ROOT/'public/brand/shiftclarity-report-logo.png'
     def frame(canvas,doc):
@@ -206,7 +212,7 @@ def mount_reports(app,settings):
     from fastapi import Request,HTTPException
     from fastapi.responses import Response
     from . import auth
-    from .db import transaction,head,audit
+    from .db import transaction,head,audit,review_workspace
     @app.get('/api/v1/runs/{run_id}/report.{format}')
     def export_report(run_id:str,format:str,request:Request,include_notes:bool=False):
         member=auth.principal(settings,request)
@@ -214,11 +220,13 @@ def mount_reports(app,settings):
         if not REPORTS.acquire(blocking=False):raise HTTPException(429,'Two reports are being prepared. Try again shortly.')
         try:
             with transaction(settings,member['org_id']) as db:
-                current=head(db)['state']
-                if not current.get('run') or current['run']['id']!=run_id:raise HTTPException(409,'Export the current reviewed run. Refresh the workspace first.')
+                current=review_workspace(db,run_id)['state']
                 row=db.execute('SELECT import_id FROM completed_runs WHERE id=%s',(run_id,)).fetchone()
                 source=db.execute('SELECT data FROM table_sessions WHERE import_id=%s AND status=\'accepted\' ORDER BY created_at LIMIT 1',(row['import_id'],)).fetchone() if row else None
-                data=model(current,source['data'].get('lineage',[]) if source else [],include_notes)
+                from .workflow import case_rows
+                cases=case_rows(db,run_id)
+                events=db.execute('SELECT * FROM case_events WHERE case_id=ANY(%s) ORDER BY sequence',([c['id'] for c in cases],)).fetchall() if cases else []
+                data=model(current,source['data'].get('lineage',[]) if source else [],include_notes,cases,events)
                 audit(db,member['org_id'],member['actor'],'report_download',run_id,{'format':format,'notes_included':include_notes})
             content=xlsx(data) if format=='xlsx' else pdf(data)
             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' if format=='xlsx' else 'application/pdf'

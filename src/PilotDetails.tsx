@@ -12,7 +12,7 @@ export function PilotDetails({pilot}:{pilot:PilotController}){
   if(responses.some(r=>!r.ok))throw new Error('Sign in again to view import history.');
   const [batches,audit]=await Promise.all(responses.map(r=>r.json()));
   if(live){setImports(batches);setEvents(audit);}
- }catch(e){if(live)setError((e as Error).message);}finally{if(live)setLoading(false);}})();return()=>{live=false;};},[pilot.version]);
+ }catch(e){if(live)setError((e as Error).message);}finally{if(live)setLoading(false);}})();return()=>{live=false;};},[pilot.version,pilot.approval?.version]);
  return <div className="stack pilot-details" aria-busy={loading}>
   {pilot.session.roles.includes('author')&&<RuleAuthoring pilot={pilot}/>}
   <section className="panel"><PanelHead title="Server import history" detail="Each accepted bundle is a complete source selection. Repeated content is reused."/>{loading?<p className="empty">Loading server import history…</p>:error?<p className="empty">Import history is unavailable.</p>:imports.length?<div className="table-wrap"><table><thead><tr><th>Import</th><th>Status</th><th>Retention</th><th>Source</th></tr></thead><tbody>{imports.map(batch=><tr key={batch.id}><td className="mono">{batch.id}</td><td><Pill type={batch.status==='validated'?'ok':'attention'}>{batch.status}</Pill>{batch.diagnostic&&<small>{batch.diagnostic}</small>}</td><td>{formatDate(batch.expires_at)}</td><td>{batch.status==='validated'&&pilot.session.roles.includes('importer')?<a className="text-link" href={'/api/v1/imports/'+batch.id+'/source'} download>Download private source</a>:'—'}</td></tr>)}</tbody></table></div>:<p className="empty">No additional snapshots imported. Included sources are fictional.</p>}</section>

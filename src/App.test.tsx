@@ -10,7 +10,7 @@ it('provides a global sign-out action to persistent pilot users',async()=>{
  const originalUrl=location.href;
  history.replaceState({},'','/pilot/?view=rules');
  const state=initialDemo(freshInputs(),draftRule),noop=async()=>{},logout=vi.fn(noop);
- const pilot:PilotController={state,version:1,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
+ const pilot:PilotController={state,version:1,cases:[],latest_run_id:state.run!.id,selectRun:noop,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
   session:{actor:'DEMO-REVIEWER',roles:['reviewer'],csrf:'test-only',synthetic:true},members:['DEMO-REVIEWER'],
   decide:noop,approve:noop,task:noop,importFile:noop,export:noop,logout,source:noop,propose:noop,api:async<T,>()=>({} as T),uploadTable:noop,runImport:noop,refresh:noop};
  const view=render(<App pilot={pilot}/>);
@@ -29,7 +29,7 @@ it('keeps a delayed server review visibly pending and prevents a duplicate submi
  let finish!:()=>void;
  const pending=new Promise<void>(resolve=>{finish=resolve;});
  const decide=vi.fn(()=>pending),noop=async()=>{};
- const pilot:PilotController={state,version:1,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
+ const pilot:PilotController={state,version:1,cases:[],latest_run_id:state.run!.id,selectRun:noop,catalog:{rules:state.inputs.rules,excerpts:state.inputs.excerpts},
   session:{actor:'DEMO-REVIEWER',roles:['reviewer'],csrf:'test-only',synthetic:true},members:['DEMO-REVIEWER'],
   decide,approve:noop,task:noop,importFile:noop,export:noop,logout:noop,source:noop,propose:noop,api:async<T,>()=>({} as T),uploadTable:noop,runImport:noop,refresh:noop};
  const view=render(<App pilot={pilot}/>);
@@ -45,7 +45,8 @@ it('keeps a delayed server review visibly pending and prevents a duplicate submi
   expect(decide).toHaveBeenCalledTimes(1);
   await act(async()=>{finish();await pending;});
   expect(screen.getByText('Review record saved on the server. Nothing was sent.').closest('[role=status]')).toBeInTheDocument();
-  expect(window.location.search).toBe('?view=workspace&scope=all');
+  expect(new URL(location.href).searchParams.get('view')).toBe('workspace');
+  expect(new URL(location.href).searchParams.get('run')).toBe(state.run!.id);
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
  }finally{
   view.unmount();history.replaceState({},'',originalUrl);

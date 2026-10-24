@@ -21,7 +21,7 @@ with psycopg.connect(admin.replace("/postgres","/shiftclarity_browser_test")) as
     seed(db,settings,inputs,draft)
     db.execute("INSERT INTO organizations VALUES('other-workspace','Isolation test')")
     for account in json.loads((ROOT/".local/accounts.json").read_text()):
-        db.execute("INSERT INTO memberships VALUES(%s,%s,%s,%s,%s,true)",(settings.issuer,account["id"],account["org"],account["actor"],account["roles"]))
+        db.execute("INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,%s,%s,%s,true)",(settings.issuer,account["id"],account["org"],account["actor"],account["roles"]))
 target=ROOT/".local/browser-config.json"
 target.write_text(json.dumps(settings.__dict__))
 target.chmod(0o600)

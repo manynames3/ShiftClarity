@@ -15,11 +15,12 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
 from psycopg.types.json import Jsonb
 from .config import ROOT, load_settings
-from .db import transaction, audit, head, save_head
+from .db import transaction, audit, head, save_head,review_workspace,save_review
 from .engine import compute, digest, EngineError
 from .storage import PrivateStorage
 from . import auth, jobs
 from .imports import receive
+from .workflow import case_rows
 
 class StrictBody(BaseModel):
     model_config=ConfigDict(extra="forbid",strict=True)
@@ -121,8 +122,9 @@ def create_app(settings=None):
             if settings.gateway_host and not secrets.compare_digest(request.headers.get("x-shiftclarity-edge","").encode(),settings.edge_proxy_secret.encode()):
                 return JSONResponse({"detail":"Invalid gateway"},403)
         length=request.headers.get("content-length","0")
-        if not length.isdigit() or int(length)>1024*1024:
-            return JSONResponse({"detail":"Request exceeds 1 MiB limit."},413)
+        maximum=2*1024*1024 if request.url.path.startswith('/api/v1/import-workbench/sessions/') and request.url.path.endswith('/files') else 1024*1024
+        if not length.isdigit() or int(length)>maximum:
+            return JSONResponse({"detail":f"Request exceeds {maximum//(1024*1024)} MiB limit."},413)
         response=await call_next(request)
         response.headers.update({
             "Cache-Control":"no-store","X-Content-Type-Options":"nosniff",
@@ -156,8 +158,8 @@ def create_app(settings=None):
         return {"status":"running","data_mode":"synthetic"}
 
     @app.get("/auth/login")
-    def login():
-        return auth.login(settings)
+    def login(return_to:str='/pilot/'):
+        return auth.login(settings,return_to)
 
     @app.get("/auth/callback")
     def callback(request:Request):
@@ -183,10 +185,12 @@ def create_app(settings=None):
         return {"actor":member["actor"],"roles":member["roles"],"csrf":member["csrf"],"synthetic":True}
 
     @app.get("/api/v1/workspace")
-    def workspace(request:Request):
+    def workspace(request:Request,run_id:str|None=None):
         member=auth.principal(settings,request)
         with transaction(settings,member["org_id"]) as db:
-            return {**head(db),"catalog":{
+            current=head(db);selected=review_workspace(db,run_id,current=current)
+            return {**selected,"latest_run_id":current['state']['run']['id'],"cases":case_rows(db,selected['state']['run']['id']),
+                "approval":{"version":current['version'],**{key:current['state'][key] for key in ['draft','ruleHistory','approvedFutureRules']}},"catalog":{
                 "rules":[row["content"] for row in db.execute("SELECT content FROM rule_versions ORDER BY id").fetchall()],
                 "excerpts":[row["content"] for row in db.execute("SELECT content FROM documents ORDER BY id").fetchall()]
             }}
@@ -220,8 +224,8 @@ def create_app(settings=None):
             return result["findings"] if request.url.path.endswith("/findings") else result["coverage"] if request.url.path.endswith("/coverage") else result
 
     @app.get("/api/v1/findings/{finding_id}")
-    def finding(finding_id:str,request:Request):
-        state=workspace(request)["state"]
+    def finding(finding_id:str,request:Request,run_id:str|None=None):
+        state=workspace(request,run_id)["state"]
         result=next((f for f in state["run"]["findings"] if f["id"]==finding_id),None)
         if not result:
             raise HTTPException(404,"Finding not found.")
@@ -232,7 +236,7 @@ def create_app(settings=None):
         member=auth.principal(settings,request,"reviewer")
         key=request_key(request)
         with transaction(settings,member["org_id"]) as db:
-            current=head(db,True)
+            current=review_workspace(db,body.run_id,True)
             state=current["state"]
             def apply():
                 if state["run"]["id"]!=body.run_id or state["stale"]:
@@ -242,7 +246,9 @@ def create_app(settings=None):
                 updated=compute("decide",state=state,finding=finding_id,action=body.action,reason=body.reason,
                                 fingerprint=body.expected_fingerprint,version=body.expected_version,owner=body.owner,
                                 actor=member["actor"],timestamp=now())
-                save_head(db,member["org_id"],updated)
+                save_review(db,member["org_id"],updated)
+                from .workflow import record_review_case
+                record_review_case(db,member["org_id"],updated,finding_id,body.action,member["actor"],body.reason,body.owner)
                 audit(db,member["org_id"],member["actor"],"finding_"+body.action,body.run_id+"/"+finding_id,{"version":body.expected_version+1})
                 return {"state":updated,"version":current["version"]+1}
             return write_once(db,member,key,{"resource":finding_id,**body.model_dump()},apply)
@@ -251,7 +257,7 @@ def create_app(settings=None):
     def task(body:TaskRequest,request:Request):
         member=auth.principal(settings,request,"reviewer")
         with transaction(settings,member["org_id"]) as db:
-            current=head(db,True)
+            current=review_workspace(db,body.run_id,True)
             state=current["state"]
             def apply():
                 if state["run"]["id"]!=body.run_id or state["stale"] or not any(t["id"]==body.task_id for t in state["run"]["tasks"]):
@@ -260,7 +266,11 @@ def create_app(settings=None):
                     raise HTTPException(422,"Choose an active workspace member.")
                 state["localTasks"].append({"sequence":len(state["localTasks"])+1,"action":"request_evidence","reason":body.reason,
                                           "owner":body.owner,"actor":member["actor"],"timestamp":now(),"fingerprint":body.task_id})
-                save_head(db,member["org_id"],state)
+                save_review(db,member["org_id"],state)
+                from .workflow import case_for_source,event
+                for case in case_for_source(db,state,'coverage',body.task_id):
+                    db.execute("UPDATE billing_cases SET owner=%s,status='awaiting_evidence',version=version+1,updated_at=now() WHERE id=%s",(body.owner,case['id']))
+                    event(db,member['org_id'],case,member['actor'],'request_evidence',body.run_id,{'owner':body.owner,'reason':body.reason})
                 audit(db,member["org_id"],member["actor"],"coverage_task",body.task_id)
                 return {"state":state,"version":current["version"]+1}
             return write_once(db,member,request_key(request),body.model_dump(),apply)
@@ -429,9 +439,7 @@ def create_app(settings=None):
     def export(run_id:str,request:Request):
         member=auth.principal(settings,request)
         with transaction(settings,member["org_id"]) as db:
-            state=head(db)["state"]
-            if state["run"]["id"]!=run_id:
-                raise HTTPException(409,"Export the current reviewed run.")
+            state=review_workspace(db,run_id)["state"]
             text=compute("export",state=state)
             audit(db,member["org_id"],member["actor"],"review_export",run_id)
             return Response(text,media_type="text/csv",headers={"Content-Disposition":'attachment; filename="ShiftClarity-reviewed-findings.csv"'})
@@ -462,6 +470,11 @@ def create_app(settings=None):
         member=auth.principal(settings,request)
         with transaction(settings,member["org_id"]) as db:
             return db.execute("SELECT sequence,actor,action,resource,created_at FROM audit_events ORDER BY sequence DESC LIMIT 100").fetchall()
+
+    from .onboarding import mount_onboarding
+    mount_onboarding(app,settings)
+    from .workflow_api import mount_workflow
+    mount_workflow(app,settings)
 
     from .reports import mount_reports
     mount_reports(app,settings)

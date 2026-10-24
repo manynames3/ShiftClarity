@@ -63,7 +63,7 @@ with psycopg.connect(admin_db) as db:
         accounts_path.write_text(json.dumps(accounts,indent=2))
         accounts_path.chmod(0o600)
     for account in accounts:
-        db.execute("INSERT INTO memberships VALUES(%s,%s,%s,%s,%s,true) ON CONFLICT DO NOTHING",
+        db.execute("INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,%s,%s,%s,true) ON CONFLICT DO NOTHING",
                    (settings.issuer,account["id"],account["org"],account["actor"],account["roles"]))
 
 realm={

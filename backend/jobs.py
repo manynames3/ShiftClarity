@@ -4,7 +4,7 @@ import json
 import boto3
 from datetime import datetime, timezone
 from psycopg.types.json import Jsonb
-from .db import transaction, audit, head, save_head
+from .db import transaction, audit, head, save_head,store_review
 from .engine import compute, EngineError
 
 def notify(settings,job_id):
@@ -43,15 +43,22 @@ def execute(settings,job):
         if current["status"]!="reconciling" or current["lease_token"]!=job["lease_token"]:
             return
         snapshot=head(db,True)["state"]
+        store_review(db,settings.org_id,snapshot)
         batch=db.execute("SELECT normalized FROM imports WHERE id=%s AND status='validated'",(job["import_id"],)).fetchone()
         if not batch:
             raise EngineError("SOURCE_UNAVAILABLE")
         inputs=batch["normalized"]
+        previous=db.execute("SELECT state FROM review_workspaces WHERE state#>>'{run,manifest,dataset_id}'=%s ORDER BY created_at DESC,run_id DESC LIMIT 1",(inputs['manifest']['dataset_id'],)).fetchone()
+        snapshot['reviews']=previous['state'].get('reviews',{}) if previous else {}
+        snapshot['localTasks']=previous['state'].get('localTasks',[]) if previous else []
+        if previous:snapshot['run']=previous['state']['run']
         inputs["manifest"]["run_id"]=job["id"]
         published=compute("publish",state=snapshot,inputs=inputs,timestamp=datetime.now(timezone.utc).isoformat())
         db.execute("INSERT INTO completed_runs(org_id,id,import_id,snapshot) VALUES(%s,%s,%s,%s)",
                    (settings.org_id,job["id"],job["import_id"],Jsonb(published)))
         save_head(db,settings.org_id,published)
+        from .workflow import sync_cases
+        sync_cases(db,settings.org_id,published)
         db.execute("UPDATE jobs SET status='completed',lease_until=NULL WHERE id=%s",(job["id"],))
         audit(db,settings.org_id,job["actor"],"run_published",job["id"])
 

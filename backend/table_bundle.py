@@ -25,8 +25,13 @@ def assemble(period,sources,known,creator,created_at):
             elif old:duplicates+=1
             else:seen[row['id']]=row
         grouped[category]=list(seen.values())
-    if len(grouped['work'])>500 or len(grouped['invoices'])>1000 or len(grouped['rates'])>100:
-        errors.append(error('Files','rows','Use up to 500 work rows, 1,000 invoice rows and 100 rate versions per review. Split larger exports by facility and billing period.'))
+    end=(date.fromisoformat(period['service_to'])+timedelta(days=1)).isoformat()
+    reused=[]
+    if period.get('use_registered_rates') and not grouped['rates']:
+        reused=[r for r in known.values() if (period['facility_id']=='ALL' or r['facility_id']==period['facility_id']) and r['effective_from']<end and (not r.get('effective_to') or r['effective_to']>period['service_from'])]
+        grouped['rates']=reused
+    if len(grouped['work'])>1000 or len(grouped['invoices'])>2000 or len(grouped['rates'])>150:
+        errors.append(error('Files','rows','Use up to 1,000 work rows, 2,000 invoice rows and 150 rate versions per review. Split larger exports by facility and billing period.'))
     if not grouped['work'] or not grouped['rates'] or (not grouped['invoices'] and not (period['invoice_complete'] and period.get('expected_invoice_total') is not None and Decimal(period['expected_invoice_total'])==0)):
         errors.append(error('Files','categories','Supply rates, work and invoices. For a genuinely empty invoice extract, declare complete coverage and enter an independent posted total of zero.'))
     end=(date.fromisoformat(period['service_to'])+timedelta(days=1)).isoformat()
@@ -48,7 +53,7 @@ def assemble(period,sources,known,creator,created_at):
         errors.append(error('Work','source_total','The independently supplied work-hour total does not match parsed rows.'))
     if period.get('expected_invoice_total') is not None and Decimal(period['expected_invoice_total'])!=posted_total:
         errors.append(error('Invoices','source_total','The independently supplied posted-invoice total does not match parsed rows.'))
-    excerpts=[];candidates=[];rules=[]
+    excerpts=[];candidates=[];rules=list(reused)
     for source,result in sources:
         if source['category']!='rates':continue
         # One evidence document per rate export, with retained worksheet/row references.

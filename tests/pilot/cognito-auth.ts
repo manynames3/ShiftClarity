@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {totp} from '../totp';
 const file=new URL('../../.local/aws-accounts.json',import.meta.url);
 type Account={username:string;password:string;totp?:string;lastCounter?:number};
-export async function cognitoLogin(page:Page,username:string){
+export async function cognitoLogin(page:Page,username:string,returnTo?:string){
  const accounts=JSON.parse(await readFile(file,'utf8')) as Account[];
  const user=accounts.find(account=>account.username===username);
  if(!user)throw Error('No authorized private AWS test account');
@@ -15,7 +15,7 @@ export async function cognitoLogin(page:Page,username:string){
   await writeFile(file,JSON.stringify(accounts,null,2),{mode:0o600});
   return totp(user!.totp);
  }
- await page.goto('/auth/login');
+ await page.goto('/auth/login'+(returnTo?'?return_to='+encodeURIComponent(returnTo):''));
  await page.locator('input[name=username]:visible').fill(user.username);
  await page.locator('input[name=password]:visible').fill(user.password);
  await page.locator('input[name=signInSubmitButton]:visible').click();

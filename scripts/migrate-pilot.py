@@ -24,10 +24,10 @@ with psycopg.connect(os.environ["ADMIN_DATABASE_URL"]) as db:
     inputs={key:json.loads((fixture/(name+".json")).read_text()) for key,name in names.items()}
     inputs["manifest"]["workspace_label"]="Synthetic pilot workspace"
     seed(db,settings,inputs,json.loads((fixture/"draft_rule.json").read_text()))
-    allowed={"author","approver","reviewer","importer"}
+    allowed={"owner","author","approver","reviewer","importer"}
     for member in members:
         if set(member)!={"subject","actor","roles"} or not set(member["roles"])<=allowed:
             raise ValueError("Invalid membership mapping")
-        db.execute("INSERT INTO memberships VALUES(%s,%s,%s,%s,%s,true) ON CONFLICT DO NOTHING",
+        db.execute("INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,%s,%s,%s,true) ON CONFLICT DO NOTHING",
                    (settings.issuer,member["subject"],settings.org_id,member["actor"],member["roles"]))
 print("Synthetic schema and reviewed memberships initialized. No customer data was imported.")

@@ -119,3 +119,14 @@ docker run --rm --platform linux/amd64 --read-only --tmpfs /tmp:rw,noexec,nosuid
 ```
 
 This verifies packaged libraries/assets, the isolated workbook process, independent rate approval, the shared calculator and both report encoders as UID 10001. It does not contact AWS/Neon, exercise Cognito or establish Lambda request latency. Use the explicit single-manifest build and registry guard in the [AWS guide](AWS_AND_DATABASE.md) for deployment.
+
+## Recurring workflow release checks
+
+Migrations 006–009 add immutable-source period review workspaces, cross-run cases/event history, agency defaults and scoped membership writes. `scripts/upgrade-workflow.py --target verification|cloud|local` is an explicit owner-side upgrade, never an API startup side effect. It verifies the target host, certificate-validates remote TLS, compares original source/run/rate records and preserves the current review history. The cloud option grants owner permission only to the previously approved private reviewer. Run a recovery rehearsal before the cloud upgrade.
+
+The extended local MVP browser journey also exercises actual case assignment, historical reports, parallel selected periods, correction references, registered-rate reuse and verified resolution with retained gaps. `tests/test_period_workflow.py` is under `backend/tests/`.
+
+`npx playwright test -c playwright.onboarding.aws.config.ts` is a separate, explicitly authorized cloud test. It provisions one synthetic private reviewer with suppressed invitation delivery, verifies the forced password change and authenticator enrollment, tests temporary password reset and revocation, then leaves the QA membership revoked. It sends no email or phone invitation. Test credentials remain in ignored owner-only `.local/` files; ordinary local tests skip this provider test.
+
+
+`npx playwright test -c playwright.capacity.aws.config.ts` separately writes a declared synthetic 1,000-work/2,000-invoice review through the real gateway and downloads both report formats. It requires the already authorized private reviewer/approver and existing approved rates; it is not part of ordinary local tests. Run cloud browser suites sequentially because private test authenticators reject reused counters.

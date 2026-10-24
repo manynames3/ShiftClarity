@@ -39,12 +39,12 @@ def test_csv_and_xlsx_header_suggestions_and_exact_mapping():
 
 @pytest.mark.parametrize('data,name,code',[
     (b'PK fake','bad.xlsx','XLSX_FORMAT'),
-    (b'x'*1048577,'big.csv','FILE_LIMIT'),
+    (b'x'*(2*1024*1024+1),'big.csv','FILE_LIMIT'),
     (workbook([HEADERS,*ROWS],formula=True),'formula.xlsx','ACTIVE_CONTENT'),
     (workbook([HEADERS,*ROWS],hidden=True),'hidden.xlsx','HIDDEN_SHEET'),
     (csv_bytes(['Shift ID','Patient ID'],[['S-A','P1']]),'patient.csv','SENSITIVE_FIELDS'),
     (csv_bytes(['Shift ID','Shift ID'],[['a','b']]),'duplicate.csv','HEADER_FIELDS'),
-])
+],ids=['invalid-xlsx','file-too-large','formula','hidden','sensitive-field','duplicate-header'])
 def test_unsafe_inputs_rejected(data,name,code):
     with pytest.raises(TableError) as error:inspect_file(data,name,'work')
     assert error.value.code==code

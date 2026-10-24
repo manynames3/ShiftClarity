@@ -1,18 +1,20 @@
 # Product screenshots
 
-## Spreadsheet MVP · October 23, 2026
+## Recurring spreadsheet workflow · October 24, 2026
 
-Actual local browser captures with fictional files. Test sessions are provisioned only in a disposable database; these are not new Cognito/cloud captures. The approved bright visual system remains shared with the original demo.
+Actual hosted Chrome captures with fictional files and real private Cognito reviewer/approver accounts. The approved bright visual system remains shared with the original demo. No sign-in secrets or customer records appear in these images.
 
 | File | View/state |
 |---|---|
-| [mvp-onboarding.png](mvp-onboarding.png) | Loaded facility/period and explicit coverage setup, 1440×1000 |
+| [mvp-onboarding.png](mvp-onboarding.png) | Facility/period setup, export guidance and registered-rate reuse, 1440×1000 |
 | [mvp-mapping.png](mvp-mapping.png) | Real XLSX worksheet/header, column suggestions and value mappings, 1440×1000 viewport |
-| [mvp-workspace.png](mvp-workspace.png) | Nineteen accepted source records; 6/8 work evaluated; $200 derived potential difference; persisted confirmation and report controls, full page |
-| [mvp-import-mobile.png](mvp-import-mobile.png) | New import flow at 390px, with confirmed mappings collapsed |
-| [mvp-report.png](mvp-report.png) | Render of page one of the actual downloaded, three-page fictional PDF |
+| [mvp-workspace.png](mvp-workspace.png) | Nineteen accepted source records; 6/8 work evaluated; $200 derived potential difference; persisted confirmation, report controls and period/team navigation |
+| [mvp-import-mobile.png](mvp-import-mobile.png) | Import workflow at 390px |
+| [workflow-followup-mobile.png](workflow-followup-mobile.png) | Resolved case, actual correction reference, verification-run link and complete retained event history, 390px |
+| [mvp-report.png](mvp-report.png) | Page one of the actual three-page compact PDF |
+| [realistic-billing-review.png](realistic-billing-review.png) | Page one of the varied seven-page fictional PDF |
 
-All five images were inspected. The report was generated from current server review state, not a mocked design. See the [full PDF](../examples/fictional-billing-review.pdf) and [filterable Excel](../examples/fictional-billing-review.xlsx); notes and worker identity fields are omitted by default. Earlier screenshots below are historical and remain labeled.
+These images were inspected. Reports come from actual server review state. See the [compact PDF](../examples/fictional-billing-review.pdf), [nine-sheet Excel](../examples/fictional-billing-review.xlsx), and [varied PDF](../examples/realistic-billing-review.pdf). Worker identity fields and reviewer notes are omitted by default. Earlier images below remain historical.
 
 
 ## Current approved overview · October 16, 2026

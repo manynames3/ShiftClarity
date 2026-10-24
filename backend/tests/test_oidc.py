@@ -111,7 +111,8 @@ def test_verified_identity_claims(settings,case):
             with pytest.raises(Exception):
                 verify_token(settings,encoded,"expected")
 
-def test_browser_bound_code_flow_is_single_use_with_secure_session_cookie(environment,clients):
+@pytest.mark.parametrize('return_to',['/pilot/','/pilot/?view=evidence&id=FND-001&run=RUN-001'])
+def test_browser_bound_code_flow_is_single_use_with_secure_session_cookie(environment,clients,return_to):
     client=clients()
     client.cookies.clear()
     key=RSAKey.generate_key(2048)
@@ -121,7 +122,7 @@ def test_browser_bound_code_flow_is_single_use_with_secure_session_cookie(enviro
     discovery={"authorization_endpoint":"https://trusted-provider.example/authorize",
                "token_endpoint":"https://trusted-provider.example/token"}
     with patch("backend.auth.provider",return_value=(discovery,{"keys":[public]})):
-        started=client.get("/auth/login",follow_redirects=False)
+        started=client.get("/auth/login",params={"return_to":return_to},follow_redirects=False)
         params=parse_qs(urlparse(started.headers["location"]).query)
         assert params["code_challenge_method"]==["S256"] and params["response_type"]==["code"]
         with psycopg.connect(TEST_ADMIN) as db:
@@ -135,6 +136,7 @@ def test_browser_bound_code_flow_is_single_use_with_secure_session_cookie(enviro
         with patch("backend.auth.OAuth2Client.fetch_token",return_value={"id_token":token}):
             result=client.get(callback,follow_redirects=False)
         assert result.status_code==303,result.text
+        assert result.headers["location"]==return_to
         cookie=result.headers["set-cookie"]
         assert "HttpOnly" in cookie and "SameSite=lax" in cookie and "Max-Age=900" in cookie
         assert client.get("/api/v1/session").json()["actor"]=="DEMO-REVIEWER"
@@ -144,3 +146,8 @@ def test_browser_bound_code_flow_is_single_use_with_secure_session_cookie(enviro
         with psycopg.connect(TEST_ADMIN) as db:
             stored=db.execute("SELECT digest FROM sessions").fetchall()
             assert all(row[0]!=client.cookies.get("sc_session") for row in stored)
+
+
+@pytest.mark.parametrize('target',['http://[','https://evil.example/','//evil.example/','/auth/logout','/pilot/\\evil','/pilot/?x=\r\n'])
+def test_login_return_cannot_leave_workspace(environment,target):
+    with pytest.raises(HTTPException):login(environment,target)

@@ -1,13 +1,16 @@
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {setFingerprintEncoder} from '../domain/engine';
 import {parseCustom} from './custom';
 import {initialDemo,publish,decide,approveRule,rejectRule,exportReviews} from '../domain/demo';
 import type {Demo} from '../domain/demo';
 import {approveRateBatch} from '../domain/rate-approval';
+setFingerprintEncoder(value=>'sha256:'+createHash('sha256').update(value).digest('hex'));
 const request=JSON.parse(readFileSync(0,'utf8'));
 try {
  let result:unknown;
  switch(request.operation){
-  case 'validate': result=parseCustom(request.text); break;
+  case 'validate': result=parseCustom(request.text,{bytes:2*1024*1024,rows:2500}); break;
   case 'seed': result=initialDemo(request.inputs,request.draft); break;
   case 'publish': {
    const state=publish(request.state,request.inputs,{actor:'SYSTEM',timestamp:request.timestamp});

@@ -1,6 +1,6 @@
 # ADR 0008: Export the current reviewed evidence
 
-Status: accepted and deployed for the synthetic MVP, October 23, 2026.
+Status: accepted and deployed October 23, 2026. The current-run-only restriction is superseded by [ADR 0009](0009-periods-and-follow-up.md), October 24, 2026.
 
 ## Context
 

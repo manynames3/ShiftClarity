@@ -76,5 +76,6 @@ def test_varied_staffing_output_is_reconciled_and_exported(environment,clients):
     (target/'realistic-billing-review.xlsx').write_bytes(response.content)
     response=client.get('/api/v1/runs/'+run['id']+'/report.pdf')
     assert response.status_code==200 and response.content.startswith(b'%PDF-'),response.text
+    assert len(__import__('re').findall(rb'/Type /Page\b',response.content))<=7
     (target/'realistic-billing-review.pdf').write_bytes(response.content)
     (target/'realistic-billing-results.json').write_text(json.dumps({'totals':run['totals'],'coverage':run['coverage'],'findings':[{k:f[k] for k in ['id','facility_id','shift_ids','expected_amount','invoiced_amount','discrepancy_amount']} for f in run['findings']]},indent=2))

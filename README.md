@@ -7,13 +7,13 @@
 
 **Find billing differences. Show the evidence. Make the next decision clear.**
 
-ShiftClarity helps healthcare staffing teams compare approved contract rates, completed work and posted invoices. Start with the exports you already have. Review potential underbilling and overbilling beside the supporting records, record a decision, and share an Excel or PDF evidence report.
+ShiftClarity helps healthcare staffing teams compare approved contract rates, completed work and posted invoices. Start with the exports you already have. Review potential underbilling and overbilling beside the supporting records, record a decision, assign the next action, and share an Excel or PDF evidence report. Keep each period’s review and verify corrections on a later import.
 
 *Every shift. Clearly aligned.* A Supreme AI Ventures product.
 
 [Explore the hosted demo](https://shiftclarity.pages.dev/demo/) · [Product](https://shiftclarity.pages.dev/) · [Complete spreadsheet walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) · [C4 architecture](docs/architecture/README.md) · [ADRs](docs/adr/README.md)
 
-**Live synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals and reviews. All included records are fictional; customer data and production approval remain gated.
+**Live synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals, period reviews and follow-up. Access is invite-only; an owner manages the team. All included records are fictional; customer data and production approval remain gated.
 
 ## Answer four billing questions
 
@@ -31,11 +31,12 @@ The supplied spreadsheet example evaluates **6 of 8 work records** and identifie
 1. **Choose a facility and billing period.** Declare source coverage and optionally supply independent control totals.
 2. **Upload CSV or Excel.** Add rates, work and invoices/statements; select the worksheet and header.
 3. **Confirm the meaning.** Review suggested columns, values, dates, USD formats and time units. Save a verified mapping for the next export.
-4. **Validate and approve.** Resolve every blocking row error. A separate permitted account approves new rate versions; unchanged approved rates are reused.
+4. **Validate and approve.** Resolve every blocking row error. A separate permitted account approves new rate versions; unchanged approved rates are reused. For a repeat period, select **Reuse registered approved rates** to upload only work and invoice exports.
 5. **Review the result.** Inspect calculations and source evidence, then record the next decision.
-6. **Share the evidence.** Download filterable Excel or a branded PDF covering all finding states and coverage gaps.
+6. **Follow through.** Assign an owner, record evidence or a correction reference, and import the corrected source exports. Every affected record must align before a financial case resolves.
+7. **Share and revisit.** Download filterable Excel or a branded PDF, then reopen any completed run from **Period history**. Two reviewers can work in different periods.
 
-![Actual column/value mapping screen from the local fictional import journey](docs/images/mvp-mapping.png)
+![Actual hosted column/value mapping screen using fictional imports](docs/images/mvp-mapping.png)
 
 The next-period example reuses the saved layout and exposes a new export code for confirmation. It starts a fresh review instead of carrying an earlier decision into another billing period. No verified vendor integration is implied.
 
@@ -45,7 +46,7 @@ The next-period example reuses the saved layout and exposes a new export code fo
 
 **In the signed-in pilot:** choose **Download report**, then **Download PDF** or **Download Excel** for server-generated `.pdf` / `.xlsx` files.
 
-Excel includes summary, findings, work calculations, itemized invoice allocations, approved terms, source lineage, review history and coverage gaps. PDF combines a management summary with calculations and evidence references. Both use the **current reviewed state**, including undecided findings.
+Excel includes summary, findings, work calculations, itemized invoice allocations, approved terms, source lineage, review history, coverage gaps and a ninth **Follow-up** sheet. PDF combines a management summary with calculations and evidence references. Both use the **selected period’s saved reviews**, including undecided findings. Latest follow-up is labeled separately from the original financial evidence.
 
 Worker identity fields and reviewer free-text notes are omitted by default. Notes require explicit opt-in. Spreadsheet cells are literal text rather than executable formulas; raw source fingerprints are replaced by hashes. Invoiced totals for unchecked work remain separate from the evaluated-work comparison.
 
@@ -57,11 +58,11 @@ This richer example has **18 shifts at two facilities**, seven rates, varied hou
 
 The [compact $200 sample PDF](docs/examples/fictional-billing-review.pdf) remains available for the original quickstart.
 
-Reports cover the current run. Download before advancing to another period; historical review/report navigation is not implemented in this MVP.
+**Period history** retains earlier reviews and reports. **Follow-up queue** shows assigned and team cases across periods, including resolved cases and their verification run. Correct invoices in the existing billing system; ShiftClarity records and verifies the follow-up without editing the source system or claiming collected revenue. [See the retained correction record](docs/images/workflow-followup-mobile.png).
 
 ## Try it locally
 
-Assigned reviewers can use the [hosted spreadsheet workflow](https://shiftclarity.pages.dev/pilot/) with their own authenticator and a separate permitted approver for new rates. There is no public signup. Start with the [fictional walkthrough](docs/SPREADSHEET_WALKTHROUGH.md).
+Assigned reviewers can use the [hosted spreadsheet workflow](https://shiftclarity.pages.dev/pilot/) with their own authenticator and a separate permitted approver for new rates. Owners create private accounts in **Workspace & team**, choose permissions and share one-time access details privately. New members change their password and enroll an authenticator; no invitation is emailed. There is no public signup. Start with the [fictional walkthrough](docs/SPREADSHEET_WALKTHROUGH.md).
 
 The same workflow runs locally. Prerequisites: Node 22, Python 3.13, uv, PostgreSQL 17 tools and a Java runtime supported by the pinned Keycloak 26.8.0 development provider.
 
@@ -89,7 +90,7 @@ For the standalone memory-only demonstration, `npm run dev -- --port 5178` opens
 | Missing/partial/duplicate billing, credits, voids and rebills | Signed posted allocations, explicit chain/reference support and declared source completeness |
 | Hospital-style/reverse-billing statements | Confirmed fields and exact references or a unique composite match; ambiguity becomes a gap |
 | Saved workspace mappings | Exact header signature, current source values and explicit reconfirmation |
-| Multiple CSV/XLSX files | Nine files, 1 MiB/file, 500 work records, 1,000 invoice lines and 100 rate versions per review |
+| Multiple CSV/XLSX files | Nine files, 2 MiB/file, 1,000 work records, 2,000 invoice lines and 150 rate versions per review; size guards also apply |
 
 Use stable pseudonymous reference codes and time that resolves to whole minutes. Credit amounts must be negative; explicit negative credit quantities normalize to absolute minutes. Export values rather than formulas/macros. Larger, ambiguous or unsupported data is rejected or left unevaluated. See the [capability matrix](docs/BILLING_CAPABILITIES.md) and [format/recovery guide](docs/SPREADSHEET_WALKTHROUGH.md#bounds-and-recovery).
 
@@ -99,7 +100,7 @@ Bullhorn, Avionté, QuickBooks and VMS names are potential source formats to ver
 
 | Part | Responsibility |
 |---|---|
-| React + TypeScript | Guided imports, evidence, review, rule approval and coverage |
+| React + TypeScript | Guided imports, evidence, period history, follow-up, team setup and reports |
 | Shared TypeScript engine + decimal.js | Exact money, effective dates, allocations and coverage decisions |
 | FastAPI + Authlib | Cognito/OIDC sessions, CSRF and server-side workspace permissions |
 | PostgreSQL / Neon + Psycopg | Durable reviews, forced-RLS mappings/imports, immutable sources/rules/runs and audit history |
@@ -108,7 +109,7 @@ Bullhorn, Avionté, QuickBooks and VMS names are potential source formats to ver
 | Cloudflare Pages | Public landing and fixed-origin proxy for the signed-in pilot |
 | OpenPyXL + DefusedXML + ReportLab | Bounded spreadsheets, hardened XML parsing and evidence reports |
 
-The three reporting/import libraries were explicitly approved. The upgrade adds no paid AI API, new cloud service or always-on infrastructure. Migration **004** adds onboarding sessions, files and profiles; **005** protects their accepted identities/content. Owner migrations remain outside request handling. [ADRs](docs/adr/README.md), [C4 views](docs/architecture/README.md) and the [import sequence](docs/architecture/import-publication.md) explain the boundaries.
+The three reporting/import libraries were explicitly approved. The upgrade adds no paid AI API, new cloud service or always-on infrastructure. Migration **004** adds onboarding sessions, files and profiles; **005** protects their accepted identities/content. Migrations **006–009** add period reviews, follow-up, owner-managed access and verified provider identity bindings. Owner migrations remain outside request handling. [ADRs](docs/adr/README.md), [C4 views](docs/architecture/README.md) and the [import sequence](docs/architecture/import-publication.md) explain the boundaries.
 
 Quarantine originals expire after one day and accepted original bytes after 30 days. Raw previews are removed at acceptance. Derived immutable evidence persists until an owner-authorized purge; this is not an approved customer retention policy. See [security controls](docs/PHASE_4.md), the [threat model](docs/THREAT_MODEL.md) and [hosted operations](docs/AWS_AND_DATABASE.md).
 
@@ -124,7 +125,7 @@ npm run test:e2e
 npm run test:mvp
 ```
 
-The commands above use disposable **local** databases and refuse cloud targets. The MVP browser journey imports XLSX files, confirms/saves mappings, obtains separate-account approval, reviews the derived result, downloads both reports, and repeats another period with a new source value. Its local sessions are provisioned for testing. A separate authorized [hosted verification](docs/VERIFICATION.md#october-23-2026--hosted-spreadsheet-mvp) uses real Cognito MFA; it writes fictional records to the assigned pilot. Original fixture and demo regressions remain separate.
+The commands above use disposable **local** databases and refuse cloud targets. The MVP browser journey imports XLSX files, confirms/saves mappings, obtains separate-account approval, downloads both reports, repeats another period with a new source value, and verifies a correction while preserving the earlier review and case history. Its local sessions are provisioned for testing. A separate authorized [hosted verification](docs/VERIFICATION.md#october-23-2026--hosted-spreadsheet-mvp) uses real Cognito MFA; it writes fictional records to the assigned pilot. Original fixture and demo regressions remain separate.
 
 See [actual verification results](docs/VERIFICATION.md), [Claude review disposition](docs/CLAUDE_MVP_REVIEW.md), [acceptance evidence](ACCEPTANCE_CHECKLIST.md) and [implementation plan](docs/MVP_IMPLEMENTATION_PLAN.md). Screenshots show running software and generated reports with fictional records.
 

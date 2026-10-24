@@ -23,4 +23,4 @@ Imported roles/components are confirmed mappings. A contract authorization date 
 
 Time must resolve to whole minutes; use a source minutes column instead of rounding a decimal-hour export. Credits require negative signed amounts; explicitly negative credit quantities normalize to absolute minutes. Nonposted lines with blank work references are retained and excluded from billing. A confirmed fixed source authorization date is allowed when the rate export shares that date, subject to independent attestation.
 
-Current-run Excel/PDF reports include all finding states and itemized allocations; prior-run report navigation is not implemented. Download before changing periods. The complete source-format and security limits are in the [walkthrough](SPREADSHEET_WALKTHROUGH.md).
+Selected-period Excel/PDF reports include all finding states, itemized allocations and separately labeled latest follow-up. Period history reopens earlier reviews and reports; the team queue retains ownership, correction references and verification-run history. The complete source-format and security limits are in the [walkthrough](SPREADSHEET_WALKTHROUGH.md).

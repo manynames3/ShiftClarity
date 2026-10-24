@@ -41,7 +41,7 @@ with psycopg.connect(owner_url) as db:
     for account in json.loads((ROOT/".local/accounts.json").read_text()):
         if account["org"]!=settings.org_id:
             continue
-        db.execute("INSERT INTO memberships VALUES(%s,%s,%s,%s,%s,true) ON CONFLICT DO NOTHING",
+        db.execute("INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,%s,%s,%s,true) ON CONFLICT DO NOTHING",
                    (settings.issuer,account["id"],settings.org_id,account["actor"],account["roles"]))
 target.write_text(json.dumps(settings.__dict__,indent=2))
 target.chmod(0o600)

@@ -73,15 +73,17 @@ def test_empty_invoice_and_incomplete_coverage_never_claim_false_money():
 
 def test_declared_capacity_import_and_report_are_bounded():
     rows=[]
-    for index in range(500):rows.append([f'W{index:04}', 'FAC-A',f'E{index:04}','RN','Regular','2026-10-05','8','Approved','2026-10-06'])
+    for index in range(1000):rows.append([f'W{index:04}', 'FAC-A',f'E{index:04}','RN','Regular','2026-10-05','8','Approved','2026-10-06'])
     work=io.StringIO();csv.writer(work).writerows([WORK.decode().splitlines()[0].split(','),*rows])
     invoice=io.StringIO();writer=csv.writer(invoice);writer.writerow(INVOICES.decode().splitlines()[0].split(','))
-    for index in range(500):
+    for index in range(1000):
         for part in [1,2]:writer.writerow([f'L{index:04}-{part}','INV-A','FAC-A',f'W{index:04}','240','4','60','Posted','Statement'])
     started=time.monotonic();state,combined=result(work=work.getvalue().encode(),invoices=invoice.getvalue().encode())
-    assert state['run']['coverage']['evaluated_records']==500 and state['run']['totals']['underbilling']=='20000.00'
+    assert state['run']['coverage']['evaluated_records']==1000 and state['run']['totals']['underbilling']=='40000.00'
     assert len(json.dumps(state).encode())<4*1024*1024
     data=model(state,combined['lineage']);excel=xlsx(data);document=pdf(data)
     assert document.startswith(b'%PDF-') and len(document)<2*1024*1024 and len(excel)<1024*1024
-    assert time.monotonic()-started<30
+    elapsed=time.monotonic()-started
+    assert elapsed<30
+    Path('artifacts/workflow-capacity.json').write_text(json.dumps({'work':1000,'invoices':2000,'state_bytes':len(json.dumps(state).encode()),'xlsx_bytes':len(excel),'pdf_bytes':len(document),'elapsed_seconds':round(elapsed,3)},indent=2))
     target=Path('artifacts/reports');target.mkdir(parents=True,exist_ok=True);(target/'capacity-review.pdf').write_bytes(document)

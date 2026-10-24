@@ -75,4 +75,15 @@ These checks describe the implemented and deployed synthetic upgrade, including 
 
 Hosted release evidence additionally covers real Cognito MFA and unassigned-account denial, S3 byte-matched originals and role/CSRF denials, persistent reviews/reports, repeat-period use, additive migrations with unchanged prior record hashes, and an isolated restore of 15 tables and 34 private objects. Both functions are Active/Successful; Terraform has no drift. See [verification](docs/VERIFICATION.md).
 
-Not implemented/established: certified vendor connectors, inferred rate policies or fractional-minute rounding, historical review/report navigation, customer data/legal/operations acceptance, or independent real-sample accuracy/effort measurement. The locally provisioned test sessions do not bypass production identity code.
+Not implemented/established: certified vendor connectors, inferred rate policies or fractional-minute rounding, customer data/legal/operations acceptance, or independent real-sample accuracy/effort measurement. The locally provisioned test sessions do not bypass production identity code.
+
+
+## Recurring agency workflow · October 24, 2026
+
+- [x] **WF-01:** Select/review/export historical runs; independent concurrent periods; preserved legacy decisions and immutable source evidence.
+- [x] **WF-02:** Durable owner assignment, personal/team queues, approval handoff, assigned-owner evidence response, correction references and append-only case history. Only fully evaluated/aligned work resolves a financial case; omission/incomplete/partial/pending evidence does not.
+- [x] **WF-03:** Owner-only defaults/access administration, explicit roles, final-owner protection, session revocation, temporary credentials without persisted passwords and suppressed invitations. The hosted Cognito first-password/MFA/reset/revocation journey passed without invitation delivery.
+- [x] **WF-04:** Export-preparation guidance, mapping reconfirmation, direct reuse of registered rates and bounded measured 1,000-work/2,000-invoice capacity.
+- [x] **WF-05:** Full local regressions, expanded end-to-end journey, checked responsive/theme/accessibility states, PDF page inspection, verified Lambda packaging, final hosted correction/history/reauthentication journey, exact deployed assets, no Terraform drift and matching restore of 19 tables/54 private objects.
+
+Customer-format accuracy, approved real data, independent labels and unassisted billing-user usability remain external acceptance gates. A synthetic release does not establish production certification or collected revenue.

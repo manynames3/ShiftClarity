@@ -61,7 +61,7 @@ with psycopg.connect(urlunsplit(owner)) as db:
     for account in accounts:
         if account["username"]=="outsider":
             continue
-        db.execute("INSERT INTO memberships VALUES(%s,%s,'synthetic-pilot',%s,%s,true) ON CONFLICT DO NOTHING",
+        db.execute("INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,'synthetic-pilot',%s,%s,true) ON CONFLICT DO NOTHING",
                    (issuer,account["subject"],account["actor"],account["roles"]))
 configuration={"database_url":runtime,"issuer":issuer,"client_id":values["cognito_client"],"client_secret":client["ClientSecret"],
                "origin":values["app_origin"],"org_id":"synthetic-pilot","storage_dir":"/tmp/unused","cloud":True,

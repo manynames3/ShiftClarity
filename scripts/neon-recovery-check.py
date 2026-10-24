@@ -44,7 +44,7 @@ backup=ROOT/(".local/"+label+"-synthetic-recovery.dump")
 tables=["imports","source_revisions","source_lineage","documents","rule_versions","jobs","completed_runs","workspace_heads","audit_events","write_receipts"]
 if args.cloud:tables.extend(["organizations","memberships"])
 with psycopg.connect("service=sc_neon_recovery") as db:
-    tables.extend(table for table in ["table_sessions","table_files","mapping_profiles"]
+    tables.extend(table for table in ["table_sessions","table_files","mapping_profiles","review_workspaces","billing_cases","case_events","agency_settings"]
                   if db.execute("SELECT to_regclass(%s)",(table,)).fetchone()[0])
 def snapshot(connection):
     connection.execute("SET TIME ZONE 'UTC'")

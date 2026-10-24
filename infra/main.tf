@@ -199,7 +199,7 @@ resource "aws_iam_role_policy" "runtime" {
     { Effect = "Allow", Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
     Resource = ["${aws_s3_bucket.private.arn}/${var.org_id}/*"] },
     { Effect = "Allow", Action = ["secretsmanager:GetSecretValue"], Resource = [var.database_secret_arn] },
-    { Effect = "Allow", Action = ["cognito-idp:GetUserPoolMfaConfig", "cognito-idp:DescribeUserPoolClient", "cognito-idp:AdminGetUser", "cognito-idp:AdminSetUserMFAPreference"],
+    { Effect = "Allow", Action = ["cognito-idp:GetUserPoolMfaConfig", "cognito-idp:DescribeUserPoolClient", "cognito-idp:AdminGetUser", "cognito-idp:AdminSetUserMFAPreference", "cognito-idp:AdminCreateUser", "cognito-idp:AdminSetUserPassword"],
     Resource = [aws_cognito_user_pool.pilot.arn] },
     { Effect = "Allow", Action = ["sqs:SendMessage", "sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"],
     Resource = [aws_sqs_queue.jobs.arn] },

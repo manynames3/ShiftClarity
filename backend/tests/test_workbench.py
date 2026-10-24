@@ -118,3 +118,17 @@ def test_profiles_do_not_grant_approval_and_unknown_matching_stays_a_gap(environ
     assert run['totals']['underbilling']=='0.00'
     assert run['records'][0]['category']=='abstained'
     assert run['records'][0]['expected_amount'] is None
+
+
+def test_repeat_period_can_reuse_registered_rates_without_reupload(environment,clients):
+    client=clients();approver=clients('DEMO-APPROVER');first=prepare(client);approve(approver,first);assert accept(client,first).status_code==200
+    from backend.tests.test_table_scenarios import PERIOD
+    response=client.post('/api/v1/import-workbench/sessions',json={**PERIOD,'use_registered_rates':True},headers={'Idempotency-Key':secrets.token_hex(16)})
+    assert response.status_code==200,response.text
+    session=response.json()['id'];path='/api/v1/import-workbench/sessions/'+session
+    for kind,data in [('work',WORK),('invoices',INVOICES)]:upload_confirm(client,session,kind,data)
+    response=client.post(path+'/validate',json={'expected_version':client.get(path).json()['version']})
+    assert response.status_code==200 and response.json()['valid'],response.text
+    saved=client.get(path).json();assert saved['status']=='approved' and not saved['rate_review']
+    assert saved['summary']['rate_versions']==1
+    assert accept(client,session).status_code==200

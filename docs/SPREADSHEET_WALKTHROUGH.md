@@ -12,14 +12,14 @@ First-time rate approval intentionally requires a second account. Reusing identi
 
 ## First review: October 1–10
 
-1. Choose **Files & rate approvals**. Select facility **FAC-A**, October 1–10, files current through **October 12 at 17:00 UTC**, billing cutoff **October 12 at 12:00 UTC**. Confirm both completeness declarations only for this supplied fictional example.
+1. Choose **Import / approve files**. Select facility **FAC-A**, October 1–10, files current through **October 12 at 17:00 UTC**, billing cutoff **October 12 at 12:00 UTC**. Confirm both completeness declarations only for this supplied fictional example.
 2. Create the review. Download and upload **Contract rates**, **Approved work** and **Invoices & statements** from the built-in example. Use all three XLSX files or their [CSV equivalents](../public/examples/spreadsheets/).
 3. Inspect each worksheet and source preview. Confirm the columns, value mappings, ISO dates, decimal-point USD amounts and hours. Save the work mapping as **Monthly work export**. Suggestions and saved profiles require confirmation.
 4. Select **Validate all sources**. Any row error blocks acceptance. Correct its file/mapping, remove the earlier staged file if necessary, and validate again. **Download all corrections** lists every error without echoing raw cell values.
 5. In the separate approver account, open the listed review. Read the rate originals and inspect the three hourly versions, effective dates and source authorization dates. Enter a specific reason and approve. The actual approval time is recorded separately from the historical source declaration.
 6. Back in the reviewer account, refresh status, check the displayed counts/totals and any warnings, explicitly **Accept sources**, then **Run billing review**.
 7. Open the finding. Inspect the contract, work and invoice evidence, then confirm, dismiss or request specific evidence with a reason. A decision is a review record; it does not edit an invoice or send a message.
-8. Select **Download report** beside the workspace summary, then download **Excel** and **PDF** before moving to the next period. Reports include every finding state, current decisions, calculations, source references and coverage gaps. Worker identity fields and reviewer notes are omitted by default; include notes only when authorized to share them.
+8. Select **Download report** beside the workspace summary, then download **Excel** and **PDF**. Reopen this run later from **Period history**. Reports include every finding state, current decisions, calculations, source references and coverage gaps. Worker identity fields and reviewer notes are omitted by default; include notes only when authorized to share them.
 
 Expected results are independently written in [expected-results.json](../public/examples/spreadsheets/expected-results.json); application calculations do not read that file.
 
@@ -41,11 +41,11 @@ Create a new review for FAC-A, October 11–20, with source/cutoff October 22 at
 
 Apply **Monthly work export**. Its header signature matches even though this source is CSV rather than XLSX. The new export code **RG** appears with an empty component mapping: explicitly choose **standard**, then confirm. Existing custom value mappings are retained. Validate and accept; unchanged registered rates need no second approval. The next review again shows $200 potential underbilling and two coverage gaps, with **Needs review** rather than carrying over the earlier decision.
 
-Only the current run is editable/exportable in this MVP. Accepted source selections and immutable completed runs remain in history; reopening a prior run's review workspace/report is not implemented. Save each report before advancing.
+Earlier reviews and reports remain available in **Period history**. Each browser is pinned to its chosen run; opening another period does not switch another person’s review.
 
 ## Files you can use
 
-Three categories are required: independently approvable rates, work and invoices. Multiple CSV/XLSX files are allowed; choose the intended sheet/header. Blank CSV templates are supplied as a ZIP to unzip locally, not to upload. Alternate generic [time](../public/examples/spreadsheets/layout-b-work.csv) and [hospital statement](../public/examples/spreadsheets/layout-c-statement.csv) layouts exercise alias and composite matching. They establish no certified Bullhorn, Avionté, QuickBooks or VMS compatibility.
+For first use, supply independently approvable rates, work and invoices. For repeat reviews with unchanged terms, select **Reuse registered approved rates** to supply only work and invoices. Missing or conflicting terms remain blocking errors or explicit coverage gaps. Multiple CSV/XLSX files are allowed; choose the intended sheet/header. Blank CSV templates are supplied as a ZIP to unzip locally, not to upload. Alternate generic [time](../public/examples/spreadsheets/layout-b-work.csv) and [hospital statement](../public/examples/spreadsheets/layout-c-statement.csv) layouts exercise alias and composite matching. They establish no certified Bullhorn, Avionté, QuickBooks or VMS compatibility.
 
 Use stable reference codes (letters, digits, underscore, hyphen; maximum 80 characters), not names. Remove patient, clinical, contact, banking and personal-name columns. Header checks are only a safeguard and cannot classify every sensitive value. This build requires fictional records regardless of which files are chosen.
 
@@ -61,8 +61,20 @@ Use stable reference codes (letters, digits, underscore, hyphen; maximum 80 char
 
 ## Bounds and recovery
 
-Each review supports nine files, 1 MiB/file, 1,000 data rows/selected sheet, 50 columns, eight worksheets/workbook, 500 work records, 1,000 invoice lines and 100 rate versions. Normalized sources must fit 1 MiB; projected reviewed state must fit 4 MiB. Split larger exports by facility/period. Macros, formulas, external relationships, embedded objects, merged/hidden sheets and unsafe archives are rejected. Workbook expanded text, parser CPU/memory/time and concurrent parser/report work are bounded. The workspace allows 20 new sessions and 120 parsing/validation attempts per hour; failed file attempts count.
+Each review supports nine files, 2 MiB/file, 2,500 data rows/selected sheet, 50 columns, eight worksheets/workbook, 1,000 work records, 2,000 invoice lines and 150 rate versions. Normalized sources must fit 2 MiB; projected reviewed state must fit 4 MiB. Split larger exports by facility/period. Macros, formulas, external relationships, embedded objects, merged/hidden sheets and unsafe archives are rejected. Workbook expanded text, parser CPU/memory/time and concurrent parser/report work are bounded. The workspace allows 20 new sessions and 120 parsing/validation attempts per hour; failed file attempts count.
 
 An identical native row/import is reused, not appended. Conflicting IDs/source versions block acceptance. Correct the source version rather than overwriting history. Failed/interrupted work does not publish partial results; the prior completed result remains available. A failed guided acceptance gives an actionable error without invalidating the earlier review.
 
 Quarantine originals and abandoned previews expire after one day; accepted original bytes after 30 days. Raw previews are removed when accepted. Derived immutable source/rate/run/review evidence persists until the owner performs the separately authorized workspace purge. Saved profiles persist until removed or purged. [Owner retention tools](PHASE_4.md) remain outside the application API. Local expiry requires running the maintenance command; S3 byte lifecycle alone does not redact database evidence. No customer retention/BAA policy is implied.
+
+## Assign, correct and verify
+
+Open a finding’s **Follow through** section or **Follow-up queue**. Assign an active colleague, record a specific evidence request, or record the corrected invoice reference after making the change in the billing system. An assigned colleague can supply evidence without gaining financial-review permission. The queue includes **Assigned to me**, **Whole team**, open and resolved views. Approvers also see validated sessions awaiting their independent review.
+
+Reimport the same facility and service period with updated work/invoices and unchanged registered rates. A financial case resolves only if all previously affected work references are present and evaluate aligned under complete declared sources. Omitted, pending, incomplete or partly corrected records leave it unresolved. A coverage case may become evaluable and reveal a separate financial finding. Neither outcome establishes payment. The case history and correction reference remain available after the finding disappears.
+
+## Owner setup
+
+The approved private reviewer is the synthetic owner. In **Workspace & team**, set the agency name/default facility, create individual usernames, and choose upload/review/author/approve/owner permissions. Share the one-time temporary password and sign-in URL through your approved private channel; ShiftClarity sends no invitation. Cognito requires a new password and authenticator enrollment. Temporary credentials expire after three days; an owner can issue a reset after verifying the person. Access changes sign that member out immediately. The last active owner cannot be removed.
+
+Customer exports, independent accuracy labels and an unassisted customer usability session still require separately approved evidence. These synthetic checks do not certify vendor compatibility or production readiness.

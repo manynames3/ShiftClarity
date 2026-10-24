@@ -15,7 +15,7 @@ flowchart LR
     reviewer["Reviewer<br/>Person<br/>Examines findings and records decisions"]
     author["Rule author<br/>Person<br/>Registers source evidence and proposes terms"]
     approver["Independent approver<br/>Person<br/>Approves or rejects another person's draft"]
-    operator["Workspace operator<br/>Person<br/>Prepares fictional records and provisions memberships"]
+    operator["Workspace owner / uploader<br/>Person<br/>Prepares exports and manages private access"]
     sources["Contract, timekeeping and invoice records<br/>External source systems<br/>Represented by fictional normalized exports"]
     sc["ShiftClarity<br/>Software system<br/>Verifies alignment and preserves review evidence"]
     identity["AWS Cognito<br/>External identity system<br/>Private accounts and authenticator MFA"]
@@ -24,7 +24,7 @@ flowchart LR
     author -->|"Registers sources and drafts rules"| sc
     approver -->|"Independently reviews rule versions"| sc
     sources -.->|"Manual export preparation; no live connector"| operator
-    operator -->|"Imports normalized synthetic JSON; manages access"| sc
+    operator -->|"Imports synthetic CSV/XLSX; manages access"| sc
     sc -->|"Authorization-code sign-in and identity verification"| identity
 
     classDef person fill:#e6f3f4,stroke:#006C78,color:#142333;
@@ -47,7 +47,7 @@ flowchart TB
     cognito["AWS Cognito<br/>External identity system<br/>Authorization code and mandatory TOTP"]
 
     subgraph sc["ShiftClarity — software system"]
-        ui["Browser application<br/>Container: React and TypeScript<br/>Workspace, evidence, inputs, rules and coverage"]
+        ui["Browser application<br/>Container: React and TypeScript<br/>Imports, evidence, period history, follow-up and team setup"]
 
         edge["Cloudflare Pages<br/>Container: static landing and JavaScript Worker<br/>Public assets; fixed AWS proxy with secure cookies and no private caching"]
 
@@ -56,12 +56,12 @@ flowchart TB
             web["Web function<br/>Container: FastAPI, Mangum and Node<br/>Sessions, authorization, imports and review API"]
             queue["SQS FIFO<br/>Infrastructure: job notifications<br/>One group per configured workspace"]
             worker["Worker function<br/>Container: Python and Node<br/>Claims durable jobs and publishes results"]
-            objects[("Private S3<br/>Data store: original JSON bytes<br/>Quarantine and accepted objects")]
+            objects[("Private S3<br/>Data store: original JSON/CSV/XLSX bytes<br/>Quarantine and accepted objects")]
             secrets["Secrets Manager<br/>Infrastructure: restricted database credential"]
         end
 
         subgraph neon["Neon hosting boundary — isolated synthetic branch"]
-            db[("PostgreSQL<br/>Data store: memberships, sessions, source revisions,<br/>rules, jobs, runs, receipts and audit history")]
+            db[("PostgreSQL<br/>Data store: memberships, sessions, source revisions,<br/>rules, jobs, period reviews, cases, receipts and audit history")]
         end
     end
 
@@ -171,7 +171,7 @@ flowchart LR
   approval --> imports["Existing immutable import pipeline<br/>imports.py"]
   imports --> jobs["Existing durable job/publication<br/>jobs.py + shared engine"]
   jobs --> review["Existing evidence and review API"]
-  review --> reports["Current reviewed-run reports<br/>reports.py"]
+  review --> reports["Selected-period evidence reports<br/>reports.py"]
   reports --> downloads["Literal Excel / branded PDF"]
   scope --> db[("PostgreSQL<br/>Forced workspace RLS<br/>sessions/files/profiles + existing evidence")]
   imports --> db
@@ -181,3 +181,49 @@ flowchart LR
 ```
 
 A spreadsheet mapping never grants approval or changes the engine's financial rules. Original files and unmapped previews are not report content. Accepted previews are removed; current reports draw on normalized evidence and hashed references. See [ADR 0007](../adr/0007-confirmed-spreadsheet-adapters.md), [ADR 0008](../adr/0008-current-review-evidence-reports.md) and the [billing matrix](../BILLING_CAPABILITIES.md).
+
+## C4 level 3: recurring review and team access
+
+These components extend the same React, FastAPI and PostgreSQL containers. They add no cloud service. See [ADR 0009](../adr/0009-periods-and-follow-up.md) and [ADR 0010](../adr/0010-owner-managed-access.md).
+
+```mermaid
+flowchart LR
+  owner["Workspace owner<br/>Person"] --> setup["Workspace and team UI<br/>React: AgencySetup"]
+  staff["Billing reviewer / assigned colleague<br/>Person"] --> history["Period history and follow-up UI<br/>React: Workflow + ServerApp"]
+  setup --> access["Owner authorization and membership management<br/>onboarding.py + auth.py"]
+  access --> cognito["Existing Cognito pool<br/>Suppressed invitation; password change; TOTP"]
+  access --> members[("PostgreSQL<br/>agency_settings + memberships + sessions")]
+  history --> api["Period and follow-up API<br/>workflow_api.py + app.py"]
+  api --> reviews[("PostgreSQL<br/>review_workspaces + billing_cases + case_events")]
+  publish["Existing durable publication<br/>jobs.py + shared engine"] --> sync["Evidence-based case verification<br/>workflow.py"]
+  publish --> snapshots[("PostgreSQL<br/>immutable completed_runs")]
+  sync --> reviews
+  api --> reports["Selected-period reports<br/>reports.py"]
+  reviews --> reports
+  snapshots --> reports
+```
+
+```mermaid
+sequenceDiagram
+  actor Reviewer
+  participant UI as Selected-period browser
+  participant API as FastAPI
+  participant DB as Existing PostgreSQL
+  participant Worker as Existing SQS worker
+  Reviewer->>UI: Record correction reference
+  UI->>API: CSRF-protected, versioned case action
+  API->>DB: Save case and append event atomically
+  Reviewer->>UI: Import corrected source exports
+  UI->>API: Validate, accept and request run
+  Worker->>DB: Publish immutable result and period workspace
+  Worker->>DB: Check every affected work reference
+  alt All affected financial records evaluate aligned
+    Worker->>DB: Resolve case with verification run reference
+  else Evidence incomplete, missing or still discrepant
+    Worker->>DB: Retain unresolved follow-up
+  end
+  Reviewer->>UI: Open an earlier period and download report
+  UI->>API: Selected run ID
+  API->>DB: Read period decisions and latest scoped follow-up
+  API-->>UI: Private PDF/XLSX; original financial evidence retained
+```

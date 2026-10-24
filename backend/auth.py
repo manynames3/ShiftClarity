@@ -89,7 +89,11 @@ def verify_cloud_mfa(settings):
     if configuration.get("AllowedOAuthFlows")!=["code"] or configuration.get("CallbackURLs")!=[settings.origin+"/auth/callback"]:
         raise ValueError("Cognito must use the registered authorization-code callback only")
 
-def login(settings):
+def login(settings,return_to='/pilot/'):
+    try:target=urlsplit(return_to)
+    except ValueError:raise HTTPException(422,'Return to a valid workspace page.') from None
+    if len(return_to)>1000 or target.scheme or target.netloc or target.path not in ['/pilot','/pilot/'] or '\\' in return_to or any(ord(c)<32 for c in return_to):
+        raise HTTPException(422,'Return to a valid workspace page.')
     data,_=provider(settings)
     flow=secrets.token_urlsafe(32)
     state=secrets.token_urlsafe(32)
@@ -102,7 +106,7 @@ def login(settings):
     with transaction(settings) as db:
         db.execute("DELETE FROM auth_flows WHERE expires_at < now()")
         db.execute("INSERT INTO auth_flows VALUES(%s,%s,now()+interval '5 minutes')",
-                   (digest(flow.encode()),Jsonb({"state":state,"verifier":verifier,"nonce":nonce,"authorization_url":url})))
+                   (digest(flow.encode()),Jsonb({"state":state,"verifier":verifier,"nonce":nonce,"authorization_url":url,"return_to":return_to})))
     # Classic Cognito login does not support prompt=login; clear its SSO cookie first.
     response=RedirectResponse(logout_url(settings,"/auth/continue") if settings.cloud else url,status_code=303)
     cookie(response,settings,FLOW_COOKIE,flow,300)
@@ -139,12 +143,18 @@ def callback(settings,request):
                           (settings.issuer,claims["sub"])).fetchone()
         if not member or member["org_id"]!=settings.org_id:
             raise HTTPException(403,"This account has no workspace membership.")
+        if settings.cloud:
+            db.execute("SELECT set_config('app.org_id',%s,true)",(member['org_id'],))
+            username=claims['cognito:username']
+            if member['provider_username'] and member['provider_username']!=username:
+                raise HTTPException(403,'Verified identity mapping changed. Contact your workspace owner.')
+            db.execute('UPDATE memberships SET provider_username=%s WHERE issuer=%s AND subject=%s',(username,settings.issuer,claims['sub']))
         db.execute("DELETE FROM sessions WHERE expires_at<now()")
         db.execute("INSERT INTO sessions VALUES(%s,%s,%s,%s,%s)",
                    (digest(session.encode()),settings.issuer,claims["sub"],csrf,datetime.now(timezone.utc)+timedelta(minutes=15)))
         db.execute("SELECT set_config('app.org_id',%s,true)",(member["org_id"],))
         audit(db,member["org_id"],member["actor"],"signed_in","session")
-    response=RedirectResponse("/pilot/",status_code=303)
+    response=RedirectResponse(saved.get('return_to','/pilot/'),status_code=303)
     cookie(response,settings,COOKIE,session,900)
     response.delete_cookie(cookie_name(settings,FLOW_COOKIE),path="/",secure=settings.cloud,httponly=True,samesite="lax")
     return response

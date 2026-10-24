@@ -22,7 +22,7 @@ def test_report_totals_current_decisions_and_all_states(environment,clients):
     assert 'Private fictional note' in str(list(load_workbook(io.BytesIO(client.get('/api/v1/runs/'+run['id']+'/report.xlsx?include_notes=true').content))['Review history'].values))
     assert wb['Findings'].freeze_panes=='A2' and wb['Findings'].tables
     assert 'worker_id' not in str([list(ws.values) for ws in wb])
-    assert client.get('/api/v1/runs/OTHER/report.xlsx').status_code==409
+    assert client.get('/api/v1/runs/OTHER/report.xlsx').status_code==404
     assert client.get('/api/v1/runs/'+run['id']+'/report.zip').status_code==404
 
 def test_exports_literal_spreadsheet_text_and_escaped_pdf_markup(clients):
@@ -42,6 +42,7 @@ def test_branded_pdf_and_stale_review_warnings(environment,clients):
     result=client.get('/api/v1/runs/'+state['run']['id']+'/report.pdf')
     assert result.status_code==200 and result.headers['content-type']=='application/pdf',result.text
     assert result.content.startswith(b'%PDF-') and len(result.content)>10000
+    assert len(__import__('re').findall(rb'/Type /Page\b',result.content))<=4
     target=Path('artifacts/reports');target.mkdir(parents=True,exist_ok=True);(target/'canonical-stale.pdf').write_bytes(result.content)
     # Reopened workbook uses current-head decisions, not the immutable run's old snapshot.
     data=model(state);assert dict(__import__('backend.reports',fromlist=['overview']).overview(data))['Result freshness'].startswith('STALE')

@@ -4,12 +4,13 @@ import {facilityName} from './adapters/fixtures';
 import {Icon,Link} from './components';
 import {findingWorkflowMetadata,formatMoney,reasonLabel,reviewFor,stateLabel,titleFor} from './presentation';
 import Decimal from 'decimal.js';
+import type {FollowupCase} from './ServerApp';
 export function CoverageBar({run}:{run:Run}){
  const categories:Category[]=['evaluated_aligned','evaluated_flagged','abstained','not_evaluated'],names=['aligned','flagged','unsupported','not evaluated'];
  return <><div className="coverage-bar" role="img" aria-label={categories.map((c,i)=>run.coverage.categories[c].records+' '+names[i]).join(', ')}>{categories.map((c,i)=><span key={c} className={'seg-'+['a','f','u','n'][i]} style={{flex:run.coverage.categories[c].records}}/>)}</div><div className="coverage-legend">{categories.map((c,i)=><span key={c}><i className={'dot '+['','f','u','n'][i]}/>{run.coverage.categories[c].records} {names[i]}</span>)}</div></>;
 }
 type SortKey='difference'|'facility'|'state';
-export function Workspace({run,reviews,initialScope='review',onShortcuts,onReport,onOpenFinding,loading=false,error}:{run:Run;reviews:Reviews;initialScope?:'review'|'all';onShortcuts?:()=>void;onReport?:()=>void;onOpenFinding?:(finding:Finding)=>void;loading?:boolean;error?:string}){
+export function Workspace({run,reviews,initialScope='review',onShortcuts,onReport,onOpenFinding,cases,loading=false,error}:{run:Run;reviews:Reviews;initialScope?:'review'|'all';onShortcuts?:()=>void;onReport?:()=>void;onOpenFinding?:(finding:Finding)=>void;loading?:boolean;error?:string;cases?:FollowupCase[]}){
  const [facility,setFacility]=useState('all'),[search,setSearch]=useState(''),[scope,setScope]=useState(initialScope),[activeFindingId,setActiveFindingId]=useState<string|null>(null),[sort,setSort]=useState<{key:SortKey;direction:'asc'|'desc'}>({key:'difference',direction:'desc'});
  const stateRank=(value:string)=>({needs_review:0,evidence_requested:1,confirmed:2,dismissed:3}[value]??4);
  const compareImpact=(a:Finding,b:Finding)=>new Decimal(b.discrepancy_amount).abs().comparedTo(new Decimal(a.discrepancy_amount).abs());
@@ -51,7 +52,7 @@ export function Workspace({run,reviews,initialScope='review',onShortcuts,onRepor
     </div>
     {loading&&<div className="table-state" role="status">Refreshing findings. The last completed result remains available.</div>}{error&&<div className="table-state table-state-error" role="alert"><strong>Latest run could not be refreshed.</strong> Showing the completed findings from {run.id}; review actions are paused.</div>}
     <table role="table" className="finding-table overview-findings"><caption className="sr-only">Financial findings for human review</caption><thead className="sr-only" role="rowgroup"><tr role="row">{['Finding','Facility','Work affected','Difference','Owner','Priority','Age','State','Open'].map((label,index)=><th key={label} role="columnheader" scope="col" aria-sort={index===1?sortState('facility'):index===3?sortState('difference'):index===7?sortState('state'):undefined}>{label}</th>)}</tr></thead><tbody role="rowgroup">{sorted.map(f=>{
-     const rows=run.records.filter(r=>f.shift_ids.includes(r.work.id)),review=reviewFor(f,reviews),metadata=findingWorkflowMetadata(f,run.manifest.synthetic),hours=rows.reduce((sum,r)=>sum+r.work.worked_minutes,0)/60;
+     const rows=run.records.filter(r=>f.shift_ids.includes(r.work.id)),review=reviewFor(f,reviews),metadata=findingWorkflowMetadata(f,!cases&&run.manifest.synthetic,reviews,cases?.find(c=>c.kind==='finding'&&c.selected_source_ref===f.id)?.owner),hours=rows.reduce((sum,r)=>sum+r.work.worked_minutes,0)/60;
      return <tr role="row" key={f.id} className={open[0]?.id===f.id?'finding-featured':''} data-finding-id={f.id} data-keyboard-active={activeFindingId===f.id||undefined}>
       <td role="cell" className="overview-finding-title"><small>{f.id} · {reasonLabel(f.reason_code)}</small><a className="finding-open" aria-current={activeFindingId===f.id?'true':undefined} href={'?view=evidence&id='+f.id}><strong>{titleFor(f)}</strong></a></td>
       <td role="cell" data-label="Facility" className="overview-facility"><strong>{facilityName(f.facility_id)}</strong><span className="sr-only">Standard RN · {rows[0]?.rule?.contract_id}</span></td>

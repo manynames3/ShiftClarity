@@ -77,9 +77,10 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await page.getByLabel('I confirm the mappings, source totals').check();
   await page.getByRole('button',{name:'Accept sources',exact:true}).click();
   await page.getByRole('button',{name:'Run billing review',exact:true}).click();
-  await expect(page).toHaveURL(/view=workspace$/);
+  await expect(page).toHaveURL(/view=workspace(?:&|$)/);
   await expect(page.getByRole('heading',{name:'+$200.00',exact:true})).toBeVisible();
   await expect(page.locator('.mvp-summary')).toContainText('6 / 8');
+  const firstRun=new URL(page.url()).searchParams.get('run')!;
   if(cloud)await page.getByRole('button',{name:/^All findings/}).click();
   await page.getByRole('link',{name:'Rate change not reflected',exact:true}).click();
   if(cloud&&await page.getByRole('button',{name:'Reopen for review'}).isVisible()){
@@ -164,9 +165,111 @@ test('nontechnical evaluator imports XLSX, confirms mappings, obtains independen
   await page.getByLabel('I confirm the mappings, source totals').check();
   await page.getByRole('button',{name:'Accept sources',exact:true}).click();
   await page.getByRole('button',{name:'Run billing review',exact:true}).click();
-  await expect(page).toHaveURL(/view=workspace$/);
+  await expect(page).toHaveURL(/view=workspace(?:&|$)/);
   await expect(page.getByRole('row',{name:/Rate change not reflected/})).toContainText('Needs review');
   await expect(page.locator('.mvp-summary')).toContainText('0 / 1');
+  const secondRun=new URL(page.url()).searchParams.get('run')!;expect(secondRun).not.toBe(firstRun);
+  await page.getByRole('link',{name:'Rate change not reflected',exact:true}).click();
+  const followup=page.getByRole('region',{name:'Case follow-up'});
+  await expect(followup).toBeVisible();
+  await expect(followup.getByRole('combobox',{name:'Case owner',exact:true})).toBeVisible();
+  await followup.getByRole('combobox',{name:'Case owner',exact:true}).selectOption(cloud?'DEMO-APPROVER':'MVP-APPROVER');
+  await followup.getByLabel('Follow-up reason',{exact:true}).fill('Independent billing colleague owns the next follow-up.');
+  await followup.getByRole('button',{name:'Save follow-up',exact:true}).click();
+  await expect(followup.getByRole('status')).toContainText('saved');
+  await expect(page.locator('.review-panel')).toContainText(cloud?'Dana Reyes':'MVP-APPROVER');
+  await page.getByRole('link',{name:'Follow-up queue',exact:true}).click();
+  await page.getByRole('combobox',{name:'Show',exact:true}).selectOption('team');
+  await expect(page.locator('.workflow-list')).toContainText(cloud?'Dana Reyes':'MVP-APPROVER');
+  await page.getByRole('link',{name:'Period history',exact:true}).click();
+  const firstPeriod=page.locator('.workflow-list>li').filter({hasText:firstRun});
+  await firstPeriod.getByRole('button',{name:'Open review'}).click();
+  await expect(page).toHaveURL(new RegExp('run='+firstRun));
+  await page.getByRole('button',{name:/^All findings/}).click();
+  await expect(page.getByRole('row',{name:/Rate change not reflected/})).toContainText('Confirmed discrepancy');
+  expect((await page.request.get('/api/v1/runs/'+firstRun+'/report.xlsx')).ok()).toBe(true);
+  expect((await page.request.get('/api/v1/runs/'+firstRun+'/report.pdf')).ok()).toBe(true);
+  // Another reviewer opens the newer run without changing the first browser's period.
+  await other.goto('/pilot/?view=workspace&run='+secondRun);
+  await expect(other.getByRole('heading',{name:'+$200.00',exact:true})).toBeVisible();
+  await page.reload();await page.getByRole('button',{name:/^All findings/}).click();
+  await expect(page).toHaveURL(new RegExp('run='+firstRun));
+  await expect(page.getByRole('row',{name:/Rate change not reflected/})).toContainText('Confirmed discrepancy');
+  await page.goto('/pilot/?view=followup');
+  for(const width of [1440,390,320]){
+   await page.setViewportSize({width,height:1000});
+   await page.getByRole('combobox',{name:'Show',exact:true}).selectOption('team');
+   await expect(page.locator('.workflow-list>li').first()).toBeVisible();
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
+   expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+   await page.screenshot({path:'artifacts/workflow-queue-'+width+'.png',fullPage:true});
+  }
+  if(!cloud){
+   await page.goto('/pilot/?view=setup');
+   await expect(page.getByRole('heading',{name:'Workspace & team',exact:true})).toBeVisible();
+   await page.getByLabel('Workspace name',{exact:true}).fill('Fictional Agency QA');
+   await page.getByRole('button',{name:'Save defaults',exact:true}).click();
+   await expect(page.getByRole('status')).toContainText('saved');
+   expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+   await page.screenshot({path:'artifacts/workflow-setup-mobile.png',fullPage:true});
+  }
+  // Close the loop: record an actual correction reference, reuse registered rates, rerun, and inspect the retained case.
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto('/pilot/?view=evidence&id=FND-001&run='+firstRun);
+  const correction=page.getByRole('region',{name:'Case follow-up'});
+  await correction.getByRole('combobox',{name:'Next action',exact:true}).selectOption('record_correction');
+  await correction.getByLabel('Corrected invoice reference',{exact:true}).fill('INV-CORRECTED-QA');
+  await correction.getByLabel('Follow-up reason',{exact:true}).fill('Corrected the fictional original invoice in the source billing system.');
+  await correction.getByRole('button',{name:'Save follow-up',exact:true}).click();
+  await expect(correction.getByRole('status')).toContainText('saved');
+  await page.goto('/pilot/?view=import');
+  await page.getByLabel('Reuse registered approved rates').check();
+  await page.getByLabel('These work records cover the whole').check();
+  await page.getByLabel('These invoice/statement records include').check();
+  await page.getByLabel('I will use fictional').check();
+  await page.getByRole('button',{name:'Create review',exact:true}).click();
+  await expect(page).toHaveURL(/session=SES-/);
+  await expect(page.getByLabel('Upload Contract rates',{exact:true})).toHaveCount(0);
+  for(const [kind,label] of [['work','Approved work'],['invoices','Invoices & statements']]){
+   let content=readFileSync('public/examples/spreadsheets/'+kind+'.csv','utf8');
+   if(kind==='invoices')content=content.replaceAll(',600,10,60,',',650,10,65,');
+   await page.getByLabel('Upload '+label,{exact:true}).setInputFiles({name:kind+'-corrected.csv',mimeType:'text/csv',buffer:Buffer.from(content)});
+   const card=page.locator('.mapping-card').filter({has:page.getByRole('heading',{name:kind+'-corrected.csv',exact:true})});
+   await card.getByLabel('I checked the columns').check();
+   await card.getByRole('button',{name:'Confirm mapping for '+kind+'-corrected.csv',exact:true}).click();
+  }
+  await page.getByRole('button',{name:'Validate all sources',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Review the new contract rate versions'})).toHaveCount(0);
+  await page.getByLabel('I confirm the mappings, source totals').check();
+  await page.getByRole('button',{name:'Accept sources',exact:true}).click();
+  await page.getByRole('button',{name:'Run billing review',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'+$0.00',exact:true})).toBeVisible();
+  await expect(page.locator('.mvp-summary')).toContainText('6 / 8');
+  await page.getByRole('link',{name:'Follow-up queue',exact:true}).click();
+  await page.getByRole('combobox',{name:'Show',exact:true}).selectOption('team');
+  await page.getByRole('combobox',{name:'Status',exact:true}).selectOption('resolved');
+  const resolved=page.locator('.workflow-list>li').filter({hasText:'FAC-A'}).filter({hasText:'Oct 1–10, 2026'});
+  await expect(resolved).toContainText('Aligned / evidence supplied');
+  await resolved.getByRole('button',{name:'Follow up',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Case follow-up'})).toContainText('INV-CORRECTED-QA');
+  await page.getByRole('region',{name:'Case follow-up'}).getByText(/Follow-up history/).click();
+  await expect(page.getByRole('region',{name:'Case follow-up'})).toContainText('aligned on rerun');
+  await page.screenshot({path:'artifacts/workflow-resolved-case.png',fullPage:true});
+  for(const width of [1440,390,320]){
+   await page.setViewportSize({width,height:1000});
+   for(const theme of ['dark','light']){
+    await page.getByRole('button',{name:theme==='dark'?'Use dark mode':'Use light mode',exact:true}).click();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
+    expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+    if(width===390)await page.screenshot({path:'artifacts/workflow-case-mobile-'+theme+'.png',fullPage:true});
+   }
+  }
+  if(cloud){
+   await cognitoLogin(page,'reviewer','/pilot/?view=history&run='+firstRun);
+   await expect(page.getByRole('heading',{name:'Period history',exact:true})).toBeVisible();
+   expect(new URL(page.url()).searchParams.get('run')).toBe(firstRun);
+  }
   expect(errors).toEqual([]);
  }finally{await evaluator.close();await approver.close();}
 });

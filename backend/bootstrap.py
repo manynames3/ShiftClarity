@@ -39,6 +39,14 @@ def seed(db,settings,inputs,draft):
                    (org,state["run"]["id"],identifier,Jsonb(state)))
         db.execute("INSERT INTO audit_events(org_id,actor,action,resource) VALUES(%s,'SYNTHETIC-SEED','workspace_seeded',%s)",(org,state["run"]["id"]))
 
+    from psycopg.rows import dict_row
+    from .db import store_review
+    from .workflow import sync_cases
+    with db.cursor(row_factory=dict_row) as cur:
+        cur.execute("SELECT set_config('app.org_id',%s,true)",(org,))
+        current=cur.execute('SELECT state FROM workspace_heads WHERE org_id=%s',(org,)).fetchone()['state']
+        store_review(cur,org,current);sync_cases(cur,org,current,'SYNTHETIC-SEED')
+
 def migrate(db):
     if not db.execute("SELECT to_regclass('public.organizations')").fetchone()[0]:
         db.execute((ROOT/"backend/migrations/001_initial.sql").read_text())
@@ -50,6 +58,16 @@ def migrate(db):
         db.execute((ROOT/"backend/migrations/004_spreadsheet_onboarding.sql").read_text())
     if not db.execute("SELECT 1 FROM pg_trigger WHERE tgname='immutable_table_file'").fetchone():
         db.execute((ROOT/"backend/migrations/005_spreadsheet_immutability.sql").read_text())
+    if not db.execute("SELECT to_regclass('public.review_workspaces')").fetchone()[0]:
+        db.execute((ROOT/"backend/migrations/006_period_workflow.sql").read_text())
+    if not db.execute("SELECT 1 FROM information_schema.columns WHERE table_name='billing_cases' AND column_name='evidence_hash'").fetchone():
+        db.execute((ROOT/"backend/migrations/007_case_evidence.sql").read_text())
+        from .workflow import backfill_workflows
+        backfill_workflows(db)
+    if not db.execute("SELECT to_regclass('public.agency_settings')").fetchone()[0]:
+        db.execute((ROOT/"backend/migrations/008_workspace_access.sql").read_text())
+    if not db.execute("SELECT 1 FROM information_schema.columns WHERE table_name='memberships' AND column_name='provider_username'").fetchone():
+        db.execute((ROOT/"backend/migrations/009_provider_username.sql").read_text())
     db.execute(sql.SQL("GRANT CONNECT ON DATABASE {} TO shiftclarity_app").format(sql.Identifier(db.info.dbname)))
     db.execute("GRANT USAGE ON SCHEMA public TO shiftclarity_app")
     db.execute("GRANT SELECT ON ALL TABLES IN SCHEMA public TO shiftclarity_app")

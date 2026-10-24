@@ -20,7 +20,7 @@ backup=ROOT/".local/synthetic-recovery.dump"
 parser=argparse.ArgumentParser()
 parser.add_argument("--storage-dir",required=True)
 args=parser.parse_args()
-tables=["imports","source_revisions","source_lineage","documents","rule_versions","jobs","completed_runs","workspace_heads","audit_events","write_receipts"]
+tables=["imports","source_revisions","source_lineage","documents","rule_versions","jobs","completed_runs","workspace_heads","audit_events","write_receipts","table_sessions","table_files","mapping_profiles","review_workspaces","billing_cases","case_events","agency_settings"]
 def snapshot(url):
     with psycopg.connect(url) as db:
         data={}

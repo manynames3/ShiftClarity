@@ -49,7 +49,7 @@ def environment(settings,bundle):
                                ("DEMO-AUTHOR",["author","approver"],"synthetic-pilot"),
                                ("DEMO-APPROVER",["approver"],"synthetic-pilot"),
                                ("DEMO-OBSERVER",[],"synthetic-pilot"),("OTHER-REVIEWER",["reviewer"],"other-workspace")]:
-            db.execute("INSERT INTO memberships VALUES(%s,%s,%s,%s,%s,true)",(settings.issuer,actor,org,actor,roles))
+            db.execute("INSERT INTO memberships(issuer,subject,org_id,actor,roles,active) VALUES(%s,%s,%s,%s,%s,true)",(settings.issuer,actor,org,actor,roles))
     return settings
 
 @pytest.fixture

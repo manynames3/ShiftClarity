@@ -53,6 +53,7 @@ def mount_workbench(app,settings,storage,wake):
         work_complete:bool=False
         expected_work_hours:str|None=Field(default=None,max_length=20)
         expected_invoice_total:str|None=Field(default=None,max_length=20)
+        use_registered_rates:bool=False
         synthetic:Literal[True]
 
     class Mapping(StrictBody):
@@ -180,7 +181,7 @@ def mount_workbench(app,settings,storage,wake):
         data=bytearray()
         async for chunk in request.stream():
             data.extend(chunk)
-            if len(data)>MAX_BYTES:raise HTTPException(413,'Each file must be at most 1 MiB.')
+            if len(data)>MAX_BYTES:raise HTTPException(413,'Each file must be at most 2 MiB.')
         def receive():
             object_key=member['org_id']+'/quarantine/'+uuid.uuid4().hex
             storage.put(object_key,bytes(data),content_type='text/csv' if filename.lower().endswith('.csv') else 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -272,7 +273,8 @@ def mount_workbench(app,settings,storage,wake):
             row=session_row(db,session_id,member,True)
             if body.expected_version!=row['version']:raise HTTPException(409,'The source selection changed. Refresh it first.')
             data=copy.deepcopy(row['data'])
-            if {f['category'] for f in data['files']}!={'rates','work','invoices'} or any(not f.get('config') for f in data['files']):
+            required={'work','invoices'} if data['period'].get('use_registered_rates') else {'rates','work','invoices'}
+            if not required.issubset({f['category'] for f in data['files']}) or any(not f.get('config') for f in data['files']):
                 raise HTTPException(422,'Upload and confirm mappings for rates, work and invoices first.')
             limit(db,'table_validated',60)
             sources=[]
@@ -356,7 +358,7 @@ def mount_workbench(app,settings,storage,wake):
                 needed={r['source_excerpt_id'] for r in normalized['rules']}
                 normalized['excerpts']=[r['content'] for r in db.execute('SELECT content FROM documents').fetchall() if r['content']['id'] in needed]
                 payload=json.dumps(normalized,separators=(',',':')).encode()
-                if len(payload)>MAX_BYTES:raise HTTPException(413,'Normalized data exceeds the 1 MiB review limit. Split the period or facility.')
+                if len(payload)>2*1024*1024:raise HTTPException(413,'Normalized data exceeds the 2 MiB review limit. Split the period or facility.')
                 checked=compute('validate',text=payload.decode())
                 projected=compute('publish',state=head(db)['state'],inputs=checked,timestamp=datetime.now(timezone.utc).isoformat())
                 if len(json.dumps(projected).encode())>4*1024*1024:raise HTTPException(413,'Review results exceed the safe response limit. Split this export into a shorter period.')

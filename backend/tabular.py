@@ -11,8 +11,8 @@ from pathlib import PurePosixPath
 from zipfile import ZipFile, BadZipFile
 from .engine import PARSERS
 
-MAX_BYTES=1024*1024
-MAX_ROWS=1000
+MAX_BYTES=2*1024*1024
+MAX_ROWS=2500
 MAX_COLUMNS=50
 MAX_SHEETS=8
 MAX_XML=16*1024*1024
@@ -111,7 +111,7 @@ def cell(value):
     return value.strip()
 
 def read_tables(data,filename):
-    if not data or len(data)>MAX_BYTES:raise TableError("FILE_LIMIT","Choose a nonempty file no larger than 1 MiB.")
+    if not data or len(data)>MAX_BYTES:raise TableError("FILE_LIMIT","Choose a nonempty file no larger than 2 MiB.")
     suffix=filename.rsplit(".",1)[-1].lower()
     if suffix=="csv":
         try:
@@ -119,7 +119,7 @@ def read_tables(data,filename):
             dialect=csv.Sniffer().sniff(text[:65536],delimiters=",;\t|")
             rows=[]
             for row in csv.reader(io.StringIO(text),dialect):
-                if len(rows)>=MAX_ROWS+20 or len(row)>MAX_COLUMNS:raise TableError("ROW_LIMIT","Use at most 1,000 data rows and 50 columns per worksheet.")
+                if len(rows)>=MAX_ROWS+20 or len(row)>MAX_COLUMNS:raise TableError("ROW_LIMIT","Use at most 2,500 data rows and 50 columns per worksheet.")
                 rows.append([cell(v) for v in row])
             return {"CSV":rows}
         except (UnicodeError,csv.Error):raise TableError("CSV_FORMAT","Use a UTF-8 or BOM-marked UTF-16 CSV with a consistent comma, semicolon, tab or pipe delimiter.") from None
@@ -154,7 +154,7 @@ def read_tables(data,filename):
                 sheet.reset_dimensions()
                 rows=[]
                 for row in sheet.iter_rows():
-                    if len(rows)>=MAX_ROWS+20 or len(row)>MAX_COLUMNS:raise TableError("ROW_LIMIT","Use at most 1,000 data rows and 50 columns per worksheet.")
+                    if len(rows)>=MAX_ROWS+20 or len(row)>MAX_COLUMNS:raise TableError("ROW_LIMIT","Use at most 2,500 data rows and 50 columns per worksheet.")
                     values=[cell(c.value) for c in row]
                     characters+=sum(len(value) for value in values)
                     if characters>MAX_TEXT:raise TableError('TEXT_LIMIT','Workbook contains too much expanded text. Export fewer columns or a shorter period.')
@@ -187,7 +187,7 @@ def table_view(rows,category,header_row=None):
         if not any(row):continue
         if len(row)>len(headers) and any(row[len(headers):]):raise TableError("COLUMN_COUNT","A row has values beyond the selected header. Correct the source file.")
         data.append({"row_number":number,"values":row[:len(headers)]+['']*max(0,len(headers)-len(row))})
-    if (not data and category!='invoices') or len(data)>MAX_ROWS:raise TableError("ROW_LIMIT","Use 1 to 1,000 data rows per selected worksheet.")
+    if (not data and category!='invoices') or len(data)>MAX_ROWS:raise TableError("ROW_LIMIT","Use 1 to 2,500 data rows per selected worksheet.")
     mapping=suggest(headers,category)
     return {"header_row":header_row,"headers":headers,"rows":data,"mapping":mapping,"value_maps":value_suggestions(data,headers,mapping)}
 

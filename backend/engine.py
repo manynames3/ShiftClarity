@@ -3,6 +3,7 @@ import json
 import subprocess
 import threading
 from .config import ROOT
+from .fingerprints import compact_state
 
 class EngineError(Exception):
     pass
@@ -14,6 +15,7 @@ def digest(value):
     return hashlib.sha256(data).hexdigest()
 
 def compute(operation, **payload):
+    if 'state' in payload:payload['state']=compact_state(payload['state'])
     try:
         with PARSERS:
             result = subprocess.run(
