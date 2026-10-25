@@ -16,6 +16,7 @@ test('approved landing stays bright, accessible and inside five viewport widths'
   await expect(page.getByRole('link',{name:'Try this sample finding →'})).toHaveAttribute('href','/demo/?view=evidence&id=FND-001');
   await expect(page.getByRole('link',{name:'Sign in',exact:true}).first()).toHaveAttribute('href','/pilot/');
   expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+  if([390,1440].includes(width))await page.locator('.hero').screenshot({path:`artifacts/landing-hero-${width}.png`});
   if([390,1440].includes(width))await page.screenshot({path:`artifacts/landing-${width}.png`,fullPage:true});
  }
  expect(errors).toEqual([]);
@@ -59,4 +60,12 @@ test('content, navigation and FAQ work with JavaScript disabled',async({browser}
   await page.getByText('Does ShiftClarity change invoices?',{exact:true}).click();
   await expect(page.getByText('No. It does not edit source invoices or collect money.',{exact:false})).toBeVisible();
  } finally {await context.close();}
+});
+
+test('agency entry makes the local path and downloadable evidence concrete',async({page,request})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await expect(page.locator('.hero .cta .btn')).toHaveAttribute('href','/demo/?view=files');await expect(page.locator('.hero .cta .btn')).toBeInViewport();expect(await page.locator('.hero .cta .text-link').count()).toBe(1);
+ await expect(page.locator('.hero')).toContainText('Your files stay in your browser');
+ for(const [file,signature] of [['pdf','%PDF-'],['xlsx','PK']]){const response=await request.get('/landing/assets/agency-billing-review.'+file);expect(response.status()).toBe(200);expect((await response.body()).subarray(0,signature.length).toString()).toBe(signature);}
+ await page.getByText('What will I get back?',{exact:true}).click();await expect(page.getByText('Differences are candidates for review, not recovered revenue or evidence of payment.',{exact:false})).toBeVisible();
 });

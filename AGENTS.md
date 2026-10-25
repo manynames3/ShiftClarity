@@ -1,5 +1,8 @@
 # ShiftClarity workspace instructions
 
+## Agency-adoption authorization · October 24, 2026
+The user requested research-informed implementation so prospects can test their own files and obtain useful billing evidence. Extend the existing memory-only own-record preview with browser-local, minimized CSV evaluation, confirmed mappings, source guidance, repeat preparation and reports. Do not upload prospect records to the synthetic AWS/S3/Neon pilot. Keep the original handoff, approved bright design, existing private permissions and real-data gates. The user approved a maintained pinned browser spreadsheet library for direct local Excel evaluation. Use SheetJS CE 0.20.3 from its official archive in a bounded worker, with archive/active-content guards; no runtime CDN or model calls. Original GitHub publication and existing synthetic release authorizations remain applicable.
+
 ## Spreadsheet MVP deployment authorization · October 23, 2026
 The user explicitly requested “push and deploy” after the completed MVP verification and publication. Deploy the reviewed MVP to the existing synthetic AWS/Cognito/S3/Neon pilot and Cloudflare origin, applying the additive database migrations and verifying the live workflow. Preserve existing records, identities and private configuration; use the dedicated deployment role. This supersedes the October 22 local-only deployment restriction for this synthetic release. No customer records, paid upgrades or unrelated resources are authorized.
 

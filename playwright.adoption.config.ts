@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'tests/e2e',testMatch:process.env.SC_ALL_DEMO_TESTS==='1'?'*.spec.ts':'adoption.spec.ts',workers:2,fullyParallel:true,reporter:[['list'],['json',{outputFile:'artifacts/adoption-e2e-results.json'}]],outputDir:'artifacts/adoption-browser',use:{channel:'chrome',baseURL:'http://127.0.0.1:5189',viewport:{width:1440,height:1000},trace:'retain-on-failure'},webServer:{command:'npm run preview -- --port 5189 --strictPort',url:'http://127.0.0.1:5189',reuseExistingServer:false}});

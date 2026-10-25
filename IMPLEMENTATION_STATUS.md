@@ -1,5 +1,11 @@
 # ShiftClarity implementation status
 
+## Latest release · October 24, 2026
+
+Deployed browser-local agency CSV/XLSX evaluation, source-aware export guidance, explicit mappings and reusable metadata, safe approval/cutoff handling, retained non-hourly charges, useful reports, and an agency-focused landing. Existing private periods, approvals, Cognito permissions, reports and corrections remain verified. [AD-01–AD-06](docs/AGENCY_ADOPTION.md) map implementation to evidence. The included manual kit independently derives $460 potential underbilling and $24 potential overbilling with 6/8 records evaluated; no real agency outcome is claimed.
+
+Final checks: 142 unit, 126 backend, 58 original/demo/own-file browser, 11 additional real-header and live own-file journeys, private local/hosted two-period/correction flows, four landing tests, original handoff/edge checks and exact-image Lambda/offline checks. Both existing functions use verified digest `24978067e020bd31`; Pages release `e5636b43` matches the built landing and Terraform has no drift. Recovery and final publication evidence are in [VERIFICATION](docs/VERIFICATION.md). Original handoff and unrelated untracked concepts/brand/examples were preserved. Customer-cloud records, native connector certification and independent real-agency validation remain gated.
+
 ## Varied billing output · October 24, 2026
 
 Added a separate realistic fictional input kit and actual API-generated PDF/Excel reports: two facilities, 18 work records, 20 invoice lines, seven rates, varied 2-12-hour shifts, RN/LPN/CNA roles, overtime/weekend billing, partial/missing billing, overbilling, credit/rebill and void exclusion. Sixteen records evaluate to $905 potential underbilling and $33.25 potential overbilling; eight align and two remain coverage gaps. Three fictional confirmations, one assigned evidence request and three pending findings exercise report states. Five focused import/report API tests passed; all five PDF pages were rendered and inspected. The original quickstart and app calculation/report code are unchanged. The richer kit can be imported through the existing pilot; it does not replace the hosted built-in downloads. No customer data or cloud mutation was used.

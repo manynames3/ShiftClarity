@@ -1,0 +1,2 @@
+import {parseWorkbook,reportWorkbook} from './workbook';
+self.onmessage=async(event:MessageEvent)=>{try{const value=event.data.operation==='report'?reportWorkbook(event.data.report):await parseWorkbook(event.data.buffer);self.postMessage({ok:true,value},value instanceof ArrayBuffer?{transfer:[value]}:{});}catch(e){self.postMessage({ok:false,error:(e as Error).message||'Workbook could not be safely processed.'});}};

@@ -1,0 +1,550 @@
+{
+  "fields": {
+    "rates": {
+      "id": [
+        "Rate version",
+        true,
+        [
+          "rate id",
+          "rate version",
+          "rule id"
+        ]
+      ],
+      "contract_id": [
+        "Contract reference",
+        true,
+        [
+          "contract",
+          "contract id",
+          "agreement id"
+        ]
+      ],
+      "facility_id": [
+        "Facility reference",
+        true,
+        [
+          "facility",
+          "facility id",
+          "client",
+          "client id",
+          "customer"
+        ]
+      ],
+      "role": [
+        "Role",
+        true,
+        [
+          "role",
+          "job",
+          "job title",
+          "discipline",
+          "specialty"
+        ]
+      ],
+      "component": [
+        "Hourly component",
+        true,
+        [
+          "component",
+          "pay type",
+          "bill type",
+          "earning code",
+          "rate type"
+        ]
+      ],
+      "rate": [
+        "Contract bill rate per hour",
+        true,
+        [
+          "bill rate",
+          "hourly rate",
+          "client rate",
+          "contract rate"
+        ]
+      ],
+      "effective_from": [
+        "Effective from",
+        true,
+        [
+          "effective from",
+          "effective date",
+          "start date"
+        ]
+      ],
+      "effective_to": [
+        "Effective end (optional)",
+        false,
+        [
+          "effective to",
+          "end date",
+          "expiration date"
+        ]
+      ],
+      "authorization_date": [
+        "Source authorization date",
+        true,
+        [
+          "authorization date",
+          "authorized on",
+          "agreement approved",
+          "approved date"
+        ]
+      ],
+      "supersedes": [
+        "Previous rate version (amendment)",
+        false,
+        [
+          "supersedes",
+          "previous rate",
+          "previous rate id"
+        ]
+      ],
+      "currency": [
+        "Currency (optional; USD otherwise)",
+        false,
+        [
+          "currency",
+          "currency code"
+        ]
+      ]
+    },
+    "work": {
+      "id": [
+        "Work record reference",
+        true,
+        [
+          "shift id",
+          "work id",
+          "timesheet id",
+          "record id"
+        ]
+      ],
+      "facility_id": [
+        "Facility reference",
+        true,
+        [
+          "facility",
+          "facility id",
+          "client",
+          "client id",
+          "customer"
+        ]
+      ],
+      "worker_id": [
+        "Worker reference (ID only)",
+        true,
+        [
+          "employee id",
+          "worker id",
+          "clinician id",
+          "resource id",
+          "candidate id"
+        ]
+      ],
+      "assignment_id": [
+        "Assignment reference (optional)",
+        false,
+        [
+          "assignment id",
+          "placement id"
+        ]
+      ],
+      "role": [
+        "Role",
+        true,
+        [
+          "role",
+          "job",
+          "job title",
+          "discipline",
+          "specialty"
+        ]
+      ],
+      "component": [
+        "Hourly component",
+        true,
+        [
+          "component",
+          "pay type",
+          "bill type",
+          "earning code",
+          "bill earn code",
+          "pay earn code",
+          "trans.type"
+        ]
+      ],
+      "service_date": [
+        "Service date",
+        true,
+        [
+          "service date",
+          "shift date",
+          "work date",
+          "date worked",
+          "bill transaction date",
+          "pay transaction date"
+        ]
+      ],
+      "service_end_date": [
+        "Service end date (overnight)",
+        false,
+        [
+          "service end date",
+          "shift end date"
+        ]
+      ],
+      "hours": [
+        "Worked time",
+        true,
+        [
+          "hours",
+          "approved hours",
+          "worked hours",
+          "bill hours",
+          "minutes",
+          "worked minutes",
+          "bill qty",
+          "pay qty"
+        ]
+      ],
+      "approval_state": [
+        "Time approval status",
+        true,
+        [
+          "approval",
+          "approval status",
+          "time status",
+          "approved",
+          "bill transaction status",
+          "pay transaction status"
+        ]
+      ],
+      "approved_at": [
+        "Time approved date",
+        false,
+        [
+          "approved at",
+          "approved date",
+          "time approved date"
+        ]
+      ],
+      "approval_observed_at": [
+        "Approved status observed on (when event date is unavailable)",
+        false,
+        [
+          "approval observed date",
+          "status observed date"
+        ]
+      ],
+      "source_revision": [
+        "Source version (optional)",
+        false,
+        [
+          "revision",
+          "source revision",
+          "version"
+        ]
+      ]
+    },
+    "invoices": {
+      "billing_basis": [
+        "Billing basis (hourly unless explicitly mapped)",
+        false,
+        [
+          "billing basis",
+          "charge basis",
+          "line scope"
+        ]
+      ],
+      "id": [
+        "Invoice line reference",
+        true,
+        [
+          "line id",
+          "invoice line id",
+          "billing line id",
+          "record id"
+        ]
+      ],
+      "invoice_id": [
+        "Invoice or statement reference",
+        true,
+        [
+          "invoice #",
+          "invoice number",
+          "billing id",
+          "invoice id",
+          "statement id",
+          "invoice statement number"
+        ]
+      ],
+      "facility_id": [
+        "Facility reference",
+        true,
+        [
+          "facility",
+          "facility id",
+          "client",
+          "client id",
+          "customer"
+        ]
+      ],
+      "shift_ids": [
+        "Work record references (optional)",
+        false,
+        [
+          "shift id",
+          "shift ids",
+          "work id",
+          "timesheet id"
+        ]
+      ],
+      "worker_id": [
+        "Worker reference for matching",
+        false,
+        [
+          "employee id",
+          "worker id",
+          "clinician id",
+          "resource id",
+          "candidate id"
+        ]
+      ],
+      "service_date": [
+        "Service date for matching",
+        false,
+        [
+          "service date",
+          "shift date",
+          "work date",
+          "bill transaction date"
+        ]
+      ],
+      "role": [
+        "Role for matching",
+        false,
+        [
+          "role",
+          "job",
+          "discipline"
+        ]
+      ],
+      "component": [
+        "Hourly component for matching",
+        false,
+        [
+          "component",
+          "pay type",
+          "bill type",
+          "earning code",
+          "bill earn code",
+          "pay earn code",
+          "trans.type"
+        ]
+      ],
+      "amount": [
+        "Signed invoice amount",
+        true,
+        [
+          "amount",
+          "line amount",
+          "net amount",
+          "billed amount",
+          "total",
+          "bill amount",
+          "item bill"
+        ]
+      ],
+      "hours": [
+        "Billed time",
+        true,
+        [
+          "hours",
+          "billed hours",
+          "bill hours",
+          "minutes",
+          "billed minutes",
+          "bill qty"
+        ]
+      ],
+      "unit_rate": [
+        "Invoice bill rate per hour",
+        true,
+        [
+          "bill rate",
+          "hourly rate",
+          "client rate",
+          "unit rate"
+        ]
+      ],
+      "state": [
+        "Posting status",
+        true,
+        [
+          "status",
+          "posting status",
+          "invoice status"
+        ]
+      ],
+      "document_kind": [
+        "Document type",
+        true,
+        [
+          "document type",
+          "type",
+          "document kind"
+        ]
+      ],
+      "chain_id": [
+        "Credit/rebill chain reference",
+        false,
+        [
+          "chain id",
+          "credit chain",
+          "rebill chain"
+        ]
+      ],
+      "currency": [
+        "Currency (optional; USD otherwise)",
+        false,
+        [
+          "currency",
+          "currency code"
+        ]
+      ]
+    }
+  },
+  "values": {
+    "billing_basis": {
+      "hourly": [
+        "hourly",
+        "hours"
+      ],
+      "non_hourly": [
+        "non-hourly",
+        "non hourly",
+        "outside hourly scope"
+      ]
+    },
+    "component": {
+      "unsupported": [
+        "unsupported",
+        "other",
+        "out of scope"
+      ],
+      "standard": [
+        "regular",
+        "reg",
+        "standard",
+        "straight time"
+      ],
+      "overtime": [
+        "overtime",
+        "ot"
+      ],
+      "holiday": [
+        "holiday",
+        "hol"
+      ],
+      "weekend": [
+        "weekend"
+      ],
+      "on_call": [
+        "on call",
+        "oncall"
+      ],
+      "callback": [
+        "callback",
+        "call back"
+      ]
+    },
+    "approval_state": {
+      "approved": [
+        "approved",
+        "yes",
+        "true",
+        "1"
+      ],
+      "pending": [
+        "pending",
+        "no",
+        "false",
+        "0",
+        "unapproved"
+      ],
+      "rejected": [
+        "rejected",
+        "denied"
+      ]
+    },
+    "state": {
+      "posted": [
+        "posted",
+        "final",
+        "paid",
+        "finalized",
+        "invoiced"
+      ],
+      "draft": [
+        "draft",
+        "pending"
+      ],
+      "void": [
+        "void",
+        "voided",
+        "cancelled"
+      ]
+    },
+    "document_kind": {
+      "invoice": [
+        "invoice",
+        "statement",
+        "reverse billing",
+        "hospital statement"
+      ],
+      "credit": [
+        "credit",
+        "credit memo"
+      ],
+      "debit": [
+        "debit",
+        "adjustment",
+        "rebill"
+      ]
+    }
+  },
+  "denied": [
+    "address",
+    "bankaccount",
+    "billdescription",
+    "birthdate",
+    "candidatename",
+    "clinicalnotes",
+    "clinicianname",
+    "contactname",
+    "dateofbirth",
+    "diagnosis",
+    "diagnosiscode",
+    "dob",
+    "email",
+    "employeename",
+    "firstname",
+    "fullname",
+    "lastname",
+    "medicalrecord",
+    "mobilephone",
+    "mrn",
+    "name",
+    "patient",
+    "patientid",
+    "patientname",
+    "paydescription",
+    "phone",
+    "phonenumber",
+    "resourcename",
+    "socialsecuritynumber",
+    "ssn",
+    "telephone",
+    "workername"
+  ]
+}

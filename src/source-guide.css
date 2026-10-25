@@ -1,0 +1,1 @@
+.source-guide dl{display:grid;grid-template-columns:180px 1fr;gap:16px}.source-guide dt{font-weight:650}.source-guide dd{margin:0}.source-guide a{color:var(--overview-accent,#006d77);text-underline-offset:3px}@media(max-width:640px){.source-guide dl{grid-template-columns:1fr;gap:8px}.source-guide dd{margin-bottom:12px}}

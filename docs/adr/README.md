@@ -13,6 +13,7 @@ These records explain the accepted architecture of the synthetic ShiftClarity pi
 | [0007](0007-confirmed-spreadsheet-adapters.md) | Confirmed spreadsheet adapters and reusable mappings | Accepted; deployed synthetic MVP |
 | [0008](0008-current-review-evidence-reports.md) | Current-review Excel/PDF evidence reports | Accepted; historical-access restriction superseded by ADR 0009 |
 | [0009](0009-periods-and-follow-up.md) | Period-scoped review workspaces, historical reports and verified follow-up | Accepted; deployed synthetic release |
+| [0011](0011-browser-local-agency-evaluation.md) | Local prospect CSV evaluation alongside the synthetic persistent pilot | Accepted; release evidence in verification |
 | [0010](0010-owner-managed-access.md) | Owner-managed, invite-only agency access with Cognito MFA | Accepted; deployed synthetic release |
 
 Start with the [C4 architecture views](../architecture/README.md) to see how these decisions fit together. The [import publication sequence](../architecture/import-publication.md) explains transaction and retry behavior. The earlier [decision log](../../DECISIONS.md) remains available for chronology; these ADRs describe the current decisions after the authorized AWS scope change.

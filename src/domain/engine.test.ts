@@ -10,7 +10,7 @@ describe('SC-01–11, SC-24: independent canonical oracle',()=>{
  it('matches all financial fields without importing oracle into production',()=>{for(const f of baseline().findings){const {fingerprint,dataset_id,...fields}=f;expect(fields).toEqual(oracle.findings.find(o=>o.id===f.id));}});
  it('matches coverage tasks and null amounts',()=>expect(baseline().tasks).toEqual(oracle.coverage_tasks));
  it('matches controls and separated financial totals',()=>{const r=baseline();expect(r.totals).toEqual({expected:'8000.00',invoiced:'6240.00',underbilling:'1760.00',overbilling:'0.00'});expect(row('S010').expected_amount).toBe('720.00');expect(row('S014').invoiced_amount).toBe('780.00');});
- it('records source/rule/calendar/engine manifest',()=>{const r=baseline();expect(r.batch_ids).toHaveLength(3);expect(r.rule_version_ids).toHaveLength(3);expect(r.engine_version).toBe('sc-engine-1.0.0');expect(r.status).toBe('completed');});
+ it('records source/rule/calendar/engine manifest',()=>{const r=baseline();expect(r.batch_ids).toHaveLength(3);expect(r.rule_version_ids).toHaveLength(3);expect(r.engine_version).toBe('sc-engine-1.1.0');expect(r.status).toBe('completed');});
 });
 describe('supplied golden cases — financial engine',()=>{
  for(const id of ['G01','G10','G11','G12'])it(`${id} ${golden.find(g=>g.id===id)!.title}`,()=>{const g=golden.find(g=>g.id===id)!;const i=g.input;const a=expected(i.minutes!,i.rate!);if(g.expected.amount)expect(a).toBe(g.expected.amount);if(g.expected.difference)expect(difference(a,i.billed||i.allocated_billed!)).toBe(g.expected.difference);});

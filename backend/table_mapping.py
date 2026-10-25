@@ -5,7 +5,7 @@ import re
 from datetime import date,datetime,timedelta
 from decimal import Decimal,InvalidOperation
 from .engine import digest
-from .tabular import FIELDS,VALUES,TableError
+from .tabular import FIELDS,VALUES,TableError,time_unit_hint
 
 DATE_FORMATS={"ISO":"%Y-%m-%d","MDY":"%m/%d/%Y","DMY":"%d/%m/%Y"}
 
@@ -42,7 +42,12 @@ def decimal_value(value,convention,places,negative=False):
         return result
     except InvalidOperation:raise ValueError('Use a valid fixed decimal amount.') from None
 
-def stamp(value,convention):return day(value,convention)+'T00:00:00+00:00'
+def stamp(value,convention):
+    if re.fullmatch(r'\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})',str(value)):
+        return datetime.fromisoformat(str(value).replace('Z','+00:00')).isoformat()
+    return day(value,convention)+'T00:00:00+00:00'
+
+def date_only(value):return not bool(re.fullmatch(r'\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})',str(value)))
 
 def check_config(table,category,config):
     if config.get('confirmed') is not True:raise TableError('MAPPING_CONFIRMATION','Review and confirm the column and value mappings first.')
@@ -51,16 +56,21 @@ def check_config(table,category,config):
     maps=config.get('value_maps',{})
     if not isinstance(maps,dict) or set(maps)-{'role',*VALUES} or any(not isinstance(values,dict) or len(values)>100 for values in maps.values()):
         raise TableError('VALUE_MAPPING_FIELDS','Value mappings may contain only supported roles, statuses and hourly components, with at most 100 source values each.')
-    allowed={'facility_id','role','component','currency','approval_state','state','document_kind','contract_id','authorization_date'}
+    allowed={'facility_id','role','component','currency','approval_state','state','document_kind','contract_id','authorization_date','approval_observed_at','billing_basis'}
     if not isinstance(constants,dict) or set(constants)-allowed or set(constants)&set(mapping) or any(not isinstance(v,str) or not v or len(v)>80 for v in constants.values()):
         raise TableError('FIXED_VALUES','Confirm supported fixed values separately from mapped columns.')
     if not isinstance(mapping,dict) or set(mapping)-set(FIELDS[category]) or any(v not in table['headers'] for v in mapping.values()):
         raise TableError('MAPPING_FIELDS','Mapped columns must exist in this worksheet.')
-    required=[label for field,(label,needed,_) in FIELDS[category].items() if needed and not mapping.get(field) and not constants.get(field)]
+    scope_column=mapping.get('billing_basis')
+    all_non_hourly=category=='invoices' and (constants.get('billing_basis')=='non_hourly' or bool(scope_column) and bool(table['rows']) and all(maps.get('billing_basis',{}).get(row['values'][table['headers'].index(scope_column)])=='non_hourly' for row in table['rows']))
+    required=[label for field,(label,needed,_) in FIELDS[category].items() if needed and not (all_non_hourly and field in ['hours','unit_rate']) and not mapping.get(field) and not constants.get(field)]
     if required:raise TableError('REQUIRED_MAPPING','Map required fields: '+', '.join(required))
     if config.get('date_format') not in DATE_FORMATS or config.get('decimal_format') not in ['dot','comma'] or config.get('time_unit') not in ['hours','minutes'] or config.get('end_date_mode') not in ['exclusive','inclusive']:
         raise TableError('FORMAT_CONFIRMATION','Confirm date, decimal, time-unit and end-date conventions.')
-    if category=='invoices' and not mapping.get('shift_ids') and not all(mapping.get(k) or constants.get(k) for k in ['worker_id','service_date','role','component']):
+    hint=time_unit_hint(mapping.get('hours',''))
+    if category!='rates' and not all_non_hourly and hint and hint!=config.get('time_unit'):
+        raise TableError('TIME_UNIT_MISMATCH',f'The selected time column is labeled in {hint}. Choose {hint} as the time unit; do not convert it a second time.')
+    if category=='invoices' and not all_non_hourly and not mapping.get('shift_ids') and not all(mapping.get(k) or constants.get(k) for k in ['worker_id','service_date','role','component']):
         raise TableError('MATCHING_FIELDS','Map work references, or all four matching fields: worker, service date, role and component.')
 
 def normalize_table(table,category,config,filename,content_hash):
@@ -81,7 +91,7 @@ def normalize_table(table,category,config,filename,content_hash):
                 return result
             def ref(key,default=None):return identifier(value(key,default))
             def date_value(key):return day(value(key),config['date_format'])
-            def number(key,places=4,negative=False):return decimal_value(value(key),config['decimal_format'],places,negative)
+            def number(key,places=4,negative=False):return decimal_value(value(key),'dot' if mapping.get(key) in row.get('numeric_columns',[]) else config['decimal_format'],places,negative)
             def mapped(key):
                 source=value(key)
                 result=source if key in config.get('constants',{}) else value_maps.get(key,{}).get(source)
@@ -109,6 +119,10 @@ def normalize_table(table,category,config,filename,content_hash):
                         'role':mapped('role'),'component':mapped('component'),'service_date':date_value('service_date'),
                         'worked_minutes':minutes(),'approval_state':approval,'approved_at':approved,'timezone':'UTC',
                         'recorded_at':date_value('service_date')+'T00:00:00+00:00'}
+                if approved:record['approval_date_only']=date_only(raw['approved_at'])
+                if raw.get('approval_observed_at'):
+                    record['approval_observed_at']=stamp(value('approval_observed_at'),config['date_format'])
+                    record['approval_observation_date_only']=date_only(raw['approval_observed_at'])
                 if raw.get('service_end_date'):
                     record['service_end_date']=date_value('service_end_date')
                     if record['service_end_date']<record['service_date']:field='service_end_date';raise ValueError('Service end precedes the start.')
@@ -118,12 +132,16 @@ def normalize_table(table,category,config,filename,content_hash):
             else:
                 amount=number('amount',2,True);kind=mapped('document_kind')
                 if (kind=='credit' and amount>0) or (kind!='credit' and amount<0):field='amount';raise ValueError('Use signed amounts: credit memos must be negative and invoice/debit amounts nonnegative. Credit amounts are not inferred.')
+                basis=mapped('billing_basis') if raw.get('billing_basis') else 'hourly'
                 field='shift_ids'
                 refs=[identifier(v.strip()) for v in str(raw.get('shift_ids','')).split(';') if v.strip()]
                 record={'id':ref('id'),'invoice_id':ref('invoice_id'),'facility_id':ref('facility_id'),'state':mapped('state'),'document_kind':kind,
-                        'amount':format(amount,'.2f'),'currency':value('currency','USD').upper(),'minutes':minutes(kind=='credit'),'unit_rate':format(number('unit_rate'),'.4f'),
+                        'amount':format(amount,'.2f'),'currency':value('currency','USD').upper(),'minutes':minutes(kind=='credit') if basis=='hourly' else 0,'unit_rate':format(number('unit_rate'),'.4f') if basis=='hourly' else '0.0000',
                         'shift_ids':refs,'chain_id':ref('chain_id') if raw.get('chain_id') else None}
-                if not refs and record['state']=='posted':
+                if basis=='non_hourly':
+                    if refs:raise ValueError('A non-hourly line cannot also allocate to hourly work. Confirm its scope and remove work references only if it is outside the hourly agreement.')
+                    record['billing_basis']=basis
+                if basis=='hourly' and not refs and record['state']=='posted':
                     record['_match']={'worker_id':ref('worker_id'),'service_date':date_value('service_date'),'role':mapped('role'),'component':mapped('component')}
             if record.get('currency','USD')!='USD':field='currency';raise ValueError('This release supports USD only.')
             if category=='invoices':

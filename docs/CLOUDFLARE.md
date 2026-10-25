@@ -49,3 +49,7 @@ The user approved the rendered bright editorial concept before implementation. S
 Landing responses carry a self-only content policy, framing denial, nosniff, restricted device permissions and explicit revalidation. Static requests need no private origin credential; preview hosts still fail closed. Private paths retain the existing credential, cookie, CSRF, redirect and cache behavior. No signup, analytics service, connector, new account or paid resource is introduced.
 
 Production release `c18b01eb` serves source commit `8e3be20`. The root and all checked landing resources matched committed bytes; live demo/pilot entry, health, anonymous API denial and preview-host denial passed. The live browser verified source tracing, bright theme, desktop/mobile bounds and the public evidence deep link. Authenticated Cognito workflows were not rerun for this static release.
+
+
+## Agency export release · October 24, 2026
+Pages deployment `e5636b43` updates agency-oriented copy, the direct local CSV/XLSX evaluator CTA, explicit data/approval boundaries and actual fictional PDF/Excel sample downloads. Routing and the existing private origin secret are unchanged. Four landing checks pass; desktop/mobile captures were inspected. The application and bounded workbook worker are served by the verified Lambda image recorded in VERIFICATION.md. The live own-file workflow passes without uploading records; the private cloud pilot remains synthetic. No new paid service or always-on resource was added.

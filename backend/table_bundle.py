@@ -1,6 +1,6 @@
 """Assemble confirmed tables into the existing canonical snapshot contract."""
 import copy
-from datetime import date,timedelta
+from datetime import date,datetime,timedelta
 from decimal import Decimal
 from .engine import digest
 from .tabular import TableError
@@ -26,6 +26,8 @@ def assemble(period,sources,known,creator,created_at):
             else:seen[row['id']]=row
         grouped[category]=list(seen.values())
     end=(date.fromisoformat(period['service_to'])+timedelta(days=1)).isoformat()
+    if datetime.fromisoformat(period['billing_cutoff'].replace('Z','+00:00'))<datetime.fromisoformat(end+'T00:00:00+00:00'):
+        errors.append(error('Period','billing_cutoff','Choose a billing cutoff after the selected service period ends.'))
     reused=[]
     if period.get('use_registered_rates') and not grouped['rates']:
         reused=[r for r in known.values() if (period['facility_id']=='ALL' or r['facility_id']==period['facility_id']) and r['effective_from']<end and (not r.get('effective_to') or r['effective_to']>period['service_from'])]
@@ -39,6 +41,10 @@ def assemble(period,sources,known,creator,created_at):
         for row in rows:
             if period['facility_id']!='ALL' and row['facility_id']!=period['facility_id']:
                 errors.append(error(kind,'facility_id','A record belongs to a different facility. Select ALL explicitly or correct the file.'))
+            if kind=='work' and row.get('approved_at') and (datetime.fromisoformat(row['approved_at'].replace('Z','+00:00'))>datetime.fromisoformat(period['source_as_of'].replace('Z','+00:00')) or row['approved_at'][:10]<row['service_date']):
+                errors.append(error(kind,'approved_at','The source approval date must fall between the service date and the files-current timestamp.'))
+            if row.get('approval_observed_at') and (datetime.fromisoformat(row['approval_observed_at'].replace('Z','+00:00'))>datetime.fromisoformat(period['source_as_of'].replace('Z','+00:00')) or row['approval_observed_at'][:10]<row['service_date']):
+                errors.append(error(kind,'approval_observed_at','The approved-status observation must fall between the service date and the files-current timestamp.'))
             if 'service_date' in row and not period['service_from']<=row['service_date']<end:
                 errors.append(error(kind,'service_date','A source row is outside the selected billing period. Export the selected scope again.'))
     work=grouped['work'];invoices=grouped['invoices']
@@ -87,11 +93,17 @@ def assemble(period,sources,known,creator,created_at):
               'billing_cutoff':period['billing_cutoff'],'invoice_source_as_of':period['source_as_of'],'invoice_coverage_complete':period['invoice_complete'],
               'workspace_label':period['facility_id']+' · Fictional review','note':'Confirmed spreadsheet mappings and declared coverage. No customer data or payment evidence.'}
     warnings=[]
-    unmatched=sum(1 for line in invoices if line['state']=='posted' and (not line['shift_ids'] or any(ref not in {w['id'] for w in work} for ref in line['shift_ids'])))
+    unmatched=sum(1 for line in invoices if line['state']=='posted' and line.get('billing_basis')!='non_hourly' and (not line['shift_ids'] or any(ref not in {w['id'] for w in work} for ref in line['shift_ids'])))
     if unmatched:warnings.append(f'{unmatched} posted invoice line(s) lack unique work references. Affected facilities will remain evidence gaps without estimated differences.')
     if not period['invoice_complete'] or not period['work_complete']:warnings.append('Coverage was not declared complete. Affected work remains unevaluated without a financial estimate.')
+    non_hourly=[line for line in invoices if line.get('billing_basis')=='non_hourly']
+    if non_hourly:warnings.append(f'{len(non_hourly)} explicitly classified non-hourly invoice line(s) remain in the source totals but are outside the hourly calculation. No difference is estimated for them.')
+    long_work=sum(w['worked_minutes']>1440 for w in work)
+    if long_work:warnings.append(f'{long_work} work row(s) exceed 24 hours. Check time units and record granularity; weekly totals must not stand in for dated shifts.')
+    observed=sum(bool(w.get('approval_observed_at')) and not w.get('approved_at') for w in work)
+    if observed:warnings.append(f'{observed} work row(s) use an explicitly supplied observation of approved source status; the original approval-event timestamp is not known.')
     if duplicates:warnings.append(f'{duplicates} identical row(s) with the same native reference were reused once.')
     rules=list({r['id']:r for r in rules}.values())
     return {'errors':[],'normalized':{'work':work,'invoices':invoices,'rules':rules,'batches':batches,'excerpts':[],'manifest':manifest},
             'rate_candidates':candidates,'excerpts':excerpts,'lineage':lineage,'warnings':warnings,
-            'summary':{'work_records':len(work),'invoice_lines':len(invoices),'rate_versions':len(grouped['rates']),'new_rates':len(candidates),'work_hours':str(Decimal(total_minutes)/60),'posted_invoice_total':format(posted_total,'.2f'),'duplicates':duplicates}}
+            'summary':{'work_records':len(work),'invoice_lines':len(invoices),'rate_versions':len(grouped['rates']),'new_rates':len(candidates),'work_hours':str(Decimal(total_minutes)/60),'posted_invoice_total':format(posted_total,'.2f'),'duplicates':duplicates,'non_hourly_lines':len(non_hourly),'non_hourly_posted_total':format(sum((Decimal(line['amount']) for line in non_hourly if line['state']=='posted'),Decimal(0)),'.2f')}}

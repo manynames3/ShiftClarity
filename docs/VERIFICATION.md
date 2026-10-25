@@ -177,3 +177,27 @@ A post-release recovery rehearsal restored **19 tables and 54 private source obj
 Manual browser inspection additionally confirmed actual Cognito/TOTP sign-in, the aligned latest result, the retained $200 original evidence/decision, the correction reference and verification link, both historical report choices, 25 visible history rows with pagination, and a bright owner setup at 390px without horizontal overflow. Browser task 6 was finished. Ego screenshot capture timed out; the published product captures come from the passing hosted Chrome journey and were visually inspected. Its optional browser-tool update was left unapplied.
 
 Real customer exports/contract semantics, independent accuracy labels, an unassisted billing-user session and approved data/operating policies remain external acceptance gates. No synthetic test establishes production certification or collected revenue.
+
+
+## Agency export evaluation and landing release · October 24, 2026
+
+The research-informed [agency evaluation](AGENCY_ADOPTION.md) is deployed at **https://shiftclarity.pages.dev/demo/?view=files**. Authorized minimized CSV/XLSX files are read and reconciled in browser memory, with explicit sheet/header/mapping/status/unit/scope confirmation. No source rows, results or local decisions are uploaded or stored in browser persistence. Direct Excel parsing and literal-cell Excel export use the explicitly approved, pinned SheetJS CE 0.20.3 in a bounded worker; no runtime CDN, model call, migration or paid service was added. The persistent cloud pilot remains synthetic.
+
+Evidence for the final implementation:
+
+- **142** unit/component checks; **126** backend checks; **58** original/demo/own-file browser checks.
+- **11** own-file journeys pass through real FastAPI security headers and again at the live Cloudflare URL. Actual CSV/XLSX imports, sheet/header selection, mapping reuse, both financial directions, row corrections, incomplete coverage, source hashes and native PDF/Excel/CSV outputs are exercised. Canary source values never enter HTTP requests or browser storage.
+- The private synthetic first/second-period import, independent account approval, review/report, history and correction loop passes locally and on the deployed Cognito/S3/SQS/Neon stack. The hosted run took about 1.2 minutes. Existing owner-lifecycle and maximum-capacity results remain historical; those unrelated checks were not unnecessarily repeated.
+- **4** landing checks cover five viewport widths, light rendering on dark devices, WCAG checks, keyboard source tracing, disabled-JavaScript content, a visible primary CTA and real example PDF/XLSX downloads. Desktop/mobile rendered captures were inspected. A third hero action found overlapping during visual inspection was removed before the final landing release.
+- **20** original handoff checks and **4** edge-routing tests pass; generated mapping metadata is synchronized. Full and production-only npm audits report zero advisories after a compatible patch to the existing test-only Undici dependency.
+- [Claude disposition](CLAUDE_AGENCY_REVIEW.md) records independently verified fixes for numeric Excel locale interpretation, wrong worksheet dimensions, stale fixed authority, approval labels and cutoff/precision safety. Additional workbook cases cover desktop printer metadata, quoted sheet names and formatting extensions while actual formula cells remain rejected.
+
+Both existing Lambda functions are Active/Successful on verified AMD64 image **sha256:24978067e020bd3126b11040fd2fbc0a8668a6939f54caa3b3f9f20e82616ede**. The actual Lambda emulator checked nonroot/read-only execution, restricted Neon access, UI/host rules and anonymous API denial. The network-disabled container smoke checked parsing, independent approval, shared calculation and both report encoders. The saved Terraform plan was inspected: only the web/worker image URIs changed; no creates, destroys or database migration. The post-apply plan reports no drift.
+
+Cloudflare production deployment **e5636b43** serves the agency-focused landing: existing-system workflow, direct own-export CTA, explicitly fictional downloadable evidence, local-data/approval boundaries and scope FAQs. Live landing, demo/pilot shells, main/lazy styles/scripts and the workbook worker match local production bytes. The public fictional Excel sample matches its build bytes; anonymous workspace access is denied.
+
+Post-release recovery matched **19 tables** and **65 private source objects** in **11.824 seconds**, restoring only the dedicated local rehearsal environment. No customer RPO/RTO or SLA is inferred.
+
+The manual Ego workspace disappeared; no replacement was created without the skill-required permission. Actual Chrome outputs, downloaded workbooks/PDFs and desktop/mobile landing captures were inspected instead. The optional browser-tool update remains unapplied. No manual sign-in or real-agency acceptance is claimed for this release.
+
+Research and invented export variants do not establish vendor certification, real-customer accuracy or a measured conversion/savings outcome. Customer-specific approved exports, contract semantics, independent labels and customer-cloud operating approval remain external acceptance work.

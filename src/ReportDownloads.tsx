@@ -1,3 +1,4 @@
+import {createBrowserWorkbook} from './adapters/browser-workbook';
 import {useMemo,useState} from 'react';
 import type {Demo} from './domain/demo';
 import {billingReport,reportCsv,reportLimit} from './domain/report';
@@ -13,6 +14,7 @@ function save(blob:Blob,filename:string){
 export function ReportDownloads({state,secure,onClose}:{state:Demo;secure:boolean;onClose:()=>void}){
  const [notes,setNotes]=useState(false),[busy,setBusy]=useState(''),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const report=useMemo(()=>billingReport(state,notes),[state,notes]);
+ async function localExcel(){setBusy('xlsx');setError('');try{save(new Blob([await createBrowserWorkbook(report)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'ShiftClarity-billing-review.xlsx');setNotice('Excel report downloaded locally.');}catch(e){setError((e as Error).message);}finally{setBusy('');}}
  async function download(format:'xlsx'|'pdf'){
   setBusy(format);setError('');setNotice('');
   try{
@@ -21,13 +23,13 @@ export function ReportDownloads({state,secure,onClose}:{state:Demo;secure:boolea
    save(await response.blob(),'ShiftClarity-billing-review.'+format);setNotice('Report downloaded.');
   }catch(e){setError((e as Error).message);}finally{setBusy('');}
  }
- return <Dialog title="Download billing review" secure={secure} onClose={onClose} className="report-dialog">
+ return <Dialog title="Download billing review" secure={secure} localData={!state.inputs.manifest.synthetic} onClose={onClose} className="report-dialog">
   <button className="report-close" aria-label="Close report" onClick={onClose}><span aria-hidden="true">×</span></button>
   <div className="report-controls">
    <p>All findings, current decisions and coverage gaps. Search and facility filters do not limit the report. Worker identities are omitted.</p>
    <label className="report-notes"><input type="checkbox" checked={notes} onChange={e=>setNotes(e.target.checked)} disabled={!!busy}/>Include reviewer notes I’m authorized to share</label>
    {state.stale&&<p className="report-stale" role="alert">Stale results: the previous completed run is retained. Reports carry this warning.</p>}
-   {secure?<div className="report-actions"><button className="btn btn-primary" disabled={!!busy} onClick={()=>void download('pdf')}>{busy==='pdf'?'Preparing PDF…':'Download PDF'}</button><button className="btn" disabled={!!busy} onClick={()=>void download('xlsx')}>{busy==='xlsx'?'Preparing Excel…':'Download Excel'}</button></div>:<><p className="report-local-note">Created in your browser. No records are uploaded. For PDF, choose “Save as PDF” in the print dialog.</p><div className="report-actions"><button className="btn btn-primary" onClick={()=>window.print()}>Print / save PDF</button><button className="btn" onClick={()=>{save(new Blob([reportCsv(report)],{type:'text/csv;charset=utf-8'}),'ShiftClarity-billing-review.csv');setNotice('CSV report downloaded. Open it in Excel or another spreadsheet app.');}}>Download CSV</button></div></>}
+   {secure?<div className="report-actions"><button className="btn btn-primary" disabled={!!busy} onClick={()=>void download('pdf')}>{busy==='pdf'?'Preparing PDF…':'Download PDF'}</button><button className="btn" disabled={!!busy} onClick={()=>void download('xlsx')}>{busy==='xlsx'?'Preparing Excel…':'Download Excel'}</button></div>:<><p className="report-local-note">Created in your browser. No records are uploaded. For PDF, choose “Save as PDF” in the print dialog.</p><div className="report-actions"><button className="btn btn-primary" onClick={()=>window.print()}>Print / save PDF</button><button className="btn" disabled={!!busy} onClick={()=>void localExcel()}>{busy==='xlsx'?'Preparing Excel…':'Download Excel'}</button><button className="btn" onClick={()=>{save(new Blob([reportCsv(report)],{type:'text/csv;charset=utf-8'}),'ShiftClarity-billing-review.csv');setNotice('CSV report downloaded. Open it in Excel or another spreadsheet app.');}}>Download CSV</button></div></>}
    {error&&<p className="error" role="alert">{displayUserText(error)}</p>}{notice&&<p role="status">{notice}</p>}
   </div>
   {!secure&&<PrintableReport report={report}/>}
@@ -57,8 +59,9 @@ function PrintableReport({report}:{report:BillingReport}){
   <h2>Coverage and evidence limits</h2><p>{summary['Hours received']} hours received; {summary['Hours evaluated']} hours evaluated. Invoice coverage: {summary['Coverage declaration']}. Source as of {summary['Source current through']}; billing cutoff {summary['Billing cutoff']}.</p>
   <ReportTable headers={['Work reference','Coverage gap','Estimate']} rows={find('Coverage gaps').rows.map(r=>[r[1],r[3],r[4]])}/>
   <h2>Invoice allocations</h2><ReportTable headers={find('Invoice allocations').headers} rows={find('Invoice allocations').rows.map(r=>[...r.slice(0,3),money(r[3]),r[4]])}/>
-  <h2>Applicable rate terms</h2>{find('Rate terms').rows.map(r=><div className="report-rate" key={String(r[0])}><h3>{r[0]} · {r[2]} · {r[3]} / {r[4]} · ${Number(r[5]).toFixed(4)} per hour</h3><p>Effective {r[6]} to {r[7]||'open'} (end exclusive). Source authorized: {r[8]||'not supplied'}. System approved at {r[9]||'not supplied'} by {r[11]||'not supplied'}. Evidence: {r[12]}.</p></div>)}
-  <h2>Source references</h2><p>Local source batch references; original-file hashes are not captured by the browser demo.</p><ReportTable headers={find('Source references').headers} rows={find('Source references').rows}/>
+  {report.tables.filter(t=>t.name==='Non-hourly invoice lines'||t.name==='Invoice source lines').map(t=><section className="report-support-table" key={t.name}><h2>{t.name}</h2><p>{t.name==='Non-hourly invoice lines'?'Retained in source totals, outside hourly comparison. No difference is estimated.':'All supplied invoice rows, including unallocated and non-hourly lines. Batch references identify the original file hash.'}</p>{t.name==='Invoice source lines'?<ReportTable headers={['Invoice / line','Facility','Posting status','Signed USD','Billing scope']} rows={t.rows.map(row=>[row[0]+' / '+row[1],row[2],row[3],money(row[5]),row[8]])}/>:<ReportTable headers={t.headers} rows={t.rows.map(row=>[...row.slice(0,4),money(row[4]),row[5]])}/>}<p className="report-limit">Full normalized invoice columns are available in the Excel/CSV report.</p></section>)}
+  <h2>Applicable rate terms</h2>{find('Rate terms').rows.map(r=><div className="report-rate" key={String(r[0])}><h3>{r[0]} · {r[2]} · {r[3]} / {r[4]} · ${Number(r[5]).toFixed(4)} per hour</h3><p>Effective {r[6]} to {r[7]||'open'} (end exclusive). Source authorized: {r[8]||'not supplied'}. {report.synthetic?'System approved at':'Supplied source approval date'} {r[9]||'not supplied'} by {r[11]||'not supplied'}. Evidence: {r[12]}.</p></div>)}
+  <h2>Source references</h2><p>Source batch references. CSV evaluations include original-file SHA-256 references; manually entered or normalized JSON previews may not.</p>{find('Source references').rows.map(row=><div className="report-source" key={String(row[0])}><h3>{row[0]} · {String(row[1]).split(' · SHA-256 ')[0]}</h3><p>{row[2]} records · Source as of {row[3]} · {row[4]}</p>{String(row[1]).includes(' · SHA-256 ')&&<p className="report-limit">Original SHA-256: {String(row[1]).split(' · SHA-256 ')[1]}</p>}</div>)}
   <h2>Review history</h2><p>Reviewer notes: {report.notesIncluded?'explicitly included':'omitted'}. Worker identities: omitted.</p><ReportTable headers={find('Review history').headers} rows={find('Review history').rows}/>
   <footer>{report.runId} · {summary['Calculation engine']} · {summary['Data boundary']}<br/>{reportLimit}</footer>
  </article>;

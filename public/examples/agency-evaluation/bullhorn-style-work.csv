@@ -1,0 +1,2 @@
+PayableChargeID,Client,CandidateID,PlacementID,JobTitle,PayEarnCode,PayTransactionDate,PayQty,PayTransactionStatus
+PAY-1001,FAC-ALPHA,C101,PL-1,RN,REG,2026-10-05,12,Approved

@@ -4,7 +4,7 @@ ShiftClarity compares approved work and posted invoices against independently ap
 
 The public root serves a static landing page from Cloudflare Pages; its dedicated `/landing/` assets do not invoke AWS.
 
-These C4 views describe the **deployed synthetic pilot**, not a proposed production platform. All records are fictional. The standalone `/demo/` experience remains a separate, memory-only demonstration.
+These C4 views describe the **deployed synthetic pilot**, not a proposed production platform. All records are fictional. The standalone `/demo/` experience remains memory-only. Its separate `?view=files` evaluator accepts authorized minimized CSV/XLSX exports entirely in the browser; those records never enter the cloud containers below.
 
 The CSV/XLSX onboarding and Excel/PDF reports extend these same containers in the **deployed synthetic MVP**, released October 23, 2026. See the [spreadsheet component view](#c4-level-3-spreadsheet-mvp) and [walkthrough](../SPREADSHEET_WALKTHROUGH.md). No new cloud service is introduced.
 
@@ -227,3 +227,40 @@ sequenceDiagram
   API->>DB: Read period decisions and latest scoped follow-up
   API-->>UI: Private PDF/XLSX; original financial evidence retained
 ```
+
+## C4 level 3: browser-local prospect evaluation
+
+```mermaid
+flowchart LR
+  user["Agency billing specialist · Person"]
+  sources["Existing ATS / VMS / billing / approved terms · External systems"]
+  subgraph browser["Prospect browser · Container"]
+    mapping["Local CSV reader / bounded XLSX worker and confirmed mappings · Component"]
+    engine["Existing exact TypeScript reconciliation engine · Component"]
+    review["Findings, evidence and local decisions · Component"]
+    reports["XLSX / CSV / print-save PDF and opt-in mapping metadata · Component"]
+    mapping --> engine --> review --> reports
+  end
+  sources -.->|"User exports authorized minimized files"| user
+  user -->|"Selects local files; confirms meanings and scope"| mapping
+  reports -->|"Explicit download; refresh clears memory"| user
+  edge["Cloudflare / AWS · Existing containers · Static application and fictional examples only"]
+  edge -->|"GET application assets; no source rows returned"| browser
+```
+
+```mermaid
+sequenceDiagram
+  actor Agency as Agency billing specialist
+  participant Browser as Browser-local evaluator
+  participant Engine as Shared exact engine
+  participant Cloud as Existing cloud host
+  Browser->>Cloud: GET application assets / optional fictional examples
+  Agency->>Browser: Select authorized CSV/XLSX files and explicit mappings
+  Browser->>Browser: Bounded parse, source SHA-256, row corrections, totals
+  Browser->>Engine: Validated canonical records and supplied declarations
+  Engine-->>Browser: Both billing directions, allocations and unknown-value gaps
+  Agency->>Browser: Review and explicitly download report
+  Note over Browser,Cloud: No source records, results or local reviews are uploaded
+```
+
+[ADR 0011](../adr/0011-browser-local-agency-evaluation.md) records why this path does not imply customer-cloud approval or a vendor connector. [Agency adoption research](../AGENCY_ADOPTION.md) maps the source evidence and testable assumptions.

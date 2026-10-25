@@ -10,7 +10,7 @@ The user explicitly requested phase 4 with realistic synthetic data and approved
 | 5 | Evaluation protocol prepared. | Representative authorized sample, independent labels, held-out period and properly configured incumbent comparison. No results measured. |
 | 6 | Productization gates preserved. | Demonstrated recurring value, separately approved connectors/onboarding, operating/commercial limits and public claims. |
 
-Competitor complaints inform failure cases; they are not proof of a customer's actual recurring problem. This application accepts fictional minimized data only. Real records and sensitive notes require the separate real-data gate.
+Competitor complaints inform failure cases; they are not proof of a customer's actual recurring problem. The persistent cloud pilot accepts fictional minimized data only. The separately authorized browser-local CSV/XLSX evaluator accepts authorized, minimized prospect records without uploading or persisting them; local supplied approvals are not authenticated. Customer-cloud processing and sensitive notes remain behind the separate real-data gate.
 
 The target timekeeping, VMS and invoicing products are not yet known. There is no single stack assumed by this exercise: keep the import vendor-neutral, then identify William's exact systems, export format and billing cutoff before designing a connector.
 

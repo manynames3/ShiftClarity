@@ -485,6 +485,10 @@ def create_app(settings=None):
     if (ROOT/"dist/assets").exists():
         app.mount("/assets",StaticFiles(directory=ROOT/"dist/assets"),name="assets")
         app.mount("/brand",StaticFiles(directory=ROOT/"dist/brand"),name="brand")
+        if (ROOT/"dist/legal").exists():
+            app.mount("/legal",StaticFiles(directory=ROOT/"dist/legal"),name="third-party-notices")
+        if (ROOT/"dist/examples").exists():
+            app.mount("/examples",StaticFiles(directory=ROOT/"dist/examples"),name="public-fictional-examples")
         @app.get("/")
         @app.get("/pilot/")
         @app.get("/demo/")

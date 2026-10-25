@@ -1,0 +1,9 @@
+Line ID,Invoice Number,Facility ID,Work ID,Amount,Minutes,Bill Rate,Status,Document Type,Chain ID,Billing Basis
+L1,INV-201,FAC-ALPHA,W1,840.00,720,70.00,Posted,Invoice,,hourly
+L2,INV-201,FAC-ALPHA,W2,576.00,480,72.00,Posted,Invoice,,hourly
+L3,INV-201,FAC-ALPHA,W3,400.00,240,100.00,Posted,Invoice,,hourly
+L5,INV-201,FAC-ALPHA,W5,960.00,720,80.00,Posted,Invoice,,hourly
+L6,INV-201,FAC-ALPHA,W6,720.00,600,72.00,Posted,Invoice,CH-1,hourly
+C6,CM-201,FAC-ALPHA,W6,-720.00,600,72.00,Posted,Credit,CH-1,hourly
+R6,INV-202,FAC-ALPHA,W6,700.00,600,70.00,Posted,Debit,CH-1,hourly
+F1,INV-201,FAC-ALPHA,,25.00,,,Posted,Invoice,,non_hourly

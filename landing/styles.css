@@ -858,3 +858,5 @@ button.src.is-active:hover { background: var(--pale); }
 }
 
 .shot figcaption a { display:inline-flex; align-items:center; min-height:44px; color:var(--teal-strong); text-underline-offset:4px; }
+
+.hero-fit{max-width:58ch;margin-top:22px;color:var(--muted);font-size:.875rem;line-height:1.7}.report-example{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;padding:28px 0;margin:28px 0;border-block:1px solid var(--line)}.report-example p{margin-top:10px;max-width:76ch;color:var(--muted)}.report-example>div:last-child{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}@media(max-width:640px){.report-example{grid-template-columns:1fr;gap:16px}.hero-fit{font-size:.875rem}}

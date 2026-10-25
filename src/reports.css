@@ -40,3 +40,5 @@
  .billing-print-report th,.billing-print-report td{padding:6pt 4pt}.report-metrics{gap:14pt}.report-metrics dd{font-size:22pt}.report-metrics dt{font-size:8pt}
  .billing-print-report p{orphans:3;widows:3}
 }
+
+@media print{.report-source,.report-support-table{break-inside:avoid}.report-source p{margin-bottom:6pt}.report-source h3{margin-top:10pt}.report-source{margin-bottom:12pt}}

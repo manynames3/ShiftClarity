@@ -7,13 +7,15 @@
 
 **Find billing differences. Show the evidence. Make the next decision clear.**
 
-ShiftClarity helps healthcare staffing teams compare approved contract rates, completed work and posted invoices. Start with the exports you already have. Review potential underbilling and overbilling beside the supporting records, record a decision, assign the next action, and share an Excel or PDF evidence report. Keep each period’s review and verify corrections on a later import.
+ShiftClarity helps healthcare staffing teams compare approved contract rates, completed work and posted invoices. Test the exports you already have—CSV or Excel—without uploading prospect records. Review potential underbilling and overbilling beside the supporting records, record a decision, assign the next action, and share an Excel or PDF evidence report. Keep each period’s review and verify corrections on a later import.
 
 *Every shift. Clearly aligned.* A Supreme AI Ventures product.
 
 [Explore the hosted demo](https://shiftclarity.pages.dev/demo/) · [Product](https://shiftclarity.pages.dev/) · [Complete spreadsheet walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) · [C4 architecture](docs/architecture/README.md) · [ADRs](docs/adr/README.md)
 
-**Live synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals, period reviews and follow-up. Access is invite-only; an owner manages the team. All included records are fictional; customer data and production approval remain gated.
+**Try your files locally:** [Open the file evaluator](https://shiftclarity.pages.dev/demo/?view=files). Select authorized, minimized CSV/XLSX exports for work, posted billing and approved contract rates. Confirm the mappings and scope, inspect both billing directions, then download Excel/CSV or print/save PDF. No account, records upload, model call or browser record storage. Refresh clears the local review. [Where the files come from and what to prepare](docs/AGENCY_ADOPTION.md).
+
+**Persistent synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals, period reviews and follow-up. Access is invite-only; an owner manages the team. All included records are fictional; customer data and production approval remain gated.
 
 ## Answer four billing questions
 
@@ -26,7 +28,7 @@ ShiftClarity helps healthcare staffing teams compare approved contract rates, co
 
 The supplied spreadsheet example evaluates **6 of 8 work records** and identifies **$200 potential underbilling**. Four 10-hour shifts use an approved $65 rate against $60 invoiced. Explicit overtime and weekend rows align. One unsupported callback and one pending time approval remain coverage gaps. Collectibility and payment outcomes are unknown.
 
-## From existing files to a review
+## Persistent review workflow in the synthetic pilot
 
 1. **Choose a facility and billing period.** Declare source coverage and optionally supply independent control totals.
 2. **Upload CSV or Excel.** Add rates, work and invoices/statements; select the worksheet and header.
@@ -42,11 +44,11 @@ The next-period example reuses the saved layout and exposes a new export code fo
 
 ## A report a billing manager can use
 
-**In the open demo:** choose **Download report** beside the workspace summary. Preview the current review, use **Print / save PDF**, or **Download CSV** for Excel. Everything stays in your browser. The same action is available from evidence and inputs.
+**In the open demo or own-file evaluator:** choose **Download report** beside the workspace summary. Preview the current review, use **Print / save PDF**, **Download Excel**, or **Download CSV**. Everything stays in your browser. The same action is available from evidence and inputs.
 
 **In the signed-in pilot:** choose **Download report**, then **Download PDF** or **Download Excel** for server-generated `.pdf` / `.xlsx` files.
 
-Excel includes summary, findings, work calculations, itemized invoice allocations, approved terms, source lineage, review history, coverage gaps and a ninth **Follow-up** sheet. PDF combines a management summary with calculations and evidence references. Both use the **selected period’s saved reviews**, including undecided findings. Latest follow-up is labeled separately from the original financial evidence.
+Private-pilot Excel includes summary, findings, work calculations, itemized invoice allocations, approved terms, source lineage, review history, coverage gaps and a ninth **Follow-up** sheet. PDF combines a management summary with calculations and evidence references. Private-pilot reports use the **selected period’s saved reviews**, including undecided findings. Latest follow-up is labeled separately from the original financial evidence.
 
 Worker identity fields and reviewer free-text notes are omitted by default. Notes require explicit opt-in. Spreadsheet cells are literal text rather than executable formulas; raw source fingerprints are replaced by hashes. Invoiced totals for unchecked work remain separate from the evaluated-work comparison.
 
@@ -59,6 +61,20 @@ This richer example has **18 shifts at two facilities**, seven rates, varied hou
 The [compact $200 sample PDF](docs/examples/fictional-billing-review.pdf) remains available for the original quickstart.
 
 **Period history** retains earlier reviews and reports. **Follow-up queue** shows assigned and team cases across periods, including resolved cases and their verification run. Correct invoices in the existing billing system; ShiftClarity records and verifies the follow-up without editing the source system or claiming collected revenue. [See the retained correction record](docs/images/workflow-followup-mobile.png).
+
+## A realistic first-customer evaluation
+
+[Try the fictional agency kit](public/examples/agency-evaluation/EXPECTED_RESULTS.md) before selecting your own records. CSV and values-only Excel versions include varied hours and contract components, missing billing, a signed credit/rebill and a non-hourly fee. The independent expected result is **$460 potential underbilling and $24 potential overbilling**, with **6 of 8 work records evaluated**. Pending time and unsupported callback terms have no estimate; the $25 fee stays in invoice totals outside hourly comparison. These are invented cases, not measured customer savings.
+
+[Download the actual browser-generated Excel report](docs/examples/agency-local-billing-review.xlsx) · [View its PDF review](docs/examples/agency-local-billing-review.pdf).
+
+![Actual local-file billing review with both financial directions and coverage](docs/images/agency-local-review.png)
+
+For repeat reviews, download confirmed mappings without source rows. New source codes remain unconfirmed; fixed approval dates and approval/posting statuses are cleared. In the persistent pilot, **Use next consecutive period** copies the selected interval/facility, proposes registered rates and requires fresh source timestamps and scope declarations. File errors are grouped into causes with a full correction download.
+
+[Agency adoption research and walkthrough](docs/AGENCY_ADOPTION.md) explains Bullhorn detailed transactions, the limitations of Avionté weekly sheet views, VMS credit/memo preparation and independent rate evidence. These are source-informed preparation guides, not native integrations or certified vendor exports.
+
+[View the updated agency landing page](docs/images/agency-landing-desktop.png) · [Mobile view](docs/images/agency-landing-mobile.png).
 
 ## Try it locally
 
@@ -109,7 +125,7 @@ Bullhorn, Avionté, QuickBooks and VMS names are potential source formats to ver
 | Cloudflare Pages | Public landing and fixed-origin proxy for the signed-in pilot |
 | OpenPyXL + DefusedXML + ReportLab | Bounded spreadsheets, hardened XML parsing and evidence reports |
 
-The three reporting/import libraries were explicitly approved. The upgrade adds no paid AI API, new cloud service or always-on infrastructure. Migration **004** adds onboarding sessions, files and profiles; **005** protects their accepted identities/content. Migrations **006–009** add period reviews, follow-up, owner-managed access and verified provider identity bindings. Owner migrations remain outside request handling. [ADRs](docs/adr/README.md), [C4 views](docs/architecture/README.md) and the [import sequence](docs/architecture/import-publication.md) explain the boundaries.
+The three reporting/import libraries were explicitly approved. The upgrade adds no paid AI API, new cloud service or always-on infrastructure. Migration **004** adds onboarding sessions, files and profiles; **005** protects their accepted identities/content. The browser evaluator adds no migration or cloud service. Migrations **006–009** add period reviews, follow-up, owner-managed access and verified provider identity bindings. Owner migrations remain outside request handling. [ADRs](docs/adr/README.md), [C4 views](docs/architecture/README.md) and the [import sequence](docs/architecture/import-publication.md) explain the boundaries.
 
 Quarantine originals expire after one day and accepted original bytes after 30 days. Raw previews are removed at acceptance. Derived immutable evidence persists until an owner-authorized purge; this is not an approved customer retention policy. See [security controls](docs/PHASE_4.md), the [threat model](docs/THREAT_MODEL.md) and [hosted operations](docs/AWS_AND_DATABASE.md).
 
@@ -122,6 +138,8 @@ npm run build
 npm run build:engine
 npm run test:backend
 npm run test:e2e
+SC_ALL_DEMO_TESTS=1 npx playwright test -c playwright.adoption.config.ts
+python3 scripts/sync-local-table-schema.py --check
 npm run test:mvp
 ```
 
@@ -129,7 +147,9 @@ The commands above use disposable **local** databases and refuse cloud targets. 
 
 See [actual verification results](docs/VERIFICATION.md), [Claude review disposition](docs/CLAUDE_MVP_REVIEW.md), [acceptance evidence](ACCEPTANCE_CHECKLIST.md) and [implementation plan](docs/MVP_IMPLEMENTATION_PLAN.md). Screenshots show running software and generated reports with fictional records.
 
-## Before a real customer pilot
+## Before a persistent customer pilot
+
+Browser-local file evaluation is available within its stated limits. Customer records remain disabled in the persistent cloud pilot.
 
 1. Verify representative approved, scrubbed exports and contract semantics, including unsupported billing/rounding cases.
 2. Approve data use, privacy/contracts, access, retention, incident response and recovery responsibilities.

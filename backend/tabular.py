@@ -36,28 +36,30 @@ FIELDS={
  "work":{
   "id":("Work record reference",True,["shift id","work id","timesheet id","record id"]),
   "facility_id":("Facility reference",True,["facility","facility id","client","client id","customer"]),
-  "worker_id":("Worker reference (ID only)",True,["employee id","worker id","clinician id","resource id","employee","worker","clinician","resource"]),
+  "worker_id":("Worker reference (ID only)",True,["employee id","worker id","clinician id","resource id","candidate id"]),
   "assignment_id":("Assignment reference (optional)",False,["assignment id","placement id"]),
   "role":("Role",True,["role","job","job title","discipline","specialty"]),
-  "component":("Hourly component",True,["component","pay type","bill type","earning code"]),
-  "service_date":("Service date",True,["service date","shift date","work date","date worked"]),
+  "component":("Hourly component",True,["component","pay type","bill type","earning code","bill earn code","pay earn code","trans.type"]),
+  "service_date":("Service date",True,["service date","shift date","work date","date worked","bill transaction date","pay transaction date"]),
   "service_end_date":("Service end date (overnight)",False,["service end date","shift end date"]),
-  "hours":("Worked time",True,["hours","approved hours","worked hours","bill hours","minutes"]),
-  "approval_state":("Time approval status",True,["approval","approval status","time status","approved"]),
+  "hours":("Worked time",True,["hours","approved hours","worked hours","bill hours","minutes","worked minutes","bill qty","pay qty"]),
+  "approval_state":("Time approval status",True,["approval","approval status","time status","approved","bill transaction status","pay transaction status"]),
   "approved_at":("Time approved date",False,["approved at","approved date","time approved date"]),
+  "approval_observed_at":("Approved status observed on (when event date is unavailable)",False,["approval observed date","status observed date"]),
   "source_revision":("Source version (optional)",False,["revision","source revision","version"]),
  },
  "invoices":{
+  "billing_basis":("Billing basis (hourly unless explicitly mapped)",False,["billing basis","charge basis","line scope"]),
   "id":("Invoice line reference",True,["line id","invoice line id","billing line id","record id"]),
-  "invoice_id":("Invoice or statement reference",True,["invoice #","invoice number","billing id","invoice id","statement id"]),
+  "invoice_id":("Invoice or statement reference",True,["invoice #","invoice number","billing id","invoice id","statement id","invoice statement number"]),
   "facility_id":("Facility reference",True,["facility","facility id","client","client id","customer"]),
   "shift_ids":("Work record references (optional)",False,["shift id","shift ids","work id","timesheet id"]),
-  "worker_id":("Worker reference for matching",False,["employee id","worker id","clinician id","resource id"]),
-  "service_date":("Service date for matching",False,["service date","shift date","work date"]),
+  "worker_id":("Worker reference for matching",False,["employee id","worker id","clinician id","resource id","candidate id"]),
+  "service_date":("Service date for matching",False,["service date","shift date","work date","bill transaction date"]),
   "role":("Role for matching",False,["role","job","discipline"]),
-  "component":("Hourly component for matching",False,["component","pay type","bill type","earning code"]),
-  "amount":("Signed invoice amount",True,["amount","line amount","net amount","billed amount","total"]),
-  "hours":("Billed time",True,["hours","billed hours","bill hours","minutes"]),
+  "component":("Hourly component for matching",False,["component","pay type","bill type","earning code","bill earn code","pay earn code","trans.type"]),
+  "amount":("Signed invoice amount",True,["amount","line amount","net amount","billed amount","total","bill amount","item bill"]),
+  "hours":("Billed time",True,["hours","billed hours","bill hours","minutes","billed minutes","bill qty"]),
   "unit_rate":("Invoice bill rate per hour",True,["bill rate","hourly rate","client rate","unit rate"]),
   "state":("Posting status",True,["status","posting status","invoice status"]),
   "document_kind":("Document type",True,["document type","type","document kind"]),
@@ -66,12 +68,19 @@ FIELDS={
  },
 }
 VALUES={
- "component":{"standard":["regular","reg","standard","straight time"],"overtime":["overtime","ot"],"holiday":["holiday","hol"],"weekend":["weekend"],"on_call":["on call","oncall"],"callback":["callback","call back"]},
+ "billing_basis":{"hourly":["hourly","hours"],"non_hourly":["non-hourly","non hourly","outside hourly scope"]},
+ "component":{"unsupported":["unsupported","other","out of scope"],"standard":["regular","reg","standard","straight time"],"overtime":["overtime","ot"],"holiday":["holiday","hol"],"weekend":["weekend"],"on_call":["on call","oncall"],"callback":["callback","call back"]},
  "approval_state":{"approved":["approved","yes","true","1"],"pending":["pending","no","false","0","unapproved"],"rejected":["rejected","denied"]},
- "state":{"posted":["posted","final","paid"],"draft":["draft","pending"],"void":["void","voided","cancelled"]},
+ "state":{"posted":["posted","final","paid","finalized","invoiced"],"draft":["draft","pending"],"void":["void","voided","cancelled"]},
  "document_kind":{"invoice":["invoice","statement","reverse billing","hospital statement"],"credit":["credit","credit memo"],"debit":["debit","adjustment","rebill"]},
 }
-DENIED={"name","firstname","lastname","fullname","phone","telephone","birthdate","resourcename","contactname","patient","patientname","patientid","diagnosis","diagnosiscode","clinicalnotes","medicalrecord","mrn","ssn","socialsecuritynumber","dateofbirth","dob","employeename","workername","clinicianname","email","address","bankaccount"}
+DENIED={"name","firstname","lastname","fullname","phone","phonenumber","telephone","mobilephone","candidatename","paydescription","billdescription","birthdate","resourcename","contactname","patient","patientname","patientid","diagnosis","diagnosiscode","clinicalnotes","medicalrecord","mrn","ssn","socialsecuritynumber","dateofbirth","dob","employeename","workername","clinicianname","email","address","bankaccount"}
+
+def time_unit_hint(header):
+    value=token(header)
+    if 'minute' in value or value.endswith('mins'):return 'minutes'
+    if 'hour' in value or value.endswith('hrs'):return 'hours'
+    return ''
 
 class TableError(ValueError):
     def __init__(self,code,message):
@@ -102,13 +111,16 @@ def value_suggestions(rows,headers,mapping):
                 result[field][value]=next((k for k,aliases in VALUES[field].items() if token(value) in {token(k),*(token(a) for a in aliases)}),"")
     return result
 
+class NumericCell(str):pass
+
 def cell(value):
     if value is None:return ""
     if isinstance(value,(date,datetime)):return value.isoformat()
+    numeric=isinstance(value,(int,float)) and not isinstance(value,bool)
     value=str(value)
     if len(value)>2000 or any(ord(c)<32 and c not in "\t\n\r" for c in value):
         raise TableError("CELL_LIMIT","A cell is too long or contains unsupported control characters.")
-    return value.strip()
+    return NumericCell(value.strip()) if numeric else value.strip()
 
 def read_tables(data,filename):
     if not data or len(data)>MAX_BYTES:raise TableError("FILE_LIMIT","Choose a nonempty file no larger than 2 MiB.")
@@ -180,16 +192,17 @@ def table_view(rows,category,header_row=None):
     while headers and not headers[-1]:headers.pop()
     if not headers or any(not h for h in headers) or len({token(h) for h in headers})!=len(headers):
         raise TableError("HEADER_FIELDS","Every column needs a distinct, nonempty header. Select the correct header row.")
-    if any(token(h) in DENIED or token(h).startswith(('patient','diagnosis','clinical','medicalrecord')) for h in headers):
-        raise TableError("SENSITIVE_FIELDS","Remove names, patient, clinical, identity, contact and banking columns before uploading.")
+    sensitive=[str(h)[:80] for h in headers if token(h) in DENIED or token(h).startswith(('patient','diagnosis','clinical','medicalrecord'))]
+    if sensitive:
+        raise TableError("SENSITIVE_FIELDS","Remove sensitive columns from the export before uploading: "+', '.join(sensitive[:8])+'. Use worker reference IDs; no cell values were included in this diagnostic.')
     data=[]
     for number,row in enumerate(rows[header_row:],header_row+1):
         if not any(row):continue
         if len(row)>len(headers) and any(row[len(headers):]):raise TableError("COLUMN_COUNT","A row has values beyond the selected header. Correct the source file.")
-        data.append({"row_number":number,"values":row[:len(headers)]+['']*max(0,len(headers)-len(row))})
+        data.append({"row_number":number,"numeric_columns":[headers[i] for i,value in enumerate(row[:len(headers)]) if isinstance(value,NumericCell)],"values":row[:len(headers)]+['']*max(0,len(headers)-len(row))})
     if (not data and category!='invoices') or len(data)>MAX_ROWS:raise TableError("ROW_LIMIT","Use 1 to 2,500 data rows per selected worksheet.")
     mapping=suggest(headers,category)
-    return {"header_row":header_row,"headers":headers,"rows":data,"mapping":mapping,"value_maps":value_suggestions(data,headers,mapping)}
+    return {"header_row":header_row,"headers":headers,"rows":data,"mapping":mapping,"value_maps":value_suggestions(data,headers,mapping),"time_unit_hint":time_unit_hint(mapping.get("hours",""))}
 
 def inspect_file(data,filename,category,sheet=None,header_row=None):
     if category not in FIELDS:raise TableError("CATEGORY","Choose rates, work or invoices.")
