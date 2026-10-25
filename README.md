@@ -13,9 +13,17 @@ ShiftClarity helps healthcare staffing teams compare approved contract rates, co
 
 [Explore the hosted demo](https://shiftclarity.pages.dev/demo/) · [Product](https://shiftclarity.pages.dev/) · [Complete spreadsheet walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) · [C4 architecture](docs/architecture/README.md) · [ADRs](docs/adr/README.md)
 
-**Try your files locally:** [Open the file evaluator](https://shiftclarity.pages.dev/demo/?view=files). Select authorized, minimized CSV/XLSX exports for work, posted billing and approved contract rates. Confirm the mappings and scope, inspect both billing directions, then download Excel/CSV or print/save PDF. No account, records upload, model call or browser record storage. Refresh clears the local review. [Where the files come from and what to prepare](docs/AGENCY_ADOPTION.md).
+## Choose how to evaluate
 
-**Persistent synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals, period reviews and follow-up. Access is invite-only; an owner manages the team. All included records are fictional; customer data and production approval remain gated.
+| Your goal | Start here | What happens to the records |
+| --- | --- | --- |
+| Understand the workflow | [Open the fictional demo](https://shiftclarity.pages.dev/demo/) | Built-in fictional records; in-memory review. |
+| Check whether your exports fit | [Test CSV/Excel files locally](https://shiftclarity.pages.dev/demo/?view=files) | No account, records upload, model call or browser record storage. Use authorized, minimized files; refresh clears the review. |
+| Evaluate a recurring team process | [Request assigned pilot access](https://shiftclarity.pages.dev/pilot/) | Invite-only synthetic workspace with Cognito MFA, separate rate approval, retained periods, follow-up and reports. Customer cloud use remains gated. |
+
+For local evaluation, prepare work, posted billing and a separately approved rate register. Confirm the mappings and scope, inspect both billing directions, then download Excel/CSV or print/save PDF. The [agency preparation guide](docs/AGENCY_ADOPTION.md) explains where the files come from and what to check.
+
+The persistent pilot uses Cognito, private S3 and Neon to retain fictional imports, approvals, period reviews and follow-up. A workspace owner manages access. It is not a customer-data production release.
 
 ## Answer four billing questions
 
