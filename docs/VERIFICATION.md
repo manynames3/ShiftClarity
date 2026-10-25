@@ -201,3 +201,14 @@ Post-release recovery matched **19 tables** and **65 private source objects** in
 The manual Ego workspace disappeared; no replacement was created without the skill-required permission. Actual Chrome outputs, downloaded workbooks/PDFs and desktop/mobile landing captures were inspected instead. The optional browser-tool update remains unapplied. No manual sign-in or real-agency acceptance is claimed for this release.
 
 Research and invented export variants do not establish vendor certification, real-customer accuracy or a measured conversion/savings outcome. Customer-specific approved exports, contract semantics, independent labels and customer-cloud operating approval remain external acceptance work.
+
+
+### Approved manual follow-up · October 24, 2026
+
+With the user's permission, Ego task 8 manually exercised the live landing CTA, fictional CSV loading, all three confirmed mappings, readiness declarations, the published local workspace, evidence tabs, coverage gaps and report controls. The downloaded ten-sheet Excel report was independently read with OpenPyXL: $460 potential underbilling, $24 potential overbilling, $25 non-hourly charge retained, literal cells and worker identities omitted. The original work-approval event remains explicitly unknown. At 390px, evidence, coverage and the final file-setup header fit the viewport and render on a white background. Task 8 was finished once after verification.
+
+Inspection found a small context mismatch: staged own-file setup showed a finding count from the fictional demo and an irrelevant reset action. The setup now hides those controls; published local records retain their own count and a consistently named “Clear local records” confirmation. The mandatory local-data disclosure has no ineffective dismissal button. Canonical demo dismissal/reset behavior remains covered.
+
+The focused follow-up passed the production typecheck/build, 142 unit/component checks, 14 local browser checks and all 12 own-file tests at the live URL, including the new context/clearing regression. The current README screenshot is the actual hosted Chrome result, captured after its temporary notification closed. Exact-image Lambda verification passed; both existing functions are Active/Successful on digest `c5a61b04ef9fd9f88bb21d70e1aa152911cc99b476da8ec9d85c1b4a46ab6cda`. The saved plan changed only their image URIs; the post-apply plan has no drift. Live demo/pilot shells and main JS/CSS match the local build byte-for-byte; anonymous workspace access returns 401. Cloudflare landing assets were unchanged.
+
+Ego screenshot capture still timed out, so this adds manual interaction/layout evidence, not a new Ego image or Safari/device test. The optional browser-tool update remains unapplied. Backend logic, private-account lifecycle and recovery were unchanged and were not unnecessarily rerun; their earlier evidence remains above. Real-agency acceptance gates remain open.

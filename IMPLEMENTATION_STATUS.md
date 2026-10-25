@@ -1,5 +1,9 @@
 # ShiftClarity implementation status
 
+## Manual release follow-up · October 24, 2026
+
+Completed the approved live manual inspection: landing → local files → mapping/readiness → findings/evidence/coverage → downloaded Excel. Corrected demo-only header controls during own-file setup and made local clearing labels consistent. Production build, 142 unit/component, 14 focused local browser and 12 live own-file checks pass. Both existing functions are verified at digest `c5a61b04ef9fd9f8`; no infrastructure drift. Refreshed the actual hosted README product screenshot. [Verification](docs/VERIFICATION.md) records manual evidence and tooling limits; customer acceptance gates are unchanged.
+
 ## Latest release · October 24, 2026
 
 Deployed browser-local agency CSV/XLSX evaluation, source-aware export guidance, explicit mappings and reusable metadata, safe approval/cutoff handling, retained non-hourly charges, useful reports, and an agency-focused landing. Existing private periods, approvals, Cognito permissions, reports and corrections remain verified. [AD-01–AD-06](docs/AGENCY_ADOPTION.md) map implementation to evidence. The included manual kit independently derives $460 potential underbilling and $24 potential overbilling with 6/8 records evaluated; no real agency outcome is claimed.

@@ -16,6 +16,7 @@ test('prospect imports their own exports, reviews both directions, and downloads
  await page.getByLabel('Work exports include all records for this facility and service period.').check();await page.getByLabel('Invoice exports include all posted lines, credits and rebills through this cutoff for the same scope.').check();await page.getByLabel('Independent work hours (optional)',{exact:true}).fill('69');await page.getByLabel('Independent signed posted total USD (optional)',{exact:true}).fill('3501.00');
  for(const name of ['work.csv','invoices.csv','rates.csv'])await page.getByRole('button',{name:'Confirm '+name+' mapping',exact:true}).click();await page.getByLabel('I’m authorized to test these minimized records, and I checked the supplied rate terms and declarations.').check();await publish(page);
  await expect(page.getByText('6 of 8 shifts rule-checked')).toBeVisible();await expect(page.locator('.demo-data-label')).toHaveText('Your records · local onlyRecords remain in this tab. Refresh clears your work.');await expect(page.getByRole('link',{name:'Rule approval',exact:true})).toHaveCount(0);
+ await expect(page.locator('.toast')).toHaveCount(0,{timeout:10000});
  await page.screenshot({path:info.outputPath('own-file-workspace.png'),fullPage:true});
  await page.getByRole('button',{name:'Download report',exact:true}).click();await expect(page.getByRole('dialog')).toContainText('Your records · local only');await expect(page.getByRole('dialog')).toContainText('Non-hourly invoice lines');
  await page.emulateMedia({media:'print'});await page.pdf({path:info.outputPath('own-file-billing-review.pdf'),printBackground:true,preferCSSPageSize:true});await page.emulateMedia({media:null});
@@ -53,4 +54,21 @@ test('Excel exports are read in-browser with explicit sheet selection and a real
 });
 test('an active Excel workbook is rejected locally before mappings or upload',async({page})=>{
  await page.goto('/demo/?view=files');const XLSX=await import('xlsx'),book=XLSX.utils.book_new(),sheet=XLSX.utils.aoa_to_sheet([['Work ID','Hours'],['W1',8]]);sheet.B2.f='2+6';XLSX.utils.book_append_sheet(book,sheet,'Time');await page.getByLabel('Local Approved work',{exact:true}).setInputFiles({name:'formula.xlsx',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',buffer:XLSX.write(book,{type:'buffer',bookType:'xlsx',compression:true})});await expect(page.getByRole('alert')).toContainText('Formula cells');await expect(page.locator('.local-mapping')).toHaveCount(0);await expect(page.getByRole('button',{name:'Validate files locally',exact:false})).toBeDisabled();
+});
+
+test('own-file setup separates staged files from demo results and clearing names the local records',async({page})=>{
+ await page.goto('/demo/?view=files');
+ const nav=page.getByRole('navigation',{name:'Application navigation',exact:true});
+ const disclosure=page.getByRole('note',{name:'Local data disclosure',exact:true});
+ await expect(nav.locator('.nav-count')).toHaveCount(0);
+ await expect(disclosure).toContainText('Your records · local only');
+ await expect(disclosure.getByRole('button')).toHaveCount(0);
+ await configure(page);await publish(page);
+ await expect(nav.locator('.nav-count')).toHaveText('4');
+ await disclosure.getByRole('button',{name:'Clear local records',exact:true}).click();
+ const dialog=page.getByRole('dialog',{name:'Clear local records?',exact:true});
+ await expect(dialog).toContainText('Download your report first');
+ await dialog.getByRole('button',{name:'Clear local records',exact:true}).click();
+ await expect(page.getByRole('note',{name:'Demo disclosure',exact:true})).toContainText('Fictional demo data');
+ await expect(nav.locator('.nav-count')).toHaveText('2');
 });
