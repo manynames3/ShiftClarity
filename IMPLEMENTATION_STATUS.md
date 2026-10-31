@@ -1,5 +1,9 @@
 # ShiftClarity implementation status
 
+## Guided file-first release · October 31, 2026
+
+Deployed the user-requested preparation improvements: files first, CSV header and period suggestions, source/field previews and compatibility diagnostics, direct approved-rate entry, reporting timezones with DST guards, optional totals and actionable readiness/correction guidance. Added messy-export regressions and an honest unassisted customer-evaluation protocol. Build and 150 unit/component checks passed; a 60-test browser pass was followed by 14 final real-header and 14 hosted adoption journeys. Both functions are Active/Successful on verified digest `130fbdfd4348a4e90`; Terraform has no drift and live shells/scripts/styles match the build. README/About, actual mobile preview, ADR 0012 and C4 notes are current. See [verification](docs/VERIFICATION.md). No real agency usability/accuracy result, vendor certification or new customer-cloud approval is claimed.
+
 ## Manual release follow-up · October 24, 2026
 
 Completed the approved live manual inspection: landing → local files → mapping/readiness → findings/evidence/coverage → downloaded Excel. Corrected demo-only header controls during own-file setup and made local clearing labels consistent. Production build, 142 unit/component, 14 focused local browser and 12 live own-file checks pass. Both existing functions are verified at digest `c5a61b04ef9fd9f8`; no infrastructure drift. Refreshed the actual hosted README product screenshot. [Verification](docs/VERIFICATION.md) records manual evidence and tooling limits; customer acceptance gates are unchanged.

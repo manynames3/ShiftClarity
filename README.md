@@ -13,7 +13,9 @@ ShiftClarity helps healthcare staffing teams compare approved contract rates, co
 
 [Explore the hosted demo](https://shiftclarity.pages.dev/demo/) · [Product](https://shiftclarity.pages.dev/) · [Complete spreadsheet walkthrough](docs/SPREADSHEET_WALKTHROUGH.md) · [C4 architecture](docs/architecture/README.md) · [ADRs](docs/adr/README.md)
 
-**Try your files locally:** [Open the file evaluator](https://shiftclarity.pages.dev/demo/?view=files). Select authorized, minimized CSV/XLSX exports for work, posted billing and approved contract rates. Confirm the mappings and scope, inspect both billing directions, then download Excel/CSV or print/save PDF. No account, records upload, model call or browser record storage. Refresh clears the local review. [Where the files come from and what to prepare](docs/AGENCY_ADOPTION.md).
+**Try your files locally:** [Open the file evaluator](https://shiftclarity.pages.dev/demo/?view=files). Select authorized, minimized CSV/XLSX exports for work, posted billing and approved contract rates. Preview sample rows, confirm suggested headers and mappings, use dates found in work records, and enter cutoffs in your reporting timezone. Supply a rate-register export or enter approved hourly terms directly. Confirm scope, inspect both billing directions, then download Excel/CSV or print/save PDF. No account, records upload, model call or browser record storage. Refresh clears the local review. [Where the files come from and what to prepare](docs/AGENCY_ADOPTION.md).
+
+[See the actual mobile mapping preview](docs/images/guided-import-mobile.png).
 
 **Persistent synthetic MVP:** the CSV/XLSX-to-report workflow is deployed in the [assigned-account pilot](https://shiftclarity.pages.dev/pilot/), alongside the open fictional demo. Cognito, private S3 and Neon retain imports, approvals, period reviews and follow-up. Access is invite-only; an owner manages the team. All included records are fictional; customer data and production approval remain gated.
 
@@ -71,6 +73,8 @@ The [compact $200 sample PDF](docs/examples/fictional-billing-review.pdf) remain
 ![Actual local-file billing review with both financial directions and coverage](docs/images/agency-local-review.png)
 
 For repeat reviews, download confirmed mappings without source rows. New source codes remain unconfirmed; fixed approval dates and approval/posting statuses are cleared. In the persistent pilot, **Use next consecutive period** copies the selected interval/facility, proposes registered rates and requires fresh source timestamps and scope declarations. File errors are grouped into causes with a full correction download.
+
+[First-review acceptance tasks](docs/UNASSISTED_EVALUATION.md) define proposed first/repeat-review targets and how to record unassisted customer results. These targets are not measured outcomes.
 
 [Agency adoption research and walkthrough](docs/AGENCY_ADOPTION.md) explains Bullhorn detailed transactions, the limitations of Avionté weekly sheet views, VMS credit/memo preparation and independent rate evidence. These are source-informed preparation guides, not native integrations or certified vendor exports.
 

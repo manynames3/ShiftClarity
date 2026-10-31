@@ -46,3 +46,14 @@ Own-file evaluation accepts CSV and values-only XLSX, USD and explicitly supplie
 | AD-06 | Consistent verified release and truthful claims | [Verification](VERIFICATION.md), ADR 0011, C4 component/sequence, screenshots |
 
 Before a paid operational rollout: validate actual approved exports and contract semantics, measure first/second-period effort against the agency’s configured incumbent process, independently label findings and aligned samples, and approve customer-cloud handling/operating policy separately. Synthetic tests cannot establish those results. The practical presentation is a functioning evaluation tool with explicit scope, rather than a promise of universal compatibility.
+
+
+## File-first preparation · October 31, 2026
+
+The local evaluator now puts file selection before period declarations. CSV header suggestions are bounded to the first twenty rows and retain explicit excluded-title counts; Excel still requires selecting its worksheet/header. Every mapping has a three-row preview, example values, required-field diagnostics and unconfirmed-code guidance. Recognized Bullhorn transaction-detail and Avionté weekly-report structures are guidance, not certified integrations. Weekly summaries never acquire invented service dates. The existing source guide gives the export recipe and provider reference.
+
+Use dates found in mapped work records to propose the period, then confirm actual scope. Reporting cutoffs accept UTC or the offered source timezone, including the browser's timezone; timestamps are normalized to UTC. Nonexistent/repeated daylight-saving times block validation and request the exact UTC timestamp. Completeness, time units, status meanings, authority and approval dates are never inferred. Control totals are optional and collapsed until requested.
+
+For agencies without a rate-register export, the local approved-terms form supports separate hourly components, effective versions, amendment links and source authorization dates. It feeds the same mapping/validation/calculation path. Manually entered terms have no original-file hash; declarations remain unauthenticated. Rates cannot be derived from the invoice being checked.
+
+The readiness checklist explains missing source/period/approval preparation before running. Error messages focus the correction panel and link back to mappings and scope; row-level correction downloads remain available. [Unassisted evaluation tasks](UNASSISTED_EVALUATION.md) separate automated correctness from actual customer usability and define proposed 15-minute first/five-minute repeat targets without claiming achieved results.

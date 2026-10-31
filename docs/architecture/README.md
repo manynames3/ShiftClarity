@@ -264,3 +264,6 @@ sequenceDiagram
 ```
 
 [ADR 0011](../adr/0011-browser-local-agency-evaluation.md) records why this path does not imply customer-cloud approval or a vendor connector. [Agency adoption research](../AGENCY_ADOPTION.md) maps the source evidence and testable assumptions.
+
+
+The browser-local evaluation component now includes file-first preparation (`LocalFiles`), deterministic header/period/source guidance (`local-guidance`) and direct approved-term entry (`RateEntry`). All feed the existing confirmed LocalSource adapter and shared engine; no new container, network boundary or persistent store is introduced. See [ADR 0012](../adr/0012-guided-local-preparation.md).

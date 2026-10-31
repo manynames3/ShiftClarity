@@ -19,3 +19,5 @@ These records explain the accepted architecture of the synthetic ShiftClarity pi
 Start with the [C4 architecture views](../architecture/README.md) to see how these decisions fit together. The [import publication sequence](../architecture/import-publication.md) explains transaction and retry behavior. The earlier [decision log](../../DECISIONS.md) remains available for chronology; these ADRs describe the current decisions after the authorized AWS scope change.
 
 Changes to an accepted decision should record the new context, tradeoffs, and any superseded record. No ADR removes the [real-data and evaluation gates](../PILOT_GATES.md), changes the original handoff, or establishes production readiness.
+
+- [0012 · Guided local preparation without inferred authority](0012-guided-local-preparation.md)
